@@ -5,13 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Архив-Контроль | Сверка литер</title>
 
-<!-- Мета-теги для PWA и установки на рабочий стол -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4A5568">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Архив-Контроль">
 <link rel="apple-touch-icon" href="icon.svg">
 
 <style>
@@ -159,6 +157,7 @@
     overflow-y: hidden;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   .view-panel {
@@ -185,7 +184,7 @@
     padding: 8px 10px;
     border: var(--border-main);
     border-radius: var(--radius-md);
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 800;
     color: var(--secondary-dark);
     background: #FFFFFF;
@@ -279,6 +278,40 @@
   .verdict-box.mismatch { background: #FEF2F2; border-color: var(--accent-red); color: #991B1B; }
   .verdict-box.pending { background: #FFFBEB; border-color: var(--accent-amber); color: #92400E; }
 
+  /* Выпадающий список живого поиска */
+  .search-dropdown {
+    position: absolute;
+    top: 52px;
+    left: 10px;
+    right: 10px;
+    background: #FFFFFF;
+    border: 2px solid var(--secondary-dark);
+    border-radius: var(--radius-md);
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+  }
+
+  .search-item {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--primary-alt);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .search-item:active {
+    background: #EEF2FF;
+  }
+
+  .search-item:last-child {
+    border-bottom: none;
+  }
+
+  /* Журнал и Каталог */
   .log-scroll-area {
     flex: 1;
     overflow-y: auto;
@@ -299,7 +332,6 @@
     box-shadow: 0 1.5px 0 var(--secondary-dark);
   }
 
-  .log-item:active { transform: scale(0.99); }
   .log-item.mismatch { border-left: 6px solid var(--accent-red); background: #FFF5F5; }
   .log-item.match { border-left: 6px solid var(--accent-green); background: #F0FDF4; }
 
@@ -314,8 +346,6 @@
     cursor: pointer;
     margin-left: 6px;
   }
-
-  .log-del-btn:active { background: var(--accent-red); color: #FFF; }
 
   .modal-overlay {
     position: fixed;
@@ -391,7 +421,7 @@
 
   <nav class="nav-tabs">
     <button class="tab-btn active" onclick="switchTab('check')">🔍 Сверка</button>
-    <button class="tab-btn" onclick="switchTab('camera')">📷 Камера</button>
+    <button class="tab-btn" onclick="switchTab('catalog')">📚 Реестр</button>
     <button class="tab-btn" onclick="switchTab('log')">📋 Журнал <span id="log-counter" style="background:#FFF;color:#000;padding:0 5px;border-radius:8px;font-size:10px;margin-left:2px;">0</span></button>
     <button class="tab-btn" onclick="switchTab('config')">⚙️ Файлы</button>
   </nav>
@@ -400,14 +430,18 @@
 
     <!-- 1. СВЕРКА -->
     <div id="view-check" class="view-panel active">
-      <div class="cartoon-card" style="margin-bottom: 6px; padding: 8px 10px;">
+      <div class="cartoon-card" style="margin-bottom: 6px; padding: 8px 10px; position: relative;">
         <div style="display: flex; gap: 5px;">
-          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Обозначение (КСП01...)" autocomplete="off" style="font-size: 15px; padding: 6px 8px;">
-          <button class="cartoon-btn btn-primary btn-sm" style="width: auto; padding: 0 14px;" onclick="handleManualSearch()">Найти</button>
+          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Введите цифры (напр. 362111)..." autocomplete="off" oninput="handleLiveSearch(this.value)">
+          <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 0 10px;" onclick="clearSearchInput()">✕</button>
         </div>
       </div>
 
-      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1; margin-bottom: 0; display: none; flex-direction: column; justify-content: space-between;">
+      <!-- Выпадающий список подсказок -->
+      <div id="search-dropdown-list" class="search-dropdown"></div>
+
+      <!-- Рабочая зона сверки -->
+      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1; margin-bottom: 0; flex-direction: column; justify-content: space-between;">
         <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <div class="drawing-code" id="cur-drawing-num">КСП01-362111.01-002</div>
@@ -442,7 +476,7 @@
           </div>
 
           <div id="verdict-display" class="verdict-box pending">
-            ⏳ Введите литеры или нажмите «Литеры совпадают»
+            ⏳ Введите литеры или подтвердите соответствие
           </div>
         </div>
 
@@ -457,33 +491,24 @@
       </div>
 
       <div id="quick-guide-box" class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-        <div style="font-size: 32px; margin-bottom: 8px;">🎯</div>
-        <div style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">Готов к поиску</div>
-        <div style="font-size: 11px; color: var(--secondary-mid); margin-bottom: 12px;">Введите обозначение чертежа выше или загрузите файл в «Файлы»</div>
+        <div style="font-size: 30px; margin-bottom: 6px;">🔢</div>
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">Поиск по любым цифрам</div>
+        <div style="font-size: 11px; color: var(--secondary-mid); margin-bottom: 10px;">Введите любые 4–6 цифр чертежа без учёта букв, точек и дефисов</div>
         <button class="cartoon-btn btn-secondary btn-sm" style="width: auto;" onclick="loadEmbeddedDemoData()">
           ✨ Загрузить образец КСП01
         </button>
       </div>
     </div>
 
-    <!-- 2. КАМЕРА -->
-    <div id="view-camera" class="view-panel">
-      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column;">
-        <div style="font-size: 12px; font-weight: 800; margin-bottom: 6px;">📷 Оптическое считывание</div>
-        <div style="position: relative; flex: 1; background: #1A202C; border-radius: var(--radius-md); border: var(--border-main); overflow: hidden; margin-bottom: 8px; display: flex; align-items: center; justify-content: center;">
-          <video id="camera-video" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
-          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
-            <div style="width: 85%; height: 50px; border: 2.5px dashed var(--accent-sky); border-radius: 6px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);"></div>
-          </div>
+    <!-- 2. РЕЕСТР (КАТАЛОГ ВСЕХ ЧЕРТЕЖЕЙ) -->
+    <div id="view-catalog" class="view-panel">
+      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; margin-bottom: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-size: 12px; font-weight: 800;">📚 База чертежей</span>
+          <span style="font-size: 10px; color: var(--secondary-mid);" id="catalog-count-text">0 шт</span>
         </div>
-
-        <div class="btn-row" style="margin-bottom: 6px;">
-          <button class="cartoon-btn btn-primary btn-sm" id="btn-toggle-cam" onclick="toggleCamera()">🔴 Камера</button>
-          <button class="cartoon-btn btn-secondary btn-sm" onclick="captureAndRecognize()">⚡ Считать</button>
-        </div>
-
-        <input type="text" id="ocr-detected-val" class="cartoon-input" placeholder="Ожидание шифра..." style="font-size: 15px; margin-bottom: 6px;">
-        <button class="cartoon-btn btn-success" onclick="transferOcrToVerify()">➡️ Перейти к проверке</button>
+        <input type="text" id="catalog-filter-input" class="cartoon-input" placeholder="Фильтр реестра..." style="font-size: 14px; margin-bottom: 6px; padding: 6px 8px;" oninput="renderCatalog(this.value)">
+        <div id="catalog-list-container" class="log-scroll-area"></div>
       </div>
     </div>
 
@@ -521,7 +546,7 @@
         <div style="border: 2px dashed var(--secondary-mid); background: #F8FAFC; border-radius: var(--radius-md); padding: 20px 10px; text-align: center; cursor: pointer; margin-bottom: 8px;" onclick="document.getElementById('excel-file-input').click()">
           <div style="font-size: 32px; margin-bottom: 4px;">📑</div>
           <div style="font-size: 13px; font-weight: 800;">Выбрать файл .xlsx / .csv</div>
-          <div style="font-size: 10px; color: var(--secondary-mid); margin-top: 2px;">Автономное чтение колонок B, C, D, E (100k+ строк)</div>
+          <div style="font-size: 10px; color: var(--secondary-mid); margin-top: 2px;">Колонки B (Обозначение), C (Наименование), D (СБ), E (СП)</div>
         </div>
         <button class="cartoon-btn btn-primary" onclick="document.getElementById('excel-file-input').click()">
           📂 Открыть файл на телефоне
@@ -531,7 +556,7 @@
 
   </main>
 
-  <!-- КАРТОЧКА ДЕТАЛИЗАЦИИ -->
+  <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛИЗАЦИИ -->
   <div id="modal-detail" class="modal-overlay" onclick="closeDetailModal(event)">
     <div class="modal-container" onclick="event.stopPropagation()">
       <div class="modal-header">
@@ -581,19 +606,17 @@
 </div>
 
 <script>
-/* Регистрация Service Worker */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
 }
 
-const DB_NAME = 'DrawingArchiveDB_v4';
+const DB_NAME = 'DrawingArchiveDB_v5';
 let dbInstance = null;
-let memoryIndexMap = new Map();
+let allDrawingsList = [];
 let verificationHistory = [];
 let currentSelectedDrawing = null;
-let videoStream = null;
 let activeLogFilter = 'all';
 
 function initDB() {
@@ -615,15 +638,16 @@ function initDB() {
 async function loadDataFromDB() {
   if (!dbInstance) return;
   const tx = dbInstance.transaction('drawings', 'readonly');
-  const store = tx.objectStore('drawings');
-  const req = store.getAll();
+  const req = tx.objectStore('drawings').getAll();
   req.onsuccess = () => {
-    const list = req.result || [];
-    memoryIndexMap.clear();
-    list.forEach(item => {
-      memoryIndexMap.set(normalizeKey(item.drawing_num), item);
-    });
-    document.getElementById('active-db-count').innerText = `База: ${memoryIndexMap.size} шт`;
+    allDrawingsList = (req.result || []).map(item => ({
+      ...item,
+      _digits: item.drawing_num.replace(/\D/g, ''),
+      _clean: item.drawing_num.toLowerCase().replace(/[\s\-_.]/g, '')
+    }));
+    document.getElementById('active-db-count').innerText = `База: ${allDrawingsList.length} шт`;
+    document.getElementById('catalog-count-text').innerText = `${allDrawingsList.length} шт`;
+    renderCatalog('');
   };
 
   const txLog = dbInstance.transaction('logs', 'readonly');
@@ -632,10 +656,6 @@ async function loadDataFromDB() {
     verificationHistory = (reqLog.result || []).reverse();
     renderLogs();
   };
-}
-
-function normalizeKey(str) {
-  return String(str || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
 }
 
 function loadEmbeddedDemoData() {
@@ -653,12 +673,11 @@ function loadEmbeddedDemoData() {
   tx.oncomplete = () => {
     loadDataFromDB();
     showToast('✅ Загружены образцы КСП01');
-    document.getElementById('input-drawing-search').value = 'КСП01-362111.01-002';
     selectDrawing(sample[0]);
   };
 }
 
-/* Автономный парсер XLSX / CSV */
+/* Автономный разбор XLSX / CSV */
 async function handleFileUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -681,13 +700,15 @@ async function handleFileUpload(event) {
     try {
       const buffer = e.target.result;
       const unzipped = await unzipPureJS(buffer);
-      if (!unzipped['xl/worksheets/sheet1.xml']) throw new Error('Лист sheet1.xml не найден');
+      const sheetKey = Object.keys(unzipped).find(k => k.startsWith('xl/worksheets/sheet'));
+      if (!sheetKey) throw new Error('Лист с данными не найден');
+      
       const sharedStringsXml = unzipped['xl/sharedStrings.xml'];
       const sharedStrings = sharedStringsXml ? parseSharedStringsXML(sharedStringsXml) : [];
-      const rows = parseSheetXML(unzipped['xl/worksheets/sheet1.xml'], sharedStrings);
+      const rows = parseSheetXML(unzipped[sheetKey], sharedStrings);
       saveParsedRowsToDB(rows);
     } catch (err) {
-      alert('Ошибка при чтении файла XLSX: ' + err.message);
+      alert('Ошибка при разборе Excel: ' + err.message);
     }
   };
   reader.readAsArrayBuffer(file);
@@ -788,6 +809,7 @@ function saveParsedRowsToDB(rows) {
     const row = rows[i];
     if (!row || row.length === 0) continue;
 
+    // Колонка B (1), C (2), D (3), E (4)
     const rawDrawing = row[1] !== undefined ? String(row[1]).trim() : '';
     if (!rawDrawing || rawDrawing.toLowerCase().includes('обозначение')) continue;
 
@@ -812,35 +834,60 @@ function saveParsedRowsToDB(rows) {
   };
 }
 
-/* Сверка */
-function handleManualSearch() {
-  const query = document.getElementById('input-drawing-search').value.trim();
-  if (!query) return showToast('⚠️ Введите номер');
+/* Живой цифровой поиск */
+function handleLiveSearch(query) {
+  const dropdown = document.getElementById('search-dropdown-list');
+  const cleanQ = query.trim().toLowerCase().replace(/[\s\-_.]/g, '');
+  const digitsQ = query.replace(/\D/g, '');
 
-  const key = normalizeKey(query);
-  const found = memoryIndexMap.get(key);
-
-  if (found) {
-    selectDrawing(found);
-  } else {
-    let matched = [];
-    for (let [k, item] of memoryIndexMap.entries()) {
-      if (k.includes(key)) {
-        matched.push(item);
-        if (matched.length > 5) break;
-      }
-    }
-    if (matched.length === 1) selectDrawing(matched[0]);
-    else if (matched.length > 1) showToast(`Найдено похожих: ${matched.length}`);
-    else showToast('❌ Чертеж не найден в базе');
+  if (!cleanQ) {
+    dropdown.style.display = 'none';
+    return;
   }
+
+  const matches = allDrawingsList.filter(item => {
+    if (digitsQ.length >= 3 && item._digits.includes(digitsQ)) return true;
+    if (cleanQ.length >= 2 && item._clean.includes(cleanQ)) return true;
+    return false;
+  }).slice(0, 15);
+
+  if (matches.length === 0) {
+    dropdown.innerHTML = '<div style="padding:10px; font-size:12px; color:#7D8A9A; text-align:center;">Ничего не найдено</div>';
+    dropdown.style.display = 'block';
+    return;
+  }
+
+  dropdown.innerHTML = '';
+  matches.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'search-item';
+    div.onclick = () => {
+      selectDrawing(item);
+      dropdown.style.display = 'none';
+      document.getElementById('input-drawing-search').value = item.drawing_num;
+    };
+    div.innerHTML = `
+      <div>
+        <div style="font-family:monospace; font-weight:800; font-size:14px; color:var(--accent-blue);">${item.drawing_num}</div>
+        <div style="font-size:11px; color:#7D8A9A;">${item.name}</div>
+      </div>
+      <div style="font-size:11px; font-weight:800; color:var(--secondary-dark);">СБ:${item.lit_sb.toUpperCase()} / СП:${item.lit_sp.toUpperCase()}</div>
+    `;
+    dropdown.appendChild(div);
+  });
+
+  dropdown.style.display = 'block';
+}
+
+function clearSearchInput() {
+  document.getElementById('input-drawing-search').value = '';
+  document.getElementById('search-dropdown-list').style.display = 'none';
 }
 
 function selectDrawing(item) {
   currentSelectedDrawing = item;
-  document.getElementById('input-drawing-search').value = item.drawing_num;
   document.getElementById('cur-drawing-num').innerText = item.drawing_num;
-  document.getElementById('cur-drawing-name').innerText = item.name;
+  document.getElementById('cur-drawing-name').innerText = 'Наименование: ' + item.name;
   document.getElementById('db-lit-sb').innerText = item.lit_sb || '-';
   document.getElementById('db-lit-sp').innerText = item.lit_sp || '-';
 
@@ -849,6 +896,7 @@ function selectDrawing(item) {
 
   document.getElementById('verify-box').style.display = 'flex';
   document.getElementById('quick-guide-box').style.display = 'none';
+  document.getElementById('search-dropdown-list').style.display = 'none';
   runLiveComparison();
 }
 
@@ -878,7 +926,7 @@ function runLiveComparison() {
 
   if (!actSb && !actSp) {
     box.className = 'verdict-box pending';
-    box.innerHTML = '⏳ Введите литеры или нажмите «Литеры совпадают»';
+    box.innerHTML = '⏳ Введите литеры или подтвердите соответствие';
     btn.className = 'cartoon-btn btn-secondary';
     return;
   }
@@ -908,9 +956,7 @@ function commitCurrentVerification() {
   const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
   const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
 
-  if (!actSb && !actSp) {
-    return showToast('⚠️ Укажите литеры перед записью');
-  }
+  if (!actSb && !actSp) return showToast('⚠️ Укажите литеры перед записью');
 
   const isMatch = (actSb === dbSb && actSp === dbSp);
 
@@ -936,6 +982,47 @@ function commitCurrentVerification() {
     showToast(isMatch ? '✅ Записано (Норма)' : '⚠️ Записано в расхождения');
     clearCurrentVerification();
   };
+}
+
+/* Каталог реестра */
+function renderCatalog(filterText) {
+  const container = document.getElementById('catalog-list-container');
+  const cleanQ = filterText.trim().toLowerCase().replace(/[\s\-_.]/g, '');
+  const digitsQ = filterText.replace(/\D/g, '');
+
+  let list = allDrawingsList;
+  if (cleanQ) {
+    list = allDrawingsList.filter(item => {
+      if (digitsQ.length >= 2 && item._digits.includes(digitsQ)) return true;
+      if (item._clean.includes(cleanQ)) return true;
+      return false;
+    });
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:16px; color:#7D8A9A; font-size:11px;">Ничего не найдено</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  list.slice(0, 50).forEach(item => {
+    const d = document.createElement('div');
+    d.className = 'log-item';
+    d.onclick = () => {
+      selectDrawing(item);
+      switchTab('check');
+    };
+    d.innerHTML = `
+      <div>
+        <div style="font-family:monospace; font-weight:900; font-size:13px; color:var(--accent-blue);">${item.drawing_num}</div>
+        <div style="font-size:11px; color:#7D8A9A;">${item.name}</div>
+      </div>
+      <div style="font-size:11px; font-weight:800; color:var(--secondary-dark);">
+        СБ: ${item.lit_sb.toUpperCase()} | СП: ${item.lit_sp.toUpperCase()}
+      </div>
+    `;
+    container.appendChild(d);
+  });
 }
 
 /* Журнал и модальное окно */
@@ -1173,11 +1260,11 @@ function generateMinimalistWordReport() {
 function switchTab(tabId) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-  const map = { 'check': 0, 'camera': 1, 'log': 2, 'config': 3 };
+
+  const map = { 'check': 0, 'catalog': 1, 'log': 2, 'config': 3 };
   if (map[tabId] !== undefined) document.querySelectorAll('.nav-tabs .tab-btn')[map[tabId]].classList.add('active');
   const target = document.getElementById('view-' + tabId);
   if (target) target.classList.add('active');
-  if (tabId !== 'camera' && videoStream) stopCamera();
 }
 
 function showToast(msg) {
@@ -1188,48 +1275,6 @@ function showToast(msg) {
 }
 
 function filterLogs(type) { activeLogFilter = type; renderLogs(); }
-
-async function toggleCamera() {
-  const btn = document.getElementById('btn-toggle-cam');
-  const v = document.getElementById('camera-video');
-  if (videoStream) {
-    stopCamera();
-    btn.innerText = '🔴 Камера';
-  } else {
-    try {
-      videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      v.srcObject = videoStream;
-      btn.innerText = '⏹️ Стоп';
-      showToast('📷 Камера включена');
-    } catch(e) {
-      alert('Камера не доступна: ' + e.message);
-    }
-  }
-}
-
-function stopCamera() {
-  if (videoStream) {
-    videoStream.getTracks().forEach(t => t.stop());
-    videoStream = null;
-  }
-}
-
-function captureAndRecognize() {
-  if (memoryIndexMap.size > 0) {
-    const items = Array.from(memoryIndexMap.values());
-    const item = items[Math.floor(Math.random() * items.length)];
-    document.getElementById('ocr-detected-val').value = item.drawing_num;
-    showToast(`🔍 Считано: ${item.drawing_num}`);
-  }
-}
-
-function transferOcrToVerify() {
-  const v = document.getElementById('ocr-detected-val').value.trim();
-  if (!v) return showToast('⚠️ Нет шифра');
-  document.getElementById('input-drawing-search').value = v;
-  switchTab('check');
-  handleManualSearch();
-}
 
 window.addEventListener('DOMContentLoaded', () => {
   initDB();
