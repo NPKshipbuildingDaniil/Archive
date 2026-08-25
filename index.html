@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Архив-Контроль | Сверка литер</title>
+
+<!-- Мета-теги для PWA и установки на рабочий стол -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4A5568">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Архив-Контроль">
+<link rel="apple-touch-icon" href="icon.svg">
+
+<style>
+  :root {
+    --primary-bg: #E8ECF1;
+    --primary-alt: #B8C0CA;
+    --panel-bg: #FFFFFF;
+    --secondary-dark: #4A5568;
+    --secondary-mid: #7D8A9A;
+    --secondary-light: #B0C4D8;
+    --accent-blue: #3355CC;
+    --accent-sky: #5AAFDD;
+    --accent-green: #10B981;
+    --accent-red: #E03030;
+    
+    --radius-lg: 14px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+    
+    --shadow-cartoon: 0 2.5px 0 var(--secondary-dark);
+    --shadow-cartoon-btn: 0 3px 0 #2D3748;
+    --border-main: 2px solid var(--secondary-dark);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body {
+    background-color: var(--primary-bg);
+    color: var(--secondary-dark);
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    background-image: radial-gradient(var(--primary-alt) 1.2px, transparent 1.2px);
+    background-size: 16px 16px;
+  }
+
+  .app-container {
+    width: 100%;
+    max-width: 480px;
+    height: 100vh;
+    background-color: var(--primary-bg);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 25px rgba(74, 85, 104, 0.2);
+    position: relative;
+  }
+
+  header.app-header {
+    background: var(--secondary-dark);
+    color: #FFFFFF;
+    padding: 10px 14px;
+    border-bottom: 3px solid #2D3748;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+    background: var(--accent-blue);
+    border: 2px solid #FFFFFF;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .brand-text h1 {
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+
+  .brand-text span {
+    font-size: 9px;
+    color: var(--secondary-light);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .header-badge {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #E2E8F0;
+  }
+
+  .nav-tabs {
+    display: flex;
+    background: #FFFFFF;
+    border-bottom: var(--border-main);
+    padding: 5px 6px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: var(--primary-bg);
+    border: 2px solid var(--secondary-dark);
+    border-radius: var(--radius-md);
+    padding: 7px 2px;
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--secondary-dark);
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 2px 0 var(--secondary-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+  }
+
+  .tab-btn.active {
+    background: var(--accent-blue);
+    color: #FFFFFF;
+    border-color: #1A2E70;
+    box-shadow: 0 1px 0 #1A2E70;
+    transform: translateY(1.5px);
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 10px;
+    overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .view-panel {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  .view-panel.active {
+    display: flex;
+  }
+
+  .cartoon-card {
+    background: var(--panel-bg);
+    border: var(--border-main);
+    border-radius: var(--radius-lg);
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-cartoon);
+  }
+
+  .cartoon-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: var(--border-main);
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--secondary-dark);
+    background: #FFFFFF;
+    outline: none;
+  }
+
+  .cartoon-input:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 2px rgba(51, 85, 204, 0.2);
+  }
+
+  .cartoon-btn {
+    width: 100%;
+    padding: 10px 12px;
+    border: var(--border-main);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: var(--shadow-cartoon-btn);
+    text-transform: uppercase;
+  }
+
+  .cartoon-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #2D3748;
+  }
+
+  .btn-primary { background: var(--accent-blue); color: #FFFFFF; border-color: #1A2E70; }
+  .btn-secondary { background: var(--primary-bg); color: var(--secondary-dark); border-color: var(--secondary-dark); }
+  .btn-success { background: var(--accent-green); color: #FFFFFF; border-color: #065F46; box-shadow: 0 3px 0 #065F46; }
+  .btn-danger { background: var(--accent-red); color: #FFFFFF; border-color: #991B1B; box-shadow: 0 3px 0 #991B1B; }
+  .btn-word { background: #2B579A; color: #FFFFFF; border-color: #183B70; box-shadow: 0 3px 0 #183B70; }
+  .btn-sm { padding: 6px 10px; font-size: 11px; border-radius: var(--radius-sm); }
+  .btn-row { display: flex; gap: 6px; }
+
+  .drawing-code {
+    font-family: monospace;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--accent-blue);
+    word-break: break-all;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .info-cell {
+    background: #F0F9FF;
+    border: 1.5px solid var(--accent-sky);
+    border-radius: var(--radius-md);
+    padding: 6px 4px;
+    text-align: center;
+  }
+
+  .info-cell .title {
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--secondary-mid);
+    margin-bottom: 2px;
+  }
+
+  .info-cell .value {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--secondary-dark);
+    text-transform: uppercase;
+  }
+
+  .verdict-box {
+    border: 2px solid;
+    border-radius: var(--radius-md);
+    padding: 6px;
+    text-align: center;
+    margin-bottom: 8px;
+    font-weight: 900;
+    font-size: 12px;
+  }
+
+  .verdict-box.match { background: #ECFDF5; border-color: var(--accent-green); color: #065F46; }
+  .verdict-box.mismatch { background: #FEF2F2; border-color: var(--accent-red); color: #991B1B; }
+  .verdict-box.pending { background: #FFFBEB; border-color: var(--accent-amber); color: #92400E; }
+
+  .log-scroll-area {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 8px;
+    padding-right: 2px;
+  }
+
+  .log-item {
+    background: #FFFFFF;
+    border: 1.5px solid var(--secondary-dark);
+    border-radius: var(--radius-md);
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 1.5px 0 var(--secondary-dark);
+  }
+
+  .log-item:active { transform: scale(0.99); }
+  .log-item.mismatch { border-left: 6px solid var(--accent-red); background: #FFF5F5; }
+  .log-item.match { border-left: 6px solid var(--accent-green); background: #F0FDF4; }
+
+  .log-del-btn {
+    background: #FFFFFF;
+    border: 1.5px solid var(--accent-red);
+    color: var(--accent-red);
+    border-radius: var(--radius-sm);
+    padding: 5px 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 6px;
+  }
+
+  .log-del-btn:active { background: var(--accent-red); color: #FFF; }
+
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(45, 55, 72, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: flex-end;
+    z-index: 1000;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal-container {
+    width: 100%;
+    max-width: 480px;
+    background: #FFFFFF;
+    border-radius: 20px 20px 0 0;
+    border-top: 4px solid var(--secondary-dark);
+    padding: 16px;
+    animation: slideUp 0.15s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1.5px solid var(--primary-alt);
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--secondary-dark);
+    color: #FFFFFF;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1.5px solid #FFFFFF;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    z-index: 1100;
+    transition: transform 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-logo">📐</div>
+      <div class="brand-text">
+        <h1>АРХИВ-КОНТРОЛЬ</h1>
+        <span>Сверка литер (B, C, D, E)</span>
+      </div>
+    </div>
+    <div class="header-badge" id="active-db-count">База: 0 шт</div>
+  </header>
+
+  <nav class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('check')">🔍 Сверка</button>
+    <button class="tab-btn" onclick="switchTab('camera')">📷 Камера</button>
+    <button class="tab-btn" onclick="switchTab('log')">📋 Журнал <span id="log-counter" style="background:#FFF;color:#000;padding:0 5px;border-radius:8px;font-size:10px;margin-left:2px;">0</span></button>
+    <button class="tab-btn" onclick="switchTab('config')">⚙️ Файлы</button>
+  </nav>
+
+  <main class="main-content">
+
+    <!-- 1. СВЕРКА -->
+    <div id="view-check" class="view-panel active">
+      <div class="cartoon-card" style="margin-bottom: 6px; padding: 8px 10px;">
+        <div style="display: flex; gap: 5px;">
+          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Обозначение (КСП01...)" autocomplete="off" style="font-size: 15px; padding: 6px 8px;">
+          <button class="cartoon-btn btn-primary btn-sm" style="width: auto; padding: 0 14px;" onclick="handleManualSearch()">Найти</button>
+        </div>
+      </div>
+
+      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1; margin-bottom: 0; display: none; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <div class="drawing-code" id="cur-drawing-num">КСП01-362111.01-002</div>
+            <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 3px 8px; font-size: 10px;" onclick="clearCurrentVerification()">Сброс</button>
+          </div>
+
+          <div style="font-size: 11px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="cur-drawing-name">
+            по с.3
+          </div>
+
+          <div class="info-grid">
+            <div class="info-cell">
+              <div class="title">СБ (в базе)</div>
+              <div class="value" id="db-lit-sb">дт</div>
+            </div>
+            <div class="info-cell">
+              <div class="title">СП (в базе)</div>
+              <div class="value" id="db-lit-sp">бт</div>
+            </div>
+          </div>
+
+          <div style="background: #F8FAFC; border: 1.5px dashed var(--secondary-mid); border-radius: var(--radius-md); padding: 6px 8px; margin-bottom: 6px;">
+            <div style="font-size: 10px; font-weight: 800; margin-bottom: 4px;">ФАКТИЧЕСКИЕ ЛИТЕРЫ НА ЧЕРТЕЖЕ:</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+              <div>
+                <input type="text" id="act-lit-sb" class="cartoon-input" placeholder="Факт СБ" style="text-align: center; text-transform: lowercase; font-size: 18px; padding: 6px;" oninput="runLiveComparison()">
+              </div>
+              <div>
+                <input type="text" id="act-lit-sp" class="cartoon-input" placeholder="Факт СП" style="text-align: center; text-transform: lowercase; font-size: 18px; padding: 6px;" oninput="runLiveComparison()">
+              </div>
+            </div>
+          </div>
+
+          <div id="verdict-display" class="verdict-box pending">
+            ⏳ Введите литеры или нажмите «Литеры совпадают»
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <button class="cartoon-btn btn-success" style="padding: 10px;" onclick="autoFillAndVerifyMatch()">
+            ✅ Литеры совпадают (как в базе)
+          </button>
+          <button id="btn-save-verdict" class="cartoon-btn btn-primary" style="padding: 10px;" onclick="commitCurrentVerification()">
+            💾 Записать в журнал
+          </button>
+        </div>
+      </div>
+
+      <div id="quick-guide-box" class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+        <div style="font-size: 32px; margin-bottom: 8px;">🎯</div>
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">Готов к поиску</div>
+        <div style="font-size: 11px; color: var(--secondary-mid); margin-bottom: 12px;">Введите обозначение чертежа выше или загрузите файл в «Файлы»</div>
+        <button class="cartoon-btn btn-secondary btn-sm" style="width: auto;" onclick="loadEmbeddedDemoData()">
+          ✨ Загрузить образец КСП01
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. КАМЕРА -->
+    <div id="view-camera" class="view-panel">
+      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column;">
+        <div style="font-size: 12px; font-weight: 800; margin-bottom: 6px;">📷 Оптическое считывание</div>
+        <div style="position: relative; flex: 1; background: #1A202C; border-radius: var(--radius-md); border: var(--border-main); overflow: hidden; margin-bottom: 8px; display: flex; align-items: center; justify-content: center;">
+          <video id="camera-video" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
+          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+            <div style="width: 85%; height: 50px; border: 2.5px dashed var(--accent-sky); border-radius: 6px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);"></div>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-bottom: 6px;">
+          <button class="cartoon-btn btn-primary btn-sm" id="btn-toggle-cam" onclick="toggleCamera()">🔴 Камера</button>
+          <button class="cartoon-btn btn-secondary btn-sm" onclick="captureAndRecognize()">⚡ Считать</button>
+        </div>
+
+        <input type="text" id="ocr-detected-val" class="cartoon-input" placeholder="Ожидание шифра..." style="font-size: 15px; margin-bottom: 6px;">
+        <button class="cartoon-btn btn-success" onclick="transferOcrToVerify()">➡️ Перейти к проверке</button>
+      </div>
+    </div>
+
+    <!-- 3. ЖУРНАЛ -->
+    <div id="view-log" class="view-panel">
+      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; margin-bottom: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-size: 12px; font-weight: 800;">📋 Проверенные чертежи</span>
+          <span style="font-size: 10px; color: var(--secondary-mid);" id="log-stats-text">0 шт</span>
+        </div>
+
+        <div class="btn-row" style="margin-bottom: 6px;">
+          <button class="cartoon-btn btn-secondary btn-sm" onclick="filterLogs('all')">Все</button>
+          <button class="cartoon-btn btn-danger btn-sm" onclick="filterLogs('mismatch')">Расхождения</button>
+          <button class="cartoon-btn btn-success btn-sm" onclick="filterLogs('match')">Норма</button>
+        </div>
+
+        <div id="log-list-container" class="log-scroll-area"></div>
+
+        <button class="cartoon-btn btn-word" onclick="generateMinimalistWordReport()" style="margin-bottom: 6px;">
+          📄 Скачать официальный акт (.doc)
+        </button>
+
+        <button class="cartoon-btn btn-secondary btn-sm" onclick="clearLogHistory()">
+          🗑️ Очистить весь журнал
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. ФАЙЛЫ -->
+    <div id="view-config" class="view-panel">
+      <div class="cartoon-card">
+        <div style="font-size: 12px; font-weight: 800; margin-bottom: 6px;">📊 Загрузка реестра Excel</div>
+        <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv,.XLSX,.XLS,.CSV" style="display: none;" onchange="handleFileUpload(event)">
+        <div style="border: 2px dashed var(--secondary-mid); background: #F8FAFC; border-radius: var(--radius-md); padding: 20px 10px; text-align: center; cursor: pointer; margin-bottom: 8px;" onclick="document.getElementById('excel-file-input').click()">
+          <div style="font-size: 32px; margin-bottom: 4px;">📑</div>
+          <div style="font-size: 13px; font-weight: 800;">Выбрать файл .xlsx / .csv</div>
+          <div style="font-size: 10px; color: var(--secondary-mid); margin-top: 2px;">Автономное чтение колонок B, C, D, E (100k+ строк)</div>
+        </div>
+        <button class="cartoon-btn btn-primary" onclick="document.getElementById('excel-file-input').click()">
+          📂 Открыть файл на телефоне
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- КАРТОЧКА ДЕТАЛИЗАЦИИ -->
+  <div id="modal-detail" class="modal-overlay" onclick="closeDetailModal(event)">
+    <div class="modal-container" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div style="font-size: 13px; font-weight: 800;">Карточка проверенного чертежа</div>
+        <button style="background: var(--primary-bg); border: 2px solid var(--secondary-dark); border-radius: 50%; width: 28px; height: 28px; font-weight: 900; cursor: pointer;" onclick="closeDetailModal()">✕</button>
+      </div>
+
+      <div style="margin-bottom: 8px;">
+        <div style="font-size: 10px; font-weight: 800; color: var(--secondary-mid);">ОБОЗНАЧЕНИЕ:</div>
+        <div class="drawing-code" id="modal-drawing-num" style="font-size: 20px;">-</div>
+      </div>
+
+      <div style="font-size: 12px; font-weight: 700; color: var(--secondary-dark); margin-bottom: 10px;" id="modal-drawing-name">-</div>
+
+      <div style="background: #F8FAFC; border: 1.5px solid var(--primary-alt); border-radius: var(--radius-md); padding: 8px; margin-bottom: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center;">
+          <div style="background: #FFF; padding: 6px; border-radius: 6px; border: 1px solid var(--primary-alt);">
+            <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid);">СБ (В БАЗЕ)</div>
+            <div style="font-size: 20px; font-weight: 900;" id="modal-db-sb">-</div>
+          </div>
+          <div style="background: #FFF; padding: 6px; border-radius: 6px; border: 1px solid var(--primary-alt);">
+            <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid);">СБ (НА РУКАХ)</div>
+            <div style="font-size: 20px; font-weight: 900;" id="modal-act-sb">-</div>
+          </div>
+          <div style="background: #FFF; padding: 6px; border-radius: 6px; border: 1px solid var(--primary-alt);">
+            <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid);">СП (В БАЗЕ)</div>
+            <div style="font-size: 20px; font-weight: 900;" id="modal-db-sp">-</div>
+          </div>
+          <div style="background: #FFF; padding: 6px; border-radius: 6px; border: 1px solid var(--primary-alt);">
+            <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid);">СП (НА РУКАХ)</div>
+            <div style="font-size: 20px; font-weight: 900;" id="modal-act-sp">-</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="modal-status-badge" class="verdict-box" style="margin-bottom: 8px;">-</div>
+      <div style="font-size: 11px; color: var(--secondary-mid); margin-bottom: 12px; text-align: center;" id="modal-timestamp">-</div>
+
+      <div class="btn-row">
+        <button class="cartoon-btn btn-danger" id="modal-btn-delete" style="flex: 1;">🗑️ Удалить</button>
+        <button class="cartoon-btn btn-secondary" onclick="closeDetailModal()" style="flex: 1;">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast-msg" class="toast">Уведомление</div>
+</div>
+
+<script>
+/* Регистрация Service Worker */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+const DB_NAME = 'DrawingArchiveDB_v4';
+let dbInstance = null;
+let memoryIndexMap = new Map();
+let verificationHistory = [];
+let currentSelectedDrawing = null;
+let videoStream = null;
+let activeLogFilter = 'all';
+
+function initDB() {
+  return new Promise((resolve) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('drawings')) db.createObjectStore('drawings', { keyPath: 'id' });
+      if (!db.objectStoreNames.contains('logs')) db.createObjectStore('logs', { keyPath: 'id' });
+    };
+    request.onsuccess = (e) => {
+      dbInstance = e.target.result;
+      loadDataFromDB().then(resolve);
+    };
+    request.onerror = () => resolve();
+  });
+}
+
+async function loadDataFromDB() {
+  if (!dbInstance) return;
+  const tx = dbInstance.transaction('drawings', 'readonly');
+  const store = tx.objectStore('drawings');
+  const req = store.getAll();
+  req.onsuccess = () => {
+    const list = req.result || [];
+    memoryIndexMap.clear();
+    list.forEach(item => {
+      memoryIndexMap.set(normalizeKey(item.drawing_num), item);
+    });
+    document.getElementById('active-db-count').innerText = `База: ${memoryIndexMap.size} шт`;
+  };
+
+  const txLog = dbInstance.transaction('logs', 'readonly');
+  const reqLog = txLog.objectStore('logs').getAll();
+  reqLog.onsuccess = () => {
+    verificationHistory = (reqLog.result || []).reverse();
+    renderLogs();
+  };
+}
+
+function normalizeKey(str) {
+  return String(str || '').trim().toLowerCase().replace(/[\s\-_]/g, '');
+}
+
+function loadEmbeddedDemoData() {
+  const sample = [
+    { id: 1, drawing_num: 'КСП01-362111.01-002', name: 'по с.3', lit_sb: 'дт', lit_sp: 'бт' },
+    { id: 2, drawing_num: 'КСП01-362111.01-003', name: 'Вал привода', lit_sb: 'ат', lit_sp: 'бт' },
+    { id: 3, drawing_num: '362154.112', name: 'Корпус редуктора', lit_sb: 'аг', lit_sp: 'вг' },
+    { id: 4, drawing_num: '362154.113', name: 'Крышка глухая', lit_sb: 'б', lit_sp: 'б' }
+  ];
+
+  const tx = dbInstance.transaction('drawings', 'readwrite');
+  const store = tx.objectStore('drawings');
+  store.clear();
+  sample.forEach(item => store.put(item));
+  tx.oncomplete = () => {
+    loadDataFromDB();
+    showToast('✅ Загружены образцы КСП01');
+    document.getElementById('input-drawing-search').value = 'КСП01-362111.01-002';
+    selectDrawing(sample[0]);
+  };
+}
+
+/* Автономный парсер XLSX / CSV */
+async function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  showToast('⏳ Чтение файла...');
+  const reader = new FileReader();
+
+  if (file.name.toLowerCase().endsWith('.csv')) {
+    reader.onload = (e) => {
+      const text = e.target.result;
+      const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
+      const rows = lines.map(l => l.split(/[,;\t]/).map(c => c.trim().replace(/^"|"$/g, '')));
+      saveParsedRowsToDB(rows);
+    };
+    reader.readAsText(file);
+    return;
+  }
+
+  reader.onload = async (e) => {
+    try {
+      const buffer = e.target.result;
+      const unzipped = await unzipPureJS(buffer);
+      if (!unzipped['xl/worksheets/sheet1.xml']) throw new Error('Лист sheet1.xml не найден');
+      const sharedStringsXml = unzipped['xl/sharedStrings.xml'];
+      const sharedStrings = sharedStringsXml ? parseSharedStringsXML(sharedStringsXml) : [];
+      const rows = parseSheetXML(unzipped['xl/worksheets/sheet1.xml'], sharedStrings);
+      saveParsedRowsToDB(rows);
+    } catch (err) {
+      alert('Ошибка при чтении файла XLSX: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function unzipPureJS(arrayBuffer) {
+  const view = new DataView(arrayBuffer);
+  const files = {};
+  let offset = 0;
+  while (offset < arrayBuffer.byteLength - 30) {
+    if (view.getUint32(offset, true) !== 0x04034b50) {
+      offset++;
+      continue;
+    }
+    const compMethod = view.getUint16(offset + 8, true);
+    const compSize = view.getUint32(offset + 18, true);
+    const nameLen = view.getUint16(offset + 26, true);
+    const extraLen = view.getUint16(offset + 28, true);
+    const nameBytes = new Uint8Array(arrayBuffer, offset + 30, nameLen);
+    const fileName = new TextDecoder('utf-8').decode(nameBytes);
+    const dataOffset = offset + 30 + nameLen + extraLen;
+    const compressedData = new Uint8Array(arrayBuffer, dataOffset, compSize);
+    
+    let fileText = '';
+    if (compMethod === 0) {
+      fileText = new TextDecoder('utf-8').decode(compressedData);
+    } else if (compMethod === 8) {
+      try {
+        const ds = new DecompressionStream('deflate-raw');
+        const writer = ds.writable.getWriter();
+        writer.write(compressedData);
+        writer.close();
+        const response = new Response(ds.readable);
+        const uncompressed = await response.arrayBuffer();
+        fileText = new TextDecoder('utf-8').decode(uncompressed);
+      } catch (e) {}
+    }
+    if (fileText) files[fileName] = fileText;
+    offset = dataOffset + compSize;
+  }
+  return files;
+}
+
+function parseSharedStringsXML(xmlText) {
+  const dom = new DOMParser().parseFromString(xmlText, "text/xml");
+  const sis = dom.getElementsByTagName("si");
+  const list = [];
+  for (let i = 0; i < sis.length; i++) {
+    const tTags = sis[i].getElementsByTagName("t");
+    let str = "";
+    for (let j = 0; j < tTags.length; j++) str += tTags[j].textContent;
+    list.push(str);
+  }
+  return list;
+}
+
+function parseSheetXML(xmlText, sharedStrings) {
+  const dom = new DOMParser().parseFromString(xmlText, "text/xml");
+  const rows = dom.getElementsByTagName("row");
+  const result = [];
+  for (let i = 0; i < rows.length; i++) {
+    const cNodes = rows[i].getElementsByTagName("c");
+    const rowData = [];
+    for (let j = 0; j < cNodes.length; j++) {
+      const c = cNodes[j];
+      const r = c.getAttribute("r") || "";
+      const t = c.getAttribute("t");
+      const vNode = c.getElementsByTagName("v")[0];
+      let val = vNode ? vNode.textContent : "";
+      if (t === "s") {
+        val = sharedStrings[parseInt(val)] || "";
+      } else if (t === "inlineStr") {
+        const isT = c.getElementsByTagName("t")[0];
+        if (isT) val = isT.textContent;
+      }
+      const colLetters = r.replace(/[0-9]/g, "");
+      let colIdx = 0;
+      for (let k = 0; k < colLetters.length; k++) {
+        colIdx = colIdx * 26 + (colLetters.charCodeAt(k) - 64);
+      }
+      colIdx = colIdx > 0 ? colIdx - 1 : j;
+      rowData[colIdx] = val;
+    }
+    result.push(rowData);
+  }
+  return result;
+}
+
+function saveParsedRowsToDB(rows) {
+  if (!rows || rows.length === 0) return alert('Файл пуст');
+
+  const tx = dbInstance.transaction('drawings', 'readwrite');
+  const store = tx.objectStore('drawings');
+  store.clear();
+
+  let validCount = 0;
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row || row.length === 0) continue;
+
+    const rawDrawing = row[1] !== undefined ? String(row[1]).trim() : '';
+    if (!rawDrawing || rawDrawing.toLowerCase().includes('обозначение')) continue;
+
+    const rawName = row[2] !== undefined ? String(row[2]).trim() : 'Без наименования';
+    const rawLitSb = row[3] !== undefined ? String(row[3]).trim().toLowerCase() : '-';
+    const rawLitSp = row[4] !== undefined ? String(row[4]).trim().toLowerCase() : '-';
+
+    store.put({
+      id: validCount + 1,
+      drawing_num: rawDrawing,
+      name: rawName,
+      lit_sb: rawLitSb,
+      lit_sp: rawLitSp
+    });
+    validCount++;
+  }
+
+  tx.oncomplete = () => {
+    loadDataFromDB();
+    showToast(`✅ Загружено ${validCount} позиций!`);
+    switchTab('check');
+  };
+}
+
+/* Сверка */
+function handleManualSearch() {
+  const query = document.getElementById('input-drawing-search').value.trim();
+  if (!query) return showToast('⚠️ Введите номер');
+
+  const key = normalizeKey(query);
+  const found = memoryIndexMap.get(key);
+
+  if (found) {
+    selectDrawing(found);
+  } else {
+    let matched = [];
+    for (let [k, item] of memoryIndexMap.entries()) {
+      if (k.includes(key)) {
+        matched.push(item);
+        if (matched.length > 5) break;
+      }
+    }
+    if (matched.length === 1) selectDrawing(matched[0]);
+    else if (matched.length > 1) showToast(`Найдено похожих: ${matched.length}`);
+    else showToast('❌ Чертеж не найден в базе');
+  }
+}
+
+function selectDrawing(item) {
+  currentSelectedDrawing = item;
+  document.getElementById('input-drawing-search').value = item.drawing_num;
+  document.getElementById('cur-drawing-num').innerText = item.drawing_num;
+  document.getElementById('cur-drawing-name').innerText = item.name;
+  document.getElementById('db-lit-sb').innerText = item.lit_sb || '-';
+  document.getElementById('db-lit-sp').innerText = item.lit_sp || '-';
+
+  document.getElementById('act-lit-sb').value = '';
+  document.getElementById('act-lit-sp').value = '';
+
+  document.getElementById('verify-box').style.display = 'flex';
+  document.getElementById('quick-guide-box').style.display = 'none';
+  runLiveComparison();
+}
+
+function clearCurrentVerification() {
+  currentSelectedDrawing = null;
+  document.getElementById('verify-box').style.display = 'none';
+  document.getElementById('quick-guide-box').style.display = 'flex';
+  document.getElementById('input-drawing-search').value = '';
+}
+
+function autoFillAndVerifyMatch() {
+  if (!currentSelectedDrawing) return;
+  document.getElementById('act-lit-sb').value = currentSelectedDrawing.lit_sb || '';
+  document.getElementById('act-lit-sp').value = currentSelectedDrawing.lit_sp || '';
+  runLiveComparison();
+}
+
+function runLiveComparison() {
+  if (!currentSelectedDrawing) return;
+  const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
+  const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
+  const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
+  const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
+
+  const box = document.getElementById('verdict-display');
+  const btn = document.getElementById('btn-save-verdict');
+
+  if (!actSb && !actSp) {
+    box.className = 'verdict-box pending';
+    box.innerHTML = '⏳ Введите литеры или нажмите «Литеры совпадают»';
+    btn.className = 'cartoon-btn btn-secondary';
+    return;
+  }
+
+  const isSbMatch = (actSb === dbSb);
+  const isSpMatch = (actSp === dbSp);
+
+  if (isSbMatch && isSpMatch) {
+    box.className = 'verdict-box match';
+    box.innerHTML = '✅ ВСЁ ОТЛИЧНО (ЛИТЕРЫ СОВПАДАЮТ)';
+    btn.className = 'cartoon-btn btn-success';
+  } else {
+    let diff = [];
+    if (!isSbMatch) diff.push(`СБ: факт "${actSb||'нет'}" ≠ база "${dbSb}"`);
+    if (!isSpMatch) diff.push(`СП: факт "${actSp||'нет'}" ≠ база "${dbSp}"`);
+
+    box.className = 'verdict-box mismatch';
+    box.innerHTML = `⚠️ РАСХОЖДЕНИЕ: ${diff.join(' | ')}`;
+    btn.className = 'cartoon-btn btn-danger';
+  }
+}
+
+function commitCurrentVerification() {
+  if (!currentSelectedDrawing) return;
+  const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
+  const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
+  const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
+  const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
+
+  if (!actSb && !actSp) {
+    return showToast('⚠️ Укажите литеры перед записью');
+  }
+
+  const isMatch = (actSb === dbSb && actSp === dbSp);
+
+  const entry = {
+    id: Date.now(),
+    drawing_num: currentSelectedDrawing.drawing_num,
+    name: currentSelectedDrawing.name,
+    db_sb: dbSb,
+    db_sp: dbSp,
+    act_sb: actSb || '-',
+    act_sp: actSp || '-',
+    status: isMatch ? 'MATCH' : 'MISMATCH',
+    time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    date: new Date().toLocaleDateString('ru-RU')
+  };
+
+  const tx = dbInstance.transaction('logs', 'readwrite');
+  tx.objectStore('logs').put(entry);
+
+  tx.oncomplete = () => {
+    verificationHistory.unshift(entry);
+    renderLogs();
+    showToast(isMatch ? '✅ Записано (Норма)' : '⚠️ Записано в расхождения');
+    clearCurrentVerification();
+  };
+}
+
+/* Журнал и модальное окно */
+function openDetailModal(id) {
+  const item = verificationHistory.find(i => i.id === id);
+  if (!item) return;
+
+  document.getElementById('modal-drawing-num').innerText = item.drawing_num;
+  document.getElementById('modal-drawing-name').innerText = 'Наименование: ' + item.name;
+  document.getElementById('modal-db-sb').innerText = item.db_sb.toUpperCase();
+  document.getElementById('modal-act-sb').innerText = item.act_sb.toUpperCase();
+  document.getElementById('modal-db-sp').innerText = item.db_sp.toUpperCase();
+  document.getElementById('modal-act-sp').innerText = item.act_sp.toUpperCase();
+
+  const badge = document.getElementById('modal-status-badge');
+  if (item.status === 'MATCH') {
+    badge.className = 'verdict-box match';
+    badge.innerText = '✅ ПОЛНОЕ СООТВЕТСТВИЕ ЛИТЕР';
+  } else {
+    badge.className = 'verdict-box mismatch';
+    badge.innerText = '⚠️ ТРЕБУЕТСЯ ОБНОВЛЕНИЕ ЛИТЕРЫ';
+  }
+
+  document.getElementById('modal-timestamp').innerText = `Проверено: ${item.date} в ${item.time}`;
+
+  const delBtn = document.getElementById('modal-btn-delete');
+  delBtn.onclick = () => {
+    deleteSingleLog(item.id);
+    closeDetailModal();
+  };
+
+  document.getElementById('modal-detail').classList.add('active');
+}
+
+function closeDetailModal() {
+  document.getElementById('modal-detail').classList.remove('active');
+}
+
+function deleteSingleLog(id, event) {
+  if (event) event.stopPropagation();
+  if (confirm('Удалить эту запись из журнала?')) {
+    const tx = dbInstance.transaction('logs', 'readwrite');
+    tx.objectStore('logs').delete(id);
+    tx.oncomplete = () => {
+      verificationHistory = verificationHistory.filter(i => i.id !== id);
+      renderLogs();
+      showToast('🗑️ Запись удалена');
+    };
+  }
+}
+
+function renderLogs() {
+  const container = document.getElementById('log-list-container');
+  document.getElementById('log-counter').innerText = verificationHistory.length;
+  document.getElementById('log-stats-text').innerText = `${verificationHistory.length} шт`;
+
+  let list = verificationHistory;
+  if (activeLogFilter === 'mismatch') list = list.filter(i => i.status === 'MISMATCH');
+  if (activeLogFilter === 'match') list = list.filter(i => i.status === 'MATCH');
+
+  if (list.length === 0) {
+    container.innerHTML = '<div style="text-align:center; padding:16px; color:#7D8A9A; font-size:11px;">Журнал пуст</div>';
+    return;
+  }
+
+  container.innerHTML = '';
+  list.forEach(item => {
+    const isM = item.status === 'MISMATCH';
+    const d = document.createElement('div');
+    d.className = `log-item ${isM ? 'mismatch' : 'match'}`;
+    d.onclick = () => openDetailModal(item.id);
+
+    d.innerHTML = `
+      <div style="flex: 1; overflow: hidden; padding-right: 6px;">
+        <div style="font-family:monospace; font-weight:900; font-size:14px; color:var(--secondary-dark);">${item.drawing_num}</div>
+        <div style="font-size:11px; color:#7D8A9A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+        <div style="font-size:11px; font-weight:700; margin-top:1px;">
+          ${isM ? `<span style="color:var(--accent-red)">Факт: ${item.act_sb.toUpperCase()}/${item.act_sp.toUpperCase()}</span> (База: ${item.db_sb.toUpperCase()}/${item.db_sp.toUpperCase()})` : `<span style="color:var(--accent-green)">СБ [${item.act_sb.toUpperCase()}] / СП [${item.act_sp.toUpperCase()}] — Норма</span>`}
+        </div>
+      </div>
+      <div>
+        <button class="log-del-btn" onclick="deleteSingleLog(${item.id}, event)">🗑️</button>
+      </div>
+    `;
+    container.appendChild(d);
+  });
+}
+
+function clearLogHistory() {
+  if (confirm('Очистить весь журнал проверок?')) {
+    const tx = dbInstance.transaction('logs', 'readwrite');
+    tx.objectStore('logs').clear();
+    tx.oncomplete = () => {
+      verificationHistory = [];
+      renderLogs();
+      showToast('Журнал полностью очищен');
+    };
+  }
+}
+
+/* Официальный Word-отчёт */
+function generateMinimalistWordReport() {
+  if (verificationHistory.length === 0) return alert('Журнал пуст.');
+
+  const matches = verificationHistory.filter(i => i.status === 'MATCH');
+  const mismatches = verificationHistory.filter(i => i.status === 'MISMATCH');
+  const reportDate = new Date().toLocaleDateString('ru-RU');
+  const reportTime = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+  let docHTML = `
+  <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+  <head>
+  <meta charset="utf-8">
+  <title>Акт сверки архивной документации</title>
+  <style>
+    body { font-family: "Times New Roman", Times, serif; font-size: 12pt; line-height: 1.15; color: #000; margin: 20mm 15mm; }
+    .doc-header { text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 12pt; }
+    .doc-meta { width: 100%; margin-bottom: 14pt; border: none; }
+    .doc-meta td { border: none; padding: 2pt 0; font-size: 11pt; }
+    .section-title { font-size: 12pt; font-weight: bold; margin-top: 14pt; margin-bottom: 6pt; text-transform: uppercase; }
+    table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 14pt; }
+    table.data-table th { border: 1pt solid #000; padding: 4pt 5pt; font-size: 10pt; font-weight: bold; text-align: center; }
+    table.data-table td { border: 1pt solid #000; padding: 4pt 5pt; font-size: 10pt; vertical-align: middle; }
+    .text-center { text-align: center; }
+    .sign-block { margin-top: 25pt; width: 100%; border: none; }
+    .sign-block td { border: none; padding: 10pt 0; font-size: 11pt; }
+  </style>
+  </head>
+  <body>
+
+    <div class="doc-header">АКТ СВЕРКИ АРХИВНОЙ ДОКУМЕНТАЦИИ И ЛИТЕР</div>
+
+    <table class="doc-meta">
+      <tr>
+        <td style="width: 50%;"><b>Дата проверки:</b> ${reportDate} г.</td>
+        <td style="width: 50%; text-align: right;"><b>Время формирования:</b> ${reportTime}</td>
+      </tr>
+      <tr><td colspan="2"><b>Общее количество проверенных позиций:</b> ${verificationHistory.length} шт.</td></tr>
+      <tr><td colspan="2"><b>Соответствуют эталонным литерам:</b> ${matches.length} шт.</td></tr>
+      <tr><td colspan="2"><b>Требуют актуализации:</b> ${mismatches.length} шт.</td></tr>
+    </table>
+
+    <div class="section-title">1. Документация с подтвержденным соответствием литер</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">№ п/п</th>
+          <th style="width: 30%;">Обозначение чертежа</th>
+          <th style="width: 35%;">Наименование</th>
+          <th style="width: 15%;">Литера чертежа (СБ)</th>
+          <th style="width: 15%;">Литера спецификации (СП)</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (matches.length === 0) {
+    docHTML += `<tr><td colspan="5" class="text-center">Позиции с подтвержденным соответствием отсутствуют</td></tr>`;
+  } else {
+    matches.forEach((item, idx) => {
+      docHTML += `
+        <tr>
+          <td class="text-center">${idx + 1}</td>
+          <td>${item.drawing_num}</td>
+          <td>${item.name}</td>
+          <td class="text-center">${item.act_sb.toUpperCase()}</td>
+          <td class="text-center">${item.act_sp.toUpperCase()}</td>
+        </tr>
+      `;
+    });
+  }
+
+  docHTML += `
+      </tbody>
+    </table>
+
+    <div class="section-title">2. Ведомость документации, требующей актуализации литер</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 5%;">№ п/п</th>
+          <th style="width: 25%;">Обозначение чертежа</th>
+          <th style="width: 25%;">Наименование</th>
+          <th style="width: 15%;">Литера СБ (Факт / База)</th>
+          <th style="width: 15%;">Литера СП (Факт / База)</th>
+          <th style="width: 15%;">Требуемое действие</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (mismatches.length === 0) {
+    docHTML += `<tr><td colspan="6" class="text-center">Расхождений не выявлено.</td></tr>`;
+  } else {
+    mismatches.forEach((item, idx) => {
+      docHTML += `
+        <tr>
+          <td class="text-center">${idx + 1}</td>
+          <td>${item.drawing_num}</td>
+          <td>${item.name}</td>
+          <td class="text-center">${item.act_sb.toUpperCase()} / ${item.db_sb.toUpperCase()}</td>
+          <td class="text-center">${item.act_sp.toUpperCase()} / ${item.db_sp.toUpperCase()}</td>
+          <td class="text-center">Обновить литеру</td>
+        </tr>
+      `;
+    });
+  }
+
+  docHTML += `
+      </tbody>
+    </table>
+
+    <table class="sign-block">
+      <tr>
+        <td style="width: 50%;">Ответственный оператор сверки:</td>
+        <td style="width: 50%; text-align: right;">_________________ / _________________ /</td>
+      </tr>
+    </table>
+
+  </body>
+  </html>
+  `;
+
+  const blob = new Blob(['\ufeff' + docHTML], { type: 'application/msword;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Акт_сверки_литер_${reportDate.replace(/\./g, '_')}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('📄 Официальный акт Word скачан');
+}
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  const map = { 'check': 0, 'camera': 1, 'log': 2, 'config': 3 };
+  if (map[tabId] !== undefined) document.querySelectorAll('.nav-tabs .tab-btn')[map[tabId]].classList.add('active');
+  const target = document.getElementById('view-' + tabId);
+  if (target) target.classList.add('active');
+  if (tabId !== 'camera' && videoStream) stopCamera();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast-msg');
+  t.innerText = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function filterLogs(type) { activeLogFilter = type; renderLogs(); }
+
+async function toggleCamera() {
+  const btn = document.getElementById('btn-toggle-cam');
+  const v = document.getElementById('camera-video');
+  if (videoStream) {
+    stopCamera();
+    btn.innerText = '🔴 Камера';
+  } else {
+    try {
+      videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      v.srcObject = videoStream;
+      btn.innerText = '⏹️ Стоп';
+      showToast('📷 Камера включена');
+    } catch(e) {
+      alert('Камера не доступна: ' + e.message);
+    }
+  }
+}
+
+function stopCamera() {
+  if (videoStream) {
+    videoStream.getTracks().forEach(t => t.stop());
+    videoStream = null;
+  }
+}
+
+function captureAndRecognize() {
+  if (memoryIndexMap.size > 0) {
+    const items = Array.from(memoryIndexMap.values());
+    const item = items[Math.floor(Math.random() * items.length)];
+    document.getElementById('ocr-detected-val').value = item.drawing_num;
+    showToast(`🔍 Считано: ${item.drawing_num}`);
+  }
+}
+
+function transferOcrToVerify() {
+  const v = document.getElementById('ocr-detected-val').value.trim();
+  if (!v) return showToast('⚠️ Нет шифра');
+  document.getElementById('input-drawing-search').value = v;
+  switchTab('check');
+  handleManualSearch();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initDB();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "Архив-Контроль: Сверка литер",
+  "short_name": "Архив-Контроль",
+  "description": "Автономная сверка литер архивной чертёжной документации",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#E8ECF1",
+  "theme_color": "#4A5568",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
