@@ -1,9 +1,10 @@
-const CACHE_NAME = 'archive-control-cache-v3';
+const CACHE_NAME = 'archive-control-cache-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
-  './icon.svg'
+  './icon.svg',
+  'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
 ];
 
 self.addEventListener('install', (event) => {
