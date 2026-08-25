@@ -184,7 +184,7 @@
     padding: 8px 10px;
     border: var(--border-main);
     border-radius: var(--radius-md);
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 800;
     color: var(--secondary-dark);
     background: #FFFFFF;
@@ -228,10 +228,22 @@
 
   .drawing-code {
     font-family: monospace;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 900;
     color: var(--accent-blue);
     word-break: break-all;
+  }
+
+  .sheet-badge {
+    background: #E2E8F0;
+    color: #2D3748;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 6px;
+    border: 1px solid var(--secondary-mid);
+    display: inline-block;
+    text-transform: uppercase;
   }
 
   .info-grid {
@@ -258,7 +270,7 @@
   }
 
   .info-cell .value {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 900;
     color: var(--secondary-dark);
     text-transform: uppercase;
@@ -271,14 +283,13 @@
     text-align: center;
     margin-bottom: 8px;
     font-weight: 900;
-    font-size: 12px;
+    font-size: 11.5px;
   }
 
   .verdict-box.match { background: #ECFDF5; border-color: var(--accent-green); color: #065F46; }
   .verdict-box.mismatch { background: #FEF2F2; border-color: var(--accent-red); color: #991B1B; }
   .verdict-box.pending { background: #FFFBEB; border-color: var(--accent-amber); color: #92400E; }
 
-  /* Выпадающий список живого поиска */
   .search-dropdown {
     position: absolute;
     top: 52px;
@@ -287,10 +298,10 @@
     background: #FFFFFF;
     border: 2px solid var(--secondary-dark);
     border-radius: var(--radius-md);
-    max-height: 240px;
+    max-height: 250px;
     overflow-y: auto;
     z-index: 100;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.15);
     display: none;
   }
 
@@ -303,15 +314,9 @@
     align-items: center;
   }
 
-  .search-item:active {
-    background: #EEF2FF;
-  }
+  .search-item:active { background: #EEF2FF; }
+  .search-item:last-child { border-bottom: none; }
 
-  .search-item:last-child {
-    border-bottom: none;
-  }
-
-  /* Журнал и Каталог */
   .log-scroll-area {
     flex: 1;
     overflow-y: auto;
@@ -332,6 +337,7 @@
     box-shadow: 0 1.5px 0 var(--secondary-dark);
   }
 
+  .log-item:active { transform: scale(0.99); }
   .log-item.mismatch { border-left: 6px solid var(--accent-red); background: #FFF5F5; }
   .log-item.match { border-left: 6px solid var(--accent-green); background: #F0FDF4; }
 
@@ -378,7 +384,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     padding-bottom: 6px;
     border-bottom: 1.5px solid var(--primary-alt);
   }
@@ -413,7 +419,7 @@
       <div class="brand-logo">📐</div>
       <div class="brand-text">
         <h1>АРХИВ-КОНТРОЛЬ</h1>
-        <span>Сверка литер (B, C, D, E)</span>
+        <span>Все листы Excel (B, C, D, E)</span>
       </div>
     </div>
     <div class="header-badge" id="active-db-count">База: 0 шт</div>
@@ -428,49 +434,52 @@
 
   <main class="main-content">
 
-    <!-- 1. СВЕРКА -->
+    <!-- 1. ВКЛАДКА СВЕРКИ (БЕЗ ПРОКРУТКИ) -->
     <div id="view-check" class="view-panel active">
       <div class="cartoon-card" style="margin-bottom: 6px; padding: 8px 10px; position: relative;">
         <div style="display: flex; gap: 5px;">
-          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Введите цифры (напр. 362111)..." autocomplete="off" oninput="handleLiveSearch(this.value)">
+          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Введите цифры (напр. 362662 или 362111)..." autocomplete="off" oninput="handleLiveSearch(this.value)">
           <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 0 10px;" onclick="clearSearchInput()">✕</button>
         </div>
       </div>
 
-      <!-- Выпадающий список подсказок -->
       <div id="search-dropdown-list" class="search-dropdown"></div>
 
-      <!-- Рабочая зона сверки -->
+      <!-- Карточка выбранного чертежа -->
       <div id="verify-box" class="cartoon-card" style="display: none; flex: 1; margin-bottom: 0; flex-direction: column; justify-content: space-between;">
         <div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <div class="drawing-code" id="cur-drawing-num">КСП01-362111.01-002</div>
-            <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 3px 8px; font-size: 10px;" onclick="clearCurrentVerification()">Сброс</button>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+            <span class="sheet-badge" id="cur-sheet-name">Устройства</span>
+            <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 2px 7px; font-size: 10px;" onclick="clearCurrentVerification()">Сброс</button>
           </div>
+
+          <div class="drawing-code" id="cur-drawing-num" style="margin-bottom: 2px;">КСП01-362111.01-002</div>
 
           <div style="font-size: 11px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="cur-drawing-name">
             по с.3
           </div>
 
+          <!-- Эталонные литеры -->
           <div class="info-grid">
             <div class="info-cell">
-              <div class="title">СБ (в базе)</div>
+              <div class="title" id="lbl-db-sb">СБ (в базе)</div>
               <div class="value" id="db-lit-sb">дт</div>
             </div>
             <div class="info-cell">
-              <div class="title">СП (в базе)</div>
+              <div class="title" id="lbl-db-sp">СП (в базе)</div>
               <div class="value" id="db-lit-sp">бт</div>
             </div>
           </div>
 
+          <!-- Ввод фактических литер -->
           <div style="background: #F8FAFC; border: 1.5px dashed var(--secondary-mid); border-radius: var(--radius-md); padding: 6px 8px; margin-bottom: 6px;">
             <div style="font-size: 10px; font-weight: 800; margin-bottom: 4px;">ФАКТИЧЕСКИЕ ЛИТЕРЫ НА ЧЕРТЕЖЕ:</div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
               <div>
-                <input type="text" id="act-lit-sb" class="cartoon-input" placeholder="Факт СБ" style="text-align: center; text-transform: lowercase; font-size: 18px; padding: 6px;" oninput="runLiveComparison()">
+                <input type="text" id="act-lit-sb" class="cartoon-input" placeholder="Факт СБ" style="text-align: center; text-transform: lowercase; font-size: 17px; padding: 5px;" oninput="runLiveComparison()">
               </div>
               <div>
-                <input type="text" id="act-lit-sp" class="cartoon-input" placeholder="Факт СП" style="text-align: center; text-transform: lowercase; font-size: 18px; padding: 6px;" oninput="runLiveComparison()">
+                <input type="text" id="act-lit-sp" class="cartoon-input" placeholder="Факт СП" style="text-align: center; text-transform: lowercase; font-size: 17px; padding: 5px;" oninput="runLiveComparison()">
               </div>
             </div>
           </div>
@@ -491,23 +500,25 @@
       </div>
 
       <div id="quick-guide-box" class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-        <div style="font-size: 30px; margin-bottom: 6px;">🔢</div>
-        <div style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">Поиск по любым цифрам</div>
-        <div style="font-size: 11px; color: var(--secondary-mid); margin-bottom: 10px;">Введите любые 4–6 цифр чертежа без учёта букв, точек и дефисов</div>
+        <div style="font-size: 30px; margin-bottom: 6px;">📑</div>
+        <div style="font-size: 13px; font-weight: 800; margin-bottom: 4px;">Поддержка всех листов</div>
+        <div style="font-size: 11px; color: var(--secondary-mid); margin-bottom: 10px;">
+          Читаются листы: «Устройства», «Электрика», «Механика», «Системы», «Корпус»
+        </div>
         <button class="cartoon-btn btn-secondary btn-sm" style="width: auto;" onclick="loadEmbeddedDemoData()">
-          ✨ Загрузить образец КСП01
+          ✨ Загрузить тест (Устройства + Электрика)
         </button>
       </div>
     </div>
 
-    <!-- 2. РЕЕСТР (КАТАЛОГ ВСЕХ ЧЕРТЕЖЕЙ) -->
+    <!-- 2. РЕЕСТР (КАТАЛОГ ПО ВСЕМ ЛИСТАМ) -->
     <div id="view-catalog" class="view-panel">
       <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; margin-bottom: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-          <span style="font-size: 12px; font-weight: 800;">📚 База чертежей</span>
+          <span style="font-size: 12px; font-weight: 800;">📚 База по всем листам</span>
           <span style="font-size: 10px; color: var(--secondary-mid);" id="catalog-count-text">0 шт</span>
         </div>
-        <input type="text" id="catalog-filter-input" class="cartoon-input" placeholder="Фильтр реестра..." style="font-size: 14px; margin-bottom: 6px; padding: 6px 8px;" oninput="renderCatalog(this.value)">
+        <input type="text" id="catalog-filter-input" class="cartoon-input" placeholder="Поиск по цифрам или разделу..." style="font-size: 14px; margin-bottom: 6px; padding: 6px 8px;" oninput="renderCatalog(this.value)">
         <div id="catalog-list-container" class="log-scroll-area"></div>
       </div>
     </div>
@@ -541,12 +552,14 @@
     <!-- 4. ФАЙЛЫ -->
     <div id="view-config" class="view-panel">
       <div class="cartoon-card">
-        <div style="font-size: 12px; font-weight: 800; margin-bottom: 6px;">📊 Загрузка реестра Excel</div>
+        <div style="font-size: 12px; font-weight: 800; margin-bottom: 6px;">📊 Загрузка файла Excel</div>
         <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv,.XLSX,.XLS,.CSV" style="display: none;" onchange="handleFileUpload(event)">
         <div style="border: 2px dashed var(--secondary-mid); background: #F8FAFC; border-radius: var(--radius-md); padding: 20px 10px; text-align: center; cursor: pointer; margin-bottom: 8px;" onclick="document.getElementById('excel-file-input').click()">
           <div style="font-size: 32px; margin-bottom: 4px;">📑</div>
-          <div style="font-size: 13px; font-weight: 800;">Выбрать файл .xlsx / .csv</div>
-          <div style="font-size: 10px; color: var(--secondary-mid); margin-top: 2px;">Колонки B (Обозначение), C (Наименование), D (СБ), E (СП)</div>
+          <div style="font-size: 13px; font-weight: 800;">Выбрать файл Excel (.xlsx)</div>
+          <div style="font-size: 10px; color: var(--secondary-mid); margin-top: 2px;">
+            Автоматически читает все листы книги и объединённые ячейки
+          </div>
         </div>
         <button class="cartoon-btn btn-primary" onclick="document.getElementById('excel-file-input').click()">
           📂 Открыть файл на телефоне
@@ -556,44 +569,43 @@
 
   </main>
 
-  <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛИЗАЦИИ -->
+  <!-- КАРТОЧКА ДЕТАЛИЗАЦИИ -->
   <div id="modal-detail" class="modal-overlay" onclick="closeDetailModal(event)">
     <div class="modal-container" onclick="event.stopPropagation()">
       <div class="modal-header">
-        <div style="font-size: 13px; font-weight: 800;">Карточка проверенного чертежа</div>
+        <div>
+          <span class="sheet-badge" id="modal-sheet-name">Устройства</span>
+          <div style="font-size: 12px; font-weight: 800; margin-top: 2px;">Карточка чертежа</div>
+        </div>
         <button style="background: var(--primary-bg); border: 2px solid var(--secondary-dark); border-radius: 50%; width: 28px; height: 28px; font-weight: 900; cursor: pointer;" onclick="closeDetailModal()">✕</button>
       </div>
 
-      <div style="margin-bottom: 8px;">
-        <div style="font-size: 10px; font-weight: 800; color: var(--secondary-mid);">ОБОЗНАЧЕНИЕ:</div>
-        <div class="drawing-code" id="modal-drawing-num" style="font-size: 20px;">-</div>
-      </div>
+      <div class="drawing-code" id="modal-drawing-num" style="font-size: 18px; margin-bottom: 4px;">-</div>
+      <div style="font-size: 12px; font-weight: 700; color: var(--secondary-dark); margin-bottom: 8px;" id="modal-drawing-name">-</div>
 
-      <div style="font-size: 12px; font-weight: 700; color: var(--secondary-dark); margin-bottom: 10px;" id="modal-drawing-name">-</div>
-
-      <div style="background: #F8FAFC; border: 1.5px solid var(--primary-alt); border-radius: var(--radius-md); padding: 8px; margin-bottom: 10px;">
+      <div style="background: #F8FAFC; border: 1.5px solid var(--primary-alt); border-radius: var(--radius-md); padding: 8px; margin-bottom: 8px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: center;">
-          <div style="background: #FFF; padding: 6px; border-radius: 6px; border: 1px solid var(--primary-alt);">
+          <div style="background: #FFF; padding: 5px; border-radius: 6px; border: 1px solid var(--primary-alt);">
             <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid);">СБ (В БАЗЕ)</div>
-            <div style="font-size: 20px; font-weight: 900;" id="modal-db-sb">-</div>
+            <div style="font-size: 18px; font-weight: 900;" id="modal-db-sb">-</div>
           </div>
-          <div style="background: #FFF; padding: 6px; border-radius: 6px; border: 1px solid var(--primary-alt);">
+          <div style="background: #FFF; padding: 5px; border-radius: 6px; border: 1px solid var(--primary-alt);">
             <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid);">СБ (НА РУКАХ)</div>
-            <div style="font-size: 20px; font-weight: 900;" id="modal-act-sb">-</div>
+            <div style="font-size: 18px; font-weight: 900;" id="modal-act-sb">-</div>
           </div>
-          <div style="background: #FFF; padding: 6px; border-radius: 6px; border: 1px solid var(--primary-alt);">
+          <div style="background: #FFF; padding: 5px; border-radius: 6px; border: 1px solid var(--primary-alt);">
             <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid);">СП (В БАЗЕ)</div>
-            <div style="font-size: 20px; font-weight: 900;" id="modal-db-sp">-</div>
+            <div style="font-size: 18px; font-weight: 900;" id="modal-db-sp">-</div>
           </div>
-          <div style="background: #FFF; padding: 6px; border-radius: 6px; border: 1px solid var(--primary-alt);">
+          <div style="background: #FFF; padding: 5px; border-radius: 6px; border: 1px solid var(--primary-alt);">
             <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid);">СП (НА РУКАХ)</div>
-            <div style="font-size: 20px; font-weight: 900;" id="modal-act-sp">-</div>
+            <div style="font-size: 18px; font-weight: 900;" id="modal-act-sp">-</div>
           </div>
         </div>
       </div>
 
-      <div id="modal-status-badge" class="verdict-box" style="margin-bottom: 8px;">-</div>
-      <div style="font-size: 11px; color: var(--secondary-mid); margin-bottom: 12px; text-align: center;" id="modal-timestamp">-</div>
+      <div id="modal-status-badge" class="verdict-box" style="margin-bottom: 6px;">-</div>
+      <div style="font-size: 11px; color: var(--secondary-mid); margin-bottom: 10px; text-align: center;" id="modal-timestamp">-</div>
 
       <div class="btn-row">
         <button class="cartoon-btn btn-danger" id="modal-btn-delete" style="flex: 1;">🗑️ Удалить</button>
@@ -612,7 +624,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const DB_NAME = 'DrawingArchiveDB_v5';
+const DB_NAME = 'DrawingArchiveDB_v6';
 let dbInstance = null;
 let allDrawingsList = [];
 let verificationHistory = [];
@@ -660,10 +672,11 @@ async function loadDataFromDB() {
 
 function loadEmbeddedDemoData() {
   const sample = [
-    { id: 1, drawing_num: 'КСП01-362111.01-002', name: 'по с.3', lit_sb: 'дт', lit_sp: 'бт' },
-    { id: 2, drawing_num: 'КСП01-362111.01-003', name: 'Вал привода', lit_sb: 'ат', lit_sp: 'бт' },
-    { id: 3, drawing_num: '362154.112', name: 'Корпус редуктора', lit_sb: 'аг', lit_sp: 'вг' },
-    { id: 4, drawing_num: '362154.113', name: 'Крышка глухая', lit_sb: 'б', lit_sp: 'б' }
+    { id: 1, sheet_name: 'Устройства', drawing_num: 'КСП01-362111.01-002', name: 'по с.3', lit_sb: 'дт', lit_sp: 'бт' },
+    { id: 2, sheet_name: 'Устройства', drawing_num: 'КСП01-362111.01-003', name: 'Вал привода', lit_sb: 'ат', lit_sp: 'бт' },
+    { id: 3, sheet_name: 'Электрика', drawing_num: 'КСП01-362662-001СБ', name: 'Установка антенн', lit_sb: 'ет', lit_sp: '-' },
+    { id: 4, sheet_name: 'Электрика', drawing_num: 'КСП01-362662-002', name: 'Установка антенн', lit_sb: 'ет', lit_sp: '-' },
+    { id: 5, sheet_name: 'Механика', drawing_num: '362154.112', name: 'Корпус редуктора', lit_sb: 'аг', lit_sp: 'вг' }
   ];
 
   const tx = dbInstance.transaction('drawings', 'readwrite');
@@ -672,17 +685,17 @@ function loadEmbeddedDemoData() {
   sample.forEach(item => store.put(item));
   tx.oncomplete = () => {
     loadDataFromDB();
-    showToast('✅ Загружены образцы КСП01');
-    selectDrawing(sample[0]);
+    showToast('✅ Загружены демо-листы (Устройства, Электрика, Механика)');
+    selectDrawing(sample[2]); // Выбираем чертёж из листа "Электрика" для демонстрации
   };
 }
 
-/* Автономный разбор XLSX / CSV */
+/* ================= ПОЛНЫЙ АВТОНОМНЫЙ ПАРСЕР ВСЕХ ЛИСТОВ XLSX ================= */
 async function handleFileUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  showToast('⏳ Чтение файла...');
+  showToast('⏳ Чтение всех листов Excel...');
   const reader = new FileReader();
 
   if (file.name.toLowerCase().endsWith('.csv')) {
@@ -690,7 +703,7 @@ async function handleFileUpload(event) {
       const text = e.target.result;
       const lines = text.split(/\r?\n/).filter(l => l.trim() !== '');
       const rows = lines.map(l => l.split(/[,;\t]/).map(c => c.trim().replace(/^"|"$/g, '')));
-      saveParsedRowsToDB(rows);
+      saveParsedRowsToDB([{ sheetName: 'Основной', rows }]);
     };
     reader.readAsText(file);
     return;
@@ -700,18 +713,71 @@ async function handleFileUpload(event) {
     try {
       const buffer = e.target.result;
       const unzipped = await unzipPureJS(buffer);
-      const sheetKey = Object.keys(unzipped).find(k => k.startsWith('xl/worksheets/sheet'));
-      if (!sheetKey) throw new Error('Лист с данными не найден');
       
       const sharedStringsXml = unzipped['xl/sharedStrings.xml'];
       const sharedStrings = sharedStringsXml ? parseSharedStringsXML(sharedStringsXml) : [];
-      const rows = parseSheetXML(unzipped[sheetKey], sharedStrings);
-      saveParsedRowsToDB(rows);
+
+      // Получаем карту всех страниц с их реальными именами (Устройства, Электрика и т.д.)
+      const sheetEntries = getWorkbookSheetList(unzipped);
+      if (sheetEntries.length === 0) throw new Error('В файле не обнаружено листов.');
+
+      const sheetsData = [];
+      for (const sheet of sheetEntries) {
+        if (unzipped[sheet.path]) {
+          const rows = parseSheetXML(unzipped[sheet.path], sharedStrings);
+          sheetsData.push({ sheetName: sheet.name, rows });
+        }
+      }
+
+      saveParsedRowsToDB(sheetsData);
     } catch (err) {
-      alert('Ошибка при разборе Excel: ' + err.message);
+      alert('Ошибка при разборе файла XLSX: ' + err.message);
     }
   };
   reader.readAsArrayBuffer(file);
+}
+
+// Определение всех листов по workbook.xml и связям
+function getWorkbookSheetList(unzipped) {
+  const wbXml = unzipped['xl/workbook.xml'];
+  const relsXml = unzipped['xl/_rels/workbook.xml.rels'];
+  const list = [];
+
+  const relMap = {};
+  if (relsXml) {
+    const domRels = new DOMParser().parseFromString(relsXml, "text/xml");
+    const relNodes = domRels.getElementsByTagName("Relationship");
+    for (let i = 0; i < relNodes.length; i++) {
+      const id = relNodes[i].getAttribute("Id");
+      let target = relNodes[i].getAttribute("Target");
+      if (target) {
+        if (!target.startsWith("xl/")) target = "xl/" + target.replace(/^\//, '');
+        relMap[id] = target;
+      }
+    }
+  }
+
+  if (wbXml) {
+    const domWb = new DOMParser().parseFromString(wbXml, "text/xml");
+    const sheetNodes = domWb.getElementsByTagName("sheet");
+    for (let i = 0; i < sheetNodes.length; i++) {
+      const name = sheetNodes[i].getAttribute("name") || `Лист ${i+1}`;
+      const rId = sheetNodes[i].getAttribute("r:id") || sheetNodes[i].getAttribute("id");
+      let path = relMap[rId] || `xl/worksheets/sheet${i+1}.xml`;
+      list.push({ name, path });
+    }
+  }
+
+  // Резервный поиск, если структура связей повреждена
+  if (list.length === 0) {
+    Object.keys(unzipped).forEach(k => {
+      if (k.startsWith('xl/worksheets/sheet') && k.endsWith('.xml')) {
+        list.push({ name: k.replace('xl/worksheets/', '').replace('.xml', ''), path: k });
+      }
+    });
+  }
+
+  return list;
 }
 
 async function unzipPureJS(arrayBuffer) {
@@ -797,44 +863,56 @@ function parseSheetXML(xmlText, sharedStrings) {
   return result;
 }
 
-function saveParsedRowsToDB(rows) {
-  if (!rows || rows.length === 0) return alert('Файл пуст');
-
+// Сохранение строк с обработкой объединённых ячеек C2:C4
+function saveParsedRowsToDB(sheetsData) {
   const tx = dbInstance.transaction('drawings', 'readwrite');
   const store = tx.objectStore('drawings');
   store.clear();
 
   let validCount = 0;
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    if (!row || row.length === 0) continue;
 
-    // Колонка B (1), C (2), D (3), E (4)
-    const rawDrawing = row[1] !== undefined ? String(row[1]).trim() : '';
-    if (!rawDrawing || rawDrawing.toLowerCase().includes('обозначение')) continue;
+  sheetsData.forEach(sheetItem => {
+    const { sheetName, rows } = sheetItem;
+    let lastSeenName = ''; // Буфер для объединённых ячеек колонки C
 
-    const rawName = row[2] !== undefined ? String(row[2]).trim() : 'Без наименования';
-    const rawLitSb = row[3] !== undefined ? String(row[3]).trim().toLowerCase() : '-';
-    const rawLitSp = row[4] !== undefined ? String(row[4]).trim().toLowerCase() : '-';
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row || row.length === 0) continue;
 
-    store.put({
-      id: validCount + 1,
-      drawing_num: rawDrawing,
-      name: rawName,
-      lit_sb: rawLitSb,
-      lit_sp: rawLitSp
-    });
-    validCount++;
-  }
+      const rawDrawing = row[1] !== undefined ? String(row[1]).trim() : '';
+      const rawName = row[2] !== undefined ? String(row[2]).trim() : '';
+
+      // Обновляем буфер наименования
+      if (rawName && !rawName.toLowerCase().includes('наименование')) {
+        lastSeenName = rawName;
+      }
+
+      // Пропускаем заголовки или пустые строки
+      if (!rawDrawing || rawDrawing.toLowerCase().includes('обозначение')) continue;
+
+      const rawLitSb = row[3] !== undefined ? String(row[3]).trim().toLowerCase() : '-';
+      const rawLitSp = row[4] !== undefined ? String(row[4]).trim().toLowerCase() : '-';
+
+      store.put({
+        id: validCount + 1,
+        sheet_name: sheetName,
+        drawing_num: rawDrawing,
+        name: rawName || lastSeenName || 'Без наименования',
+        lit_sb: rawLitSb || '-',
+        lit_sp: rawLitSp || '-'
+      });
+      validCount++;
+    }
+  });
 
   tx.oncomplete = () => {
     loadDataFromDB();
-    showToast(`✅ Загружено ${validCount} позиций!`);
+    showToast(`✅ Загружено ${validCount} чертежей со всех листов!`);
     switchTab('check');
   };
 }
 
-/* Живой цифровой поиск */
+/* ================= ЖИВОЙ ПОИСК И СВЕРКА ================= */
 function handleLiveSearch(query) {
   const dropdown = document.getElementById('search-dropdown-list');
   const cleanQ = query.trim().toLowerCase().replace(/[\s\-_.]/g, '');
@@ -866,12 +944,18 @@ function handleLiveSearch(query) {
       dropdown.style.display = 'none';
       document.getElementById('input-drawing-search').value = item.drawing_num;
     };
+    
+    const litInfo = (item.lit_sp === '-' || !item.lit_sp) 
+      ? `ЛИТ:${item.lit_sb.toUpperCase()}` 
+      : `СБ:${item.lit_sb.toUpperCase()} / СП:${item.lit_sp.toUpperCase()}`;
+
     div.innerHTML = `
       <div>
+        <span class="sheet-badge" style="font-size:9px; margin-bottom:2px;">${item.sheet_name}</span>
         <div style="font-family:monospace; font-weight:800; font-size:14px; color:var(--accent-blue);">${item.drawing_num}</div>
         <div style="font-size:11px; color:#7D8A9A;">${item.name}</div>
       </div>
-      <div style="font-size:11px; font-weight:800; color:var(--secondary-dark);">СБ:${item.lit_sb.toUpperCase()} / СП:${item.lit_sp.toUpperCase()}</div>
+      <div style="font-size:11px; font-weight:800; color:var(--secondary-dark); text-align:right;">${litInfo}</div>
     `;
     dropdown.appendChild(div);
   });
@@ -886,13 +970,21 @@ function clearSearchInput() {
 
 function selectDrawing(item) {
   currentSelectedDrawing = item;
+  document.getElementById('cur-sheet-name').innerText = item.sheet_name || 'Раздел';
   document.getElementById('cur-drawing-num').innerText = item.drawing_num;
   document.getElementById('cur-drawing-name').innerText = 'Наименование: ' + item.name;
+
+  const hasSp = item.lit_sp && item.lit_sp !== '-';
+
+  document.getElementById('lbl-db-sb').innerText = hasSp ? 'СБ (в базе)' : 'Литера (в базе)';
   document.getElementById('db-lit-sb').innerText = item.lit_sb || '-';
-  document.getElementById('db-lit-sp').innerText = item.lit_sp || '-';
+
+  document.getElementById('lbl-db-sp').innerText = hasSp ? 'СП (в базе)' : 'СП (не треб.)';
+  document.getElementById('db-lit-sp').innerText = hasSp ? item.lit_sp : '—';
 
   document.getElementById('act-lit-sb').value = '';
-  document.getElementById('act-lit-sp').value = '';
+  document.getElementById('act-lit-sp').value = hasSp ? '' : '—';
+  document.getElementById('act-lit-sp').disabled = !hasSp;
 
   document.getElementById('verify-box').style.display = 'flex';
   document.getElementById('quick-guide-box').style.display = 'none';
@@ -909,30 +1001,34 @@ function clearCurrentVerification() {
 
 function autoFillAndVerifyMatch() {
   if (!currentSelectedDrawing) return;
+  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
   document.getElementById('act-lit-sb').value = currentSelectedDrawing.lit_sb || '';
-  document.getElementById('act-lit-sp').value = currentSelectedDrawing.lit_sp || '';
+  document.getElementById('act-lit-sp').value = hasSp ? currentSelectedDrawing.lit_sp : '—';
   runLiveComparison();
 }
 
 function runLiveComparison() {
   if (!currentSelectedDrawing) return;
+  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
+
   const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
   const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
+
   const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
   const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
 
   const box = document.getElementById('verdict-display');
   const btn = document.getElementById('btn-save-verdict');
 
-  if (!actSb && !actSp) {
+  if (!actSb) {
     box.className = 'verdict-box pending';
-    box.innerHTML = '⏳ Введите литеры или подтвердите соответствие';
+    box.innerHTML = '⏳ Введите литеру или подтвердите соответствие';
     btn.className = 'cartoon-btn btn-secondary';
     return;
   }
 
   const isSbMatch = (actSb === dbSb);
-  const isSpMatch = (actSp === dbSp);
+  const isSpMatch = hasSp ? (actSp === dbSp) : true;
 
   if (isSbMatch && isSpMatch) {
     box.className = 'verdict-box match';
@@ -940,8 +1036,8 @@ function runLiveComparison() {
     btn.className = 'cartoon-btn btn-success';
   } else {
     let diff = [];
-    if (!isSbMatch) diff.push(`СБ: факт "${actSb||'нет'}" ≠ база "${dbSb}"`);
-    if (!isSpMatch) diff.push(`СП: факт "${actSp||'нет'}" ≠ база "${dbSp}"`);
+    if (!isSbMatch) diff.push(`СБ: факт "${actSb}" ≠ база "${dbSb}"`);
+    if (hasSp && !isSpMatch) diff.push(`СП: факт "${actSp||'нет'}" ≠ база "${dbSp}"`);
 
     box.className = 'verdict-box mismatch';
     box.innerHTML = `⚠️ РАСХОЖДЕНИЕ: ${diff.join(' | ')}`;
@@ -951,23 +1047,27 @@ function runLiveComparison() {
 
 function commitCurrentVerification() {
   if (!currentSelectedDrawing) return;
+  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
+
   const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
   const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
+
   const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
   const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
 
-  if (!actSb && !actSp) return showToast('⚠️ Укажите литеры перед записью');
+  if (!actSb) return showToast('⚠️ Укажите литеру перед записью');
 
-  const isMatch = (actSb === dbSb && actSp === dbSp);
+  const isMatch = (actSb === dbSb) && (hasSp ? (actSp === dbSp) : true);
 
   const entry = {
     id: Date.now(),
+    sheet_name: currentSelectedDrawing.sheet_name || 'Основной',
     drawing_num: currentSelectedDrawing.drawing_num,
     name: currentSelectedDrawing.name,
     db_sb: dbSb,
-    db_sp: dbSp,
+    db_sp: hasSp ? dbSp : '-',
     act_sb: actSb || '-',
-    act_sp: actSp || '-',
+    act_sp: hasSp ? (actSp || '-') : '-',
     status: isMatch ? 'MATCH' : 'MISMATCH',
     time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
     date: new Date().toLocaleDateString('ru-RU')
@@ -984,7 +1084,7 @@ function commitCurrentVerification() {
   };
 }
 
-/* Каталог реестра */
+/* ================= КАТАЛОГ ВСЕХ ЧЕРТЕЖЕЙ ================= */
 function renderCatalog(filterText) {
   const container = document.getElementById('catalog-list-container');
   const cleanQ = filterText.trim().toLowerCase().replace(/[\s\-_.]/g, '');
@@ -995,6 +1095,7 @@ function renderCatalog(filterText) {
     list = allDrawingsList.filter(item => {
       if (digitsQ.length >= 2 && item._digits.includes(digitsQ)) return true;
       if (item._clean.includes(cleanQ)) return true;
+      if (item.sheet_name && item.sheet_name.toLowerCase().includes(cleanQ)) return true;
       return false;
     });
   }
@@ -1005,37 +1106,43 @@ function renderCatalog(filterText) {
   }
 
   container.innerHTML = '';
-  list.slice(0, 50).forEach(item => {
+  list.slice(0, 60).forEach(item => {
     const d = document.createElement('div');
     d.className = 'log-item';
     d.onclick = () => {
       selectDrawing(item);
       switchTab('check');
     };
+    
+    const litInfo = (item.lit_sp === '-' || !item.lit_sp) 
+      ? `ЛИТ: ${item.lit_sb.toUpperCase()}` 
+      : `СБ: ${item.lit_sb.toUpperCase()} | СП: ${item.lit_sp.toUpperCase()}`;
+
     d.innerHTML = `
       <div>
+        <span class="sheet-badge" style="font-size:9px; margin-bottom:2px;">${item.sheet_name}</span>
         <div style="font-family:monospace; font-weight:900; font-size:13px; color:var(--accent-blue);">${item.drawing_num}</div>
         <div style="font-size:11px; color:#7D8A9A;">${item.name}</div>
       </div>
-      <div style="font-size:11px; font-weight:800; color:var(--secondary-dark);">
-        СБ: ${item.lit_sb.toUpperCase()} | СП: ${item.lit_sp.toUpperCase()}
-      </div>
+      <div style="font-size:11px; font-weight:800; color:var(--secondary-dark);">${litInfo}</div>
     `;
     container.appendChild(d);
   });
 }
 
-/* Журнал и модальное окно */
+/* ================= ЖУРНАЛ И КАРТОЧКА ДЕТАЛИЗАЦИИ ================= */
 function openDetailModal(id) {
   const item = verificationHistory.find(i => i.id === id);
   if (!item) return;
 
+  document.getElementById('modal-sheet-name').innerText = item.sheet_name || 'Раздел';
   document.getElementById('modal-drawing-num').innerText = item.drawing_num;
   document.getElementById('modal-drawing-name').innerText = 'Наименование: ' + item.name;
+
   document.getElementById('modal-db-sb').innerText = item.db_sb.toUpperCase();
   document.getElementById('modal-act-sb').innerText = item.act_sb.toUpperCase();
-  document.getElementById('modal-db-sp').innerText = item.db_sp.toUpperCase();
-  document.getElementById('modal-act-sp').innerText = item.act_sp.toUpperCase();
+  document.getElementById('modal-db-sp').innerText = item.db_sp !== '-' ? item.db_sp.toUpperCase() : '—';
+  document.getElementById('modal-act-sp').innerText = item.act_sp !== '-' ? item.act_sp.toUpperCase() : '—';
 
   const badge = document.getElementById('modal-status-badge');
   if (item.status === 'MATCH') {
@@ -1095,12 +1202,16 @@ function renderLogs() {
     d.className = `log-item ${isM ? 'mismatch' : 'match'}`;
     d.onclick = () => openDetailModal(item.id);
 
+    const factLit = item.act_sp !== '-' ? `${item.act_sb.toUpperCase()}/${item.act_sp.toUpperCase()}` : item.act_sb.toUpperCase();
+    const baseLit = item.db_sp !== '-' ? `${item.db_sb.toUpperCase()}/${item.db_sp.toUpperCase()}` : item.db_sb.toUpperCase();
+
     d.innerHTML = `
       <div style="flex: 1; overflow: hidden; padding-right: 6px;">
+        <span class="sheet-badge" style="font-size:9px; margin-bottom:2px;">${item.sheet_name}</span>
         <div style="font-family:monospace; font-weight:900; font-size:14px; color:var(--secondary-dark);">${item.drawing_num}</div>
         <div style="font-size:11px; color:#7D8A9A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
         <div style="font-size:11px; font-weight:700; margin-top:1px;">
-          ${isM ? `<span style="color:var(--accent-red)">Факт: ${item.act_sb.toUpperCase()}/${item.act_sp.toUpperCase()}</span> (База: ${item.db_sb.toUpperCase()}/${item.db_sp.toUpperCase()})` : `<span style="color:var(--accent-green)">СБ [${item.act_sb.toUpperCase()}] / СП [${item.act_sp.toUpperCase()}] — Норма</span>`}
+          ${isM ? `<span style="color:var(--accent-red)">Факт: ${factLit}</span> (База: ${baseLit})` : `<span style="color:var(--accent-green)">Литеры [${factLit}] — Норма</span>`}
         </div>
       </div>
       <div>
@@ -1123,7 +1234,7 @@ function clearLogHistory() {
   }
 }
 
-/* Официальный Word-отчёт */
+/* ================= МИНИМАЛИСТИЧНЫЙ ОФИЦИАЛЬНЫЙ WORD-ОТЧЁТ ================= */
 function generateMinimalistWordReport() {
   if (verificationHistory.length === 0) return alert('Журнал пуст.');
 
@@ -1170,26 +1281,28 @@ function generateMinimalistWordReport() {
       <thead>
         <tr>
           <th style="width: 5%;">№ п/п</th>
-          <th style="width: 30%;">Обозначение чертежа</th>
-          <th style="width: 35%;">Наименование</th>
-          <th style="width: 15%;">Литера чертежа (СБ)</th>
-          <th style="width: 15%;">Литера спецификации (СП)</th>
+          <th style="width: 18%;">Раздел (Лист)</th>
+          <th style="width: 25%;">Обозначение чертежа</th>
+          <th style="width: 28%;">Наименование</th>
+          <th style="width: 12%;">Литера СБ</th>
+          <th style="width: 12%;">Литера СП</th>
         </tr>
       </thead>
       <tbody>
   `;
 
   if (matches.length === 0) {
-    docHTML += `<tr><td colspan="5" class="text-center">Позиции с подтвержденным соответствием отсутствуют</td></tr>`;
+    docHTML += `<tr><td colspan="6" class="text-center">Позиции с подтвержденным соответствием отсутствуют</td></tr>`;
   } else {
     matches.forEach((item, idx) => {
       docHTML += `
         <tr>
           <td class="text-center">${idx + 1}</td>
+          <td class="text-center">${item.sheet_name}</td>
           <td>${item.drawing_num}</td>
           <td>${item.name}</td>
           <td class="text-center">${item.act_sb.toUpperCase()}</td>
-          <td class="text-center">${item.act_sp.toUpperCase()}</td>
+          <td class="text-center">${item.act_sp !== '-' ? item.act_sp.toUpperCase() : '—'}</td>
         </tr>
       `;
     });
@@ -1203,29 +1316,32 @@ function generateMinimalistWordReport() {
     <table class="data-table">
       <thead>
         <tr>
-          <th style="width: 5%;">№ п/п</th>
-          <th style="width: 25%;">Обозначение чертежа</th>
-          <th style="width: 25%;">Наименование</th>
-          <th style="width: 15%;">Литера СБ (Факт / База)</th>
-          <th style="width: 15%;">Литера СП (Факт / База)</th>
-          <th style="width: 15%;">Требуемое действие</th>
+          <th style="width: 4%;">№ п/п</th>
+          <th style="width: 16%;">Раздел (Лист)</th>
+          <th style="width: 23%;">Обозначение чертежа</th>
+          <th style="width: 23%;">Наименование</th>
+          <th style="width: 12%;">Литера СБ (Факт/База)</th>
+          <th style="width: 12%;">Литера СП (Факт/База)</th>
+          <th style="width: 10%;">Действие</th>
         </tr>
       </thead>
       <tbody>
   `;
 
   if (mismatches.length === 0) {
-    docHTML += `<tr><td colspan="6" class="text-center">Расхождений не выявлено.</td></tr>`;
+    docHTML += `<tr><td colspan="7" class="text-center">Расхождений не выявлено.</td></tr>`;
   } else {
     mismatches.forEach((item, idx) => {
+      const spFactBase = item.act_sp !== '-' ? `${item.act_sp.toUpperCase()} / ${item.db_sp.toUpperCase()}` : '—';
       docHTML += `
         <tr>
           <td class="text-center">${idx + 1}</td>
+          <td class="text-center">${item.sheet_name}</td>
           <td>${item.drawing_num}</td>
           <td>${item.name}</td>
           <td class="text-center">${item.act_sb.toUpperCase()} / ${item.db_sb.toUpperCase()}</td>
-          <td class="text-center">${item.act_sp.toUpperCase()} / ${item.db_sp.toUpperCase()}</td>
-          <td class="text-center">Обновить литеру</td>
+          <td class="text-center">${spFactBase}</td>
+          <td class="text-center">Обновить</td>
         </tr>
       `;
     });
