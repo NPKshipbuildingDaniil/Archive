@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icon.svg">
 
-<!-- Движок оптического распознавания Tesseract OCR -->
+<!-- OCR Движок -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <style>
@@ -67,6 +67,7 @@
     flex-direction: column;
     box-shadow: 0 0 25px rgba(74, 85, 104, 0.2);
     position: relative;
+    overflow: hidden;
   }
 
   header.app-header {
@@ -133,7 +134,8 @@
   }
 
   .tab-btn {
-    flex: 1;
+    flex: 1 1 0;
+    min-width: 0;
     background: var(--primary-bg);
     border: 1.5px solid var(--secondary-dark);
     border-radius: var(--radius-md);
@@ -148,6 +150,9 @@
     align-items: center;
     justify-content: center;
     gap: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .tab-btn.active {
@@ -159,9 +164,9 @@
   }
 
   .main-content {
-    flex: 1;
+    flex: 1 1 auto;
     padding: 8px;
-    overflow-y: hidden;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -173,6 +178,7 @@
     height: 100%;
     flex-direction: column;
     min-height: 0;
+    overflow: hidden;
   }
 
   .view-panel.active {
@@ -206,18 +212,17 @@
   }
 
   .cartoon-btn {
-    width: 100%;
-    padding: 9px 12px;
+    padding: 8px 6px;
     border: var(--border-main);
     border-radius: var(--radius-md);
-    font-size: 12.5px;
+    font-size: 12px;
     font-weight: 800;
     cursor: pointer;
     text-align: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
+    gap: 4px;
     box-shadow: var(--shadow-cartoon-btn);
     text-transform: uppercase;
     flex-shrink: 0;
@@ -228,13 +233,31 @@
     box-shadow: 0 1px 0 #2D3748;
   }
 
+  /* РЯД КНОПОК БЕЗ БОКОВОГО СКРОЛЛА */
+  .btn-row {
+    display: flex;
+    gap: 4px;
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  .btn-row .cartoon-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    width: auto;
+    padding: 7px 2px;
+    font-size: 11px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
   .btn-primary { background: var(--accent-blue); color: #FFFFFF; border-color: #1A2E70; }
   .btn-secondary { background: var(--primary-bg); color: var(--secondary-dark); border-color: var(--secondary-dark); }
-  .btn-success { background: var(--accent-green); color: #FFFFFF; border-color: #065F46; box-shadow: 0 2.5px 0 #065F46; }
-  .btn-danger { background: var(--accent-red); color: #FFFFFF; border-color: #991B1B; box-shadow: 0 2.5px 0 #991B1B; }
-  .btn-word { background: #2B579A; color: #FFFFFF; border-color: #183B70; box-shadow: 0 2.5px 0 #183B70; }
+  .btn-success { background: var(--accent-green); color: #FFFFFF; border-color: #065F46; box-shadow: 0 2px 0 #065F46; }
+  .btn-danger { background: var(--accent-red); color: #FFFFFF; border-color: #991B1B; box-shadow: 0 2px 0 #991B1B; }
+  .btn-word { background: #2B579A; color: #FFFFFF; border-color: #183B70; box-shadow: 0 2px 0 #183B70; }
   .btn-sm { padding: 5px 8px; font-size: 10.5px; border-radius: var(--radius-sm); }
-  .btn-row { display: flex; gap: 5px; }
 
   .drawing-code {
     font-family: monospace;
@@ -257,7 +280,6 @@
     text-transform: uppercase;
   }
 
-  /* Сверхкомпактная сетка сверки */
   .compare-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -339,12 +361,16 @@
   .search-item:active { background: #EEF2FF; }
   .search-item:last-child { border-bottom: none; }
 
+  /* СКРОЛЛ РЕЕСТРА И ЖУРНАЛА */
   .log-scroll-area {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 6px;
-    padding-right: 2px;
+    flex: 1 1 auto;
     min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+    padding-right: 2px;
+    margin-bottom: 6px;
   }
 
   .log-item {
@@ -360,6 +386,7 @@
     box-shadow: 0 1px 0 var(--secondary-dark);
   }
 
+  .log-item:active { transform: scale(0.99); }
   .log-item.mismatch { border-left: 5px solid var(--accent-red); background: #FFF5F5; }
   .log-item.match { border-left: 5px solid var(--accent-green); background: #F0FDF4; }
 
@@ -373,6 +400,7 @@
     font-weight: bold;
     cursor: pointer;
     margin-left: 5px;
+    flex-shrink: 0;
   }
 
   .modal-overlay {
@@ -432,7 +460,7 @@
       <div class="brand-logo">📐</div>
       <div class="brand-text">
         <h1>АРХИВ-КОНТРОЛЬ</h1>
-        <span>Все листы Excel</span>
+        <span>Сверка литер</span>
       </div>
     </div>
     <div class="header-badge" id="active-db-count">База: 0 шт</div>
@@ -448,9 +476,9 @@
 
   <main class="main-content">
 
-    <!-- 1. ВКЛАДКА СВЕРКИ (100% ВМЕЩАЕТСЯ НА ЭКРАНЕ) -->
+    <!-- 1. ВКЛАДКА СВЕРКИ -->
     <div id="view-check" class="view-panel active">
-      <div class="cartoon-card" style="margin-bottom: 5px; padding: 6px 8px; position: relative;">
+      <div class="cartoon-card" style="margin-bottom: 5px; padding: 6px 8px; position: relative; flex-shrink: 0;">
         <div style="display: flex; gap: 4px;">
           <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Цифры (напр. 362662 или 362111)..." autocomplete="off" oninput="handleLiveSearch(this.value)">
           <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 0 8px;" onclick="clearSearchInput()">✕</button>
@@ -459,8 +487,8 @@
 
       <div id="search-dropdown-list" class="search-dropdown"></div>
 
-      <!-- Рабочая зона выбранного чертежа -->
-      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 8px;">
+      <!-- Карточка выбранного чертежа -->
+      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1 1 auto; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 8px; min-height: 0;">
         <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
             <span class="sheet-badge" id="cur-sheet-name">Устройства</span>
@@ -473,7 +501,6 @@
             по с.3
           </div>
 
-          <!-- Сетка сравнения: База vs Факт в одной строке -->
           <div class="compare-grid">
             <div class="compare-col">
               <div class="compare-cell-base">
@@ -497,95 +524,95 @@
           </div>
         </div>
 
-        <!-- ДВЕ ГЛАВНЫЕ КНОПКИ (ВСЕГДА ВИДНЫ) -->
-        <div style="display: flex; flex-direction: column; gap: 5px;">
-          <button class="cartoon-btn btn-success" style="padding: 10px;" onclick="autoFillAndVerifyMatch()">
+        <div style="display: flex; flex-direction: column; gap: 5px; flex-shrink: 0;">
+          <button class="cartoon-btn btn-success" style="width: 100%; padding: 10px;" onclick="autoFillAndVerifyMatch()">
             ✅ Литеры совпадают (как в базе)
           </button>
-          <button id="btn-save-verdict" class="cartoon-btn btn-primary" style="padding: 10px;" onclick="commitCurrentVerification()">
+          <button id="btn-save-verdict" class="cartoon-btn btn-primary" style="width: 100%; padding: 10px;" onclick="commitCurrentVerification()">
             💾 Записать в журнал
           </button>
         </div>
       </div>
 
-      <div id="quick-guide-box" class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+      <div id="quick-guide-box" class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-bottom: 0;">
         <div style="font-size: 28px; margin-bottom: 4px;">🔢</div>
         <div style="font-size: 12.5px; font-weight: 800; margin-bottom: 3px;">Быстрый поиск чертежа</div>
-        <div style="font-size: 10.5px; color: var(--secondary-mid); margin-bottom: 8px;">Введите любые 3-6 цифр или перейдите во вкладку «Камера»</div>
+        <div style="font-size: 10.5px; color: var(--secondary-mid); margin-bottom: 8px;">Введите любые 3-6 цифр или откройте «Камеру»</div>
         <button class="cartoon-btn btn-secondary btn-sm" style="width: auto;" onclick="loadEmbeddedDemoData()">
           ✨ Загрузить тест (Устройства + Электрика)
         </button>
       </div>
     </div>
 
-    <!-- 2. ВКЛАДКА КАМЕРЫ (GOOGLE LENS / OCR МЕТОД) -->
+    <!-- 2. ВКЛАДКА КАМЕРЫ -->
     <div id="view-camera" class="view-panel">
-      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; margin-bottom: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+      <div class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; margin-bottom: 0; min-height: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-shrink: 0;">
           <span style="font-size: 11.5px; font-weight: 800;">📷 Оптическое считывание (OCR)</span>
-          <span id="ocr-status-badge" style="font-size: 9.5px; color: var(--secondary-mid);">Готов к съёмке</span>
+          <span id="ocr-status-badge" style="font-size: 9.5px; color: var(--secondary-mid); font-weight: bold;">Готов</span>
         </div>
 
-        <!-- Видеоискатель -->
-        <div style="position: relative; height: 140px; background: #1A202C; border-radius: var(--radius-md); border: var(--border-main); overflow: hidden; margin-bottom: 6px; display: flex; align-items: center; justify-content: center;">
+        <!-- Видеоискатель с рамкой кадрирования -->
+        <div id="camera-box-wrap" style="position: relative; height: 135px; background: #1A202C; border-radius: var(--radius-md); border: var(--border-main); overflow: hidden; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
           <video id="camera-video" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
           <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
-            <div style="width: 85%; height: 45px; border: 2px dashed var(--accent-sky); border-radius: 6px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);"></div>
+            <div id="camera-reticle-box" style="width: 85%; height: 45px; border: 2.5px dashed var(--accent-sky); border-radius: 6px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);"></div>
           </div>
         </div>
 
         <canvas id="ocr-canvas" style="display: none;"></canvas>
         <input type="file" id="native-camera-input" accept="image/*" capture="environment" style="display: none;" onchange="handleNativePhotoCapture(event)">
 
+        <!-- 3 КНОПКИ В ОДИН РЯД -->
         <div class="btn-row" style="margin-bottom: 6px;">
-          <button class="cartoon-btn btn-primary btn-sm" id="btn-toggle-cam" onclick="toggleCamera()">🔴 Видео</button>
-          <button class="cartoon-btn btn-success btn-sm" onclick="document.getElementById('native-camera-input').click()">📸 Фото штампа</button>
-          <button class="cartoon-btn btn-secondary btn-sm" onclick="captureLiveVideoFrame()">⚡ Считать</button>
+          <button class="cartoon-btn btn-primary" id="btn-toggle-cam" onclick="toggleCamera()">🔴 Видео</button>
+          <button class="cartoon-btn btn-success" onclick="document.getElementById('native-camera-input').click()">📸 Фото</button>
+          <button class="cartoon-btn btn-secondary" onclick="captureLiveVideoFrame()">⚡ Считать</button>
         </div>
 
-        <!-- Блок найденных совпадений по фото -->
-        <div style="font-size: 10px; font-weight: 800; color: var(--secondary-mid); margin-bottom: 3px;">НАЙДЕННЫЕ СОВПАДЕНИЯ В БАЗЕ:</div>
+        <div style="font-size: 10px; font-weight: 800; color: var(--secondary-mid); margin-bottom: 3px; flex-shrink: 0;">СОВПАДЕНИЯ В БАЗЕ (ВНУТРИ РАМКИ):</div>
         <div id="ocr-results-container" class="log-scroll-area" style="background: #F8FAFC; border: 1.5px solid var(--primary-alt); border-radius: var(--radius-md); padding: 4px;">
           <div style="text-align: center; padding: 12px; font-size: 10.5px; color: #7D8A9A;">
-            Сделайте фото штампа или наведите камеру для автораспознавания
+            Наведите синюю рамку на шифр и нажмите «Считать» или сделайте «Фото»
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 3. РЕЕСТР (КАТАЛОГ ВСЕХ ЧЕРТЕЖЕЙ) -->
+    <!-- 3. РЕЕСТР (ВЕРТИКАЛЬНЫЙ СКРОЛЛ) -->
     <div id="view-catalog" class="view-panel">
-      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; margin-bottom: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+      <div class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; margin-bottom: 0; min-height: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-shrink: 0;">
           <span style="font-size: 11.5px; font-weight: 800;">📚 База по всем листам</span>
           <span style="font-size: 10px; color: var(--secondary-mid);" id="catalog-count-text">0 шт</span>
         </div>
-        <input type="text" id="catalog-filter-input" class="cartoon-input" placeholder="Поиск по цифрам или разделу..." style="font-size: 13px; margin-bottom: 5px; padding: 5px 8px;" oninput="renderCatalog(this.value)">
+        <input type="text" id="catalog-filter-input" class="cartoon-input" placeholder="Поиск по цифрам или разделу..." style="font-size: 13px; margin-bottom: 5px; padding: 5px 8px; flex-shrink: 0;" oninput="renderCatalog(this.value)">
         <div id="catalog-list-container" class="log-scroll-area"></div>
       </div>
     </div>
 
-    <!-- 4. ЖУРНАЛ -->
+    <!-- 4. ЖУРНАЛ (ВЕРТИКАЛЬНЫЙ СКРОЛЛ И КНОПКИ В ОДИН РЯД) -->
     <div id="view-log" class="view-panel">
-      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; margin-bottom: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+      <div class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; margin-bottom: 0; min-height: 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-shrink: 0;">
           <span style="font-size: 11.5px; font-weight: 800;">📋 Проверенные чертежи</span>
           <span style="font-size: 10px; color: var(--secondary-mid);" id="log-stats-text">0 шт</span>
         </div>
 
+        <!-- 3 ФИЛЬТРА В ОДИН РЯД -->
         <div class="btn-row" style="margin-bottom: 5px;">
-          <button class="cartoon-btn btn-secondary btn-sm" onclick="filterLogs('all')">Все</button>
-          <button class="cartoon-btn btn-danger btn-sm" onclick="filterLogs('mismatch')">Расхождения</button>
-          <button class="cartoon-btn btn-success btn-sm" onclick="filterLogs('match')">Норма</button>
+          <button class="cartoon-btn btn-secondary" onclick="filterLogs('all')">Все</button>
+          <button class="cartoon-btn btn-danger" onclick="filterLogs('mismatch')">⚠️ Расхождения</button>
+          <button class="cartoon-btn btn-success" onclick="filterLogs('match')">✅ Норма</button>
         </div>
 
         <div id="log-list-container" class="log-scroll-area"></div>
 
-        <button class="cartoon-btn btn-word" onclick="generateMinimalistWordReport()" style="margin-bottom: 5px; padding: 8px;">
+        <button class="cartoon-btn btn-word" onclick="generateMinimalistWordReport()" style="width: 100%; margin-bottom: 5px; padding: 8px;">
           📄 Скачать официальный акт (.doc)
         </button>
 
-        <button class="cartoon-btn btn-secondary btn-sm" onclick="clearLogHistory()">
+        <button class="cartoon-btn btn-secondary" style="width: 100%; padding: 6px; font-size: 11px;" onclick="clearLogHistory()">
           🗑️ Очистить весь журнал
         </button>
       </div>
@@ -601,7 +628,7 @@
           <div style="font-size: 12px; font-weight: 800;">Выбрать файл Excel (.xlsx)</div>
           <div style="font-size: 9.5px; color: var(--secondary-mid); margin-top: 2px;">Автоматически считывает все листы книги</div>
         </div>
-        <button class="cartoon-btn btn-primary" onclick="document.getElementById('excel-file-input').click()">
+        <button class="cartoon-btn btn-primary" style="width: 100%;" onclick="document.getElementById('excel-file-input').click()">
           📂 Открыть файл на телефоне
         </button>
       </div>
@@ -609,7 +636,7 @@
 
   </main>
 
-  <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛИЗАЦИИ -->
+  <!-- КАРТОЧКА ДЕТАЛИЗАЦИИ -->
   <div id="modal-detail" class="modal-overlay" onclick="closeDetailModal(event)">
     <div class="modal-container" onclick="event.stopPropagation()">
       <div class="modal-header">
@@ -648,8 +675,8 @@
       <div style="font-size: 10px; color: var(--secondary-mid); margin-bottom: 8px; text-align: center;" id="modal-timestamp">-</div>
 
       <div class="btn-row">
-        <button class="cartoon-btn btn-danger" id="modal-btn-delete" style="flex: 1;">🗑️ Удалить</button>
-        <button class="cartoon-btn btn-secondary" onclick="closeDetailModal()" style="flex: 1;">Закрыть</button>
+        <button class="cartoon-btn btn-danger" id="modal-btn-delete">🗑️ Удалить</button>
+        <button class="cartoon-btn btn-secondary" onclick="closeDetailModal()">Закрыть</button>
       </div>
     </div>
   </div>
@@ -664,7 +691,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const DB_NAME = 'DrawingArchiveDB_v7';
+const DB_NAME = 'DrawingArchiveDB_v8';
 let dbInstance = null;
 let allDrawingsList = [];
 let verificationHistory = [];
@@ -1116,7 +1143,7 @@ function commitCurrentVerification() {
   };
 }
 
-/* ================= ДВИЖОК ОПТИЧЕСКОГО РАСПОЗНАВАНИЯ (OCR) ================= */
+/* ================= ДВИЖОК OCR: КАДРИРОВАНИЕ ТОЧНО ПО СИНЕЙ РАМКЕ ================= */
 async function toggleCamera() {
   const btn = document.getElementById('btn-toggle-cam');
   const v = document.getElementById('camera-video');
@@ -1126,7 +1153,7 @@ async function toggleCamera() {
   } else {
     try {
       videoStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+        video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
       });
       v.srcObject = videoStream;
       btn.innerText = '⏹️ Стоп';
@@ -1144,44 +1171,82 @@ function stopCamera() {
   }
 }
 
-// Захват кадра из видео
+// Кадрирование строго по синей рамке видоискателя
+function cropImageToReticle(sourceElement, srcWidth, srcHeight) {
+  const boxWrap = document.getElementById('camera-box-wrap');
+  const reticle = document.getElementById('camera-reticle-box');
+  const bRect = boxWrap.getBoundingClientRect();
+  const rRect = reticle.getBoundingClientRect();
+
+  // Относительные координаты рамки
+  const relX = (rRect.left - bRect.left) / bRect.width;
+  const relY = (rRect.top - bRect.top) / bRect.height;
+  const relW = rRect.width / bRect.width;
+  const relH = rRect.height / bRect.height;
+
+  // Абсолютные координаты на исходном кадре
+  const sx = Math.max(0, Math.floor(relX * srcWidth));
+  const sy = Math.max(0, Math.floor(relY * srcHeight));
+  const sw = Math.min(srcWidth - sx, Math.floor(relW * srcWidth));
+  const sh = Math.min(srcHeight - sy, Math.floor(relH * srcHeight));
+
+  const canvas = document.getElementById('ocr-canvas');
+  const scale = 2.5; // Увеличение для чёткого распознавания шрифтов
+  canvas.width = Math.floor(sw * scale);
+  canvas.height = Math.floor(sh * scale);
+  const ctx = canvas.getContext('2d');
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
+  ctx.drawImage(sourceElement, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+
+  // Контрастирование и бинаризация для повышения точности цифр
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const d = imgData.data;
+  let totalB = 0;
+  for (let i = 0; i < d.length; i += 4) {
+    totalB += (0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2]);
+  }
+  const avgB = totalB / (d.length / 4);
+  const threshold = Math.max(70, Math.min(170, avgB * 0.95));
+
+  for (let i = 0; i < d.length; i += 4) {
+    const gray = 0.299 * d[i] + 0.587 * d[i+1] + 0.114 * d[i+2];
+    const val = gray < threshold ? 0 : 255;
+    d[i] = val; d[i+1] = val; d[i+2] = val;
+  }
+  ctx.putImageData(imgData, 0, 0);
+
+  return canvas;
+}
+
 function captureLiveVideoFrame() {
   const video = document.getElementById('camera-video');
   if (!videoStream || video.videoWidth === 0) {
-    showToast('⚠️ Сначала включите видео или сделайте фото');
+    showToast('⚠️ Включите «Видео» или нажмите «Фото»');
     return;
   }
-  const canvas = document.getElementById('ocr-canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const canvas = cropImageToReticle(video, video.videoWidth, video.videoHeight);
   processImageForOCR(canvas);
 }
 
-// Захват фотографии со штатной камеры с автофокусом
 function handleNativePhotoCapture(event) {
   const file = event.target.files[0];
   if (!file) return;
 
   const img = new Image();
   img.onload = () => {
-    const canvas = document.getElementById('ocr-canvas');
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
+    const canvas = cropImageToReticle(img, img.width, img.height);
     processImageForOCR(canvas);
   };
   img.src = URL.createObjectURL(file);
 }
 
-// Обработка и распознавание
 async function processImageForOCR(canvas) {
   const statusBadge = document.getElementById('ocr-status-badge');
   const resultsBox = document.getElementById('ocr-results-container');
-  statusBadge.innerText = '⏳ Распознавание OCR...';
-  showToast('🔍 Анализ изображения...');
+  statusBadge.innerText = '⏳ OCR...';
+  showToast('🔍 Считывание в рамке...');
 
   try {
     if (typeof Tesseract === 'undefined') {
@@ -1191,7 +1256,7 @@ async function processImageForOCR(canvas) {
     const { data: { text } } = await Tesseract.recognize(canvas, 'rus+eng', {
       logger: m => {
         if (m.status === 'recognizing text') {
-          statusBadge.innerText = `OCR: ${Math.round(m.progress * 100)}%`;
+          statusBadge.innerText = `${Math.round(m.progress * 100)}%`;
         }
       }
     });
@@ -1204,34 +1269,30 @@ async function processImageForOCR(canvas) {
   }
 }
 
-// Интеллектуальный поиск соответствий по распознанному тексту
 function findBestMatchingDrawingsFromOCR(ocrRawText) {
   const resultsBox = document.getElementById('ocr-results-container');
   const ocrClean = ocrRawText.toLowerCase().replace(/[\s\-_.]/g, '');
   const ocrDigits = ocrRawText.replace(/\D/g, '');
 
   if (!ocrDigits && !ocrClean) {
-    resultsBox.innerHTML = '<div style="padding:8px; font-size:11px; color:#7D8A9A; text-align:center;">Символы не обнаружены. Повторите фото под прямым углом.</div>';
+    resultsBox.innerHTML = '<div style="padding:8px; font-size:11px; color:#7D8A9A; text-align:center;">В рамке символы не обнаружены. Наведите точнее.</div>';
     return;
   }
 
-  // Оценка релевантности каждого чертежа
   const scoredList = allDrawingsList.map(item => {
     let score = 0;
-    // Совпадение по цифрам
-    if (ocrDigits.length >= 3 && item._digits.includes(ocrDigits.slice(0, 6))) score += 50;
-    if (ocrDigits.length >= 4 && item._digits.includes(ocrDigits.slice(0, 4))) score += 30;
-    if (item._digits && ocrDigits.includes(item._digits)) score += 40;
-    // Совпадение по текстовому обозначению
-    if (ocrClean.includes(item._clean) || item._clean.includes(ocrClean)) score += 40;
+    if (ocrDigits.length >= 4 && item._digits.includes(ocrDigits.slice(0, 6))) score += 60;
+    if (ocrDigits.length >= 3 && item._digits.includes(ocrDigits.slice(0, 4))) score += 40;
+    if (item._digits && ocrDigits.includes(item._digits)) score += 50;
+    if (ocrClean.includes(item._clean) || item._clean.includes(ocrClean)) score += 50;
 
     return { item, score };
   }).filter(s => s.score > 0).sort((a, b) => b.score - a.score).slice(0, 5);
 
   if (scoredList.length === 0) {
     resultsBox.innerHTML = `
-      <div style="padding:8px; font-size:11px; color:#7D8A9A; text-align:center;">
-        Распознан текст: "<b>${ocrRawText.trim().slice(0, 30)}</b>"<br>Точных совпадений в базе не найдено.
+      <div style="padding:8px; font-size:10.5px; color:#7D8A9A; text-align:center;">
+        Распознано в рамке: "<b>${ocrRawText.trim().slice(0, 25)}</b>"<br>В реестре совпадений не найдено.
       </div>
     `;
     return;
@@ -1258,7 +1319,7 @@ function findBestMatchingDrawingsFromOCR(ocrRawText) {
         <div style="font-family:monospace; font-weight:900; font-size:13px; color:var(--accent-blue);">${item.drawing_num}</div>
         <div style="font-size:10px; color:#7D8A9A;">${item.name}</div>
       </div>
-      <button class="cartoon-btn btn-primary btn-sm" style="width:auto; padding:4px 8px;">Выбрать ➡️</button>
+      <button class="cartoon-btn btn-primary btn-sm" style="width:auto; padding:4px 8px; flex-shrink:0;">Выбрать ➡️</button>
     `;
     resultsBox.appendChild(div);
   });
@@ -1266,7 +1327,7 @@ function findBestMatchingDrawingsFromOCR(ocrRawText) {
   showToast(`✅ Найдено совпадений: ${scoredList.length}`);
 }
 
-/* ================= КАТАЛОГ ВСЕХ ЧЕРТЕЖЕЙ ================= */
+/* ================= КАТАЛОГ ВСЕХ ЧЕРТЕЖЕЙ (СКРОЛЛ) ================= */
 function renderCatalog(filterText) {
   const container = document.getElementById('catalog-list-container');
   const cleanQ = filterText.trim().toLowerCase().replace(/[\s\-_.]/g, '');
@@ -1288,7 +1349,7 @@ function renderCatalog(filterText) {
   }
 
   container.innerHTML = '';
-  list.slice(0, 60).forEach(item => {
+  list.slice(0, 80).forEach(item => {
     const d = document.createElement('div');
     d.className = 'log-item';
     d.onclick = () => {
@@ -1312,7 +1373,7 @@ function renderCatalog(filterText) {
   });
 }
 
-/* ================= ЖУРНАЛ И КАРТОЧКА ДЕТАЛИЗАЦИИ ================= */
+/* ================= ЖУРНАЛ И КАРТОЧКА (СКРОЛЛ) ================= */
 function openDetailModal(id) {
   const item = verificationHistory.find(i => i.id === id);
   if (!item) return;
@@ -1388,7 +1449,7 @@ function renderLogs() {
     const baseLit = item.db_sp !== '-' ? `${item.db_sb.toUpperCase()}/${item.db_sp.toUpperCase()}` : item.db_sb.toUpperCase();
 
     d.innerHTML = `
-      <div style="flex: 1; overflow: hidden; padding-right: 4px;">
+      <div style="flex: 1 1 auto; overflow: hidden; padding-right: 4px;">
         <span class="sheet-badge" style="font-size:8.5px; margin-bottom:1px;">${item.sheet_name}</span>
         <div style="font-family:monospace; font-weight:900; font-size:13px; color:var(--secondary-dark);">${item.drawing_num}</div>
         <div style="font-size:10px; color:#7D8A9A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
@@ -1416,7 +1477,7 @@ function clearLogHistory() {
   }
 }
 
-/* ================= МИНИМАЛИСТИЧНЫЙ ОФИЦИАЛЬНЫЙ WORD-ОТЧЁТ ================= */
+/* ================= ОФИЦИАЛЬНЫЙ МИНИМАЛИСТИЧНЫЙ WORD-ОТЧЁТ ================= */
 function generateMinimalistWordReport() {
   if (verificationHistory.length === 0) return alert('Журнал пуст.');
 
