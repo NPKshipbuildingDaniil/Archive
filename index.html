@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icon.svg">
 
-<!-- Движок прямого WebRTC моста PeerJS (без CORS) -->
+<!-- Движок прямого WebRTC моста PeerJS -->
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <!-- OCR Движок -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -378,7 +378,6 @@
   .verdict-box.mismatch { background: #FEF2F2; border-color: var(--accent-red); color: #991B1B; }
   .verdict-box.pending { background: #FFFBEB; border-color: var(--accent-amber); color: #92400E; }
 
-  /* ПЛАШКА 6-ЗНАЧНОГО PIN КОДА */
   .pin-code-display {
     background: #1E1B4B;
     color: #A5B4FC;
@@ -560,7 +559,7 @@
             по с.3
           </div>
 
-          <!-- Сетка с БОЛЬШИМИ НАДПИСЯМИ СБ и СП -->
+          <!-- Сетка СБ и СП -->
           <div class="compare-grid">
             <div class="compare-col">
               <span class="sb-sp-title-tag">СБ (Чертёж)</span>
@@ -702,7 +701,6 @@
     <!-- 5. ФАЙЛЫ И 6-ЗНАЧНЫЙ PIN-МОСТ -->
     <div id="view-config" class="view-panel">
       
-      <!-- Загрузка Excel -->
       <div class="cartoon-card" style="margin-bottom: 6px; padding: 6px 8px;">
         <div style="font-size: 11.5px; font-weight: 800; margin-bottom: 4px;">📊 База данных Excel</div>
         <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv,.XLSX,.XLS,.CSV" style="display: none;" onchange="handleFileUpload(event)">
@@ -711,7 +709,6 @@
         </button>
       </div>
 
-      <!-- 6-ЗНАЧНЫЙ PIN-МОСТ -->
       <div class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; margin-bottom: 0;">
         <div>
           <div style="font-size: 12px; font-weight: 800; color: var(--accent-purple); margin-bottom: 2px;">⚡ Прямая передача смены по PIN (Телефон ➔ ПК)</div>
@@ -720,12 +717,10 @@
             2. Введите эти 6 цифр на компьютере и нажмите <b>«Загрузить»</b>.
           </div>
 
-          <!-- Кнопка генерации PIN -->
           <button class="cartoon-btn btn-sync" id="btn-generate-pin" style="width: 100%; padding: 9px;" onclick="generateDirectWebRTCPin()">
             ⚡ Создать 6-значный PIN смены
           </button>
 
-          <!-- Отображение PIN кода -->
           <div id="pin-display-wrapper" style="display: none;">
             <div style="font-size: 10px; font-weight: 800; text-align: center; margin-top: 6px; color: var(--secondary-dark);">
               КОД ДЛЯ ВВОДА НА КОМПЬЮТЕРЕ:
@@ -736,7 +731,6 @@
             </div>
           </div>
 
-          <!-- Прием на ПК по PIN -->
           <div style="margin-top: 10px; padding-top: 8px; border-top: 1.5px dashed var(--primary-alt);">
             <div style="font-size: 10.5px; font-weight: 800; margin-bottom: 4px;">ПРИЁМ СМЕНЫ НА ПК:</div>
             <div style="display: flex; gap: 4px;">
@@ -746,7 +740,6 @@
           </div>
         </div>
 
-        <!-- Резервный метод -->
         <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--primary-alt);">
           <div style="font-size: 9.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 3px;">Резервные методы:</div>
           <div class="btn-row">
@@ -834,6 +827,20 @@ let activeLogFilter = 'all';
 let senderPeer = null;
 let receiverPeer = null;
 
+// Строгая нормализация
+function normLit(val) {
+  if (val === undefined || val === null) return '-';
+  const v = String(val).trim().toLowerCase();
+  if (v === '' || v === '-' || v === '—' || v === 'нет' || v === 'не треб.' || v === 'null') return '-';
+  return v;
+}
+
+// Преобразование литеры в печатный вид для Word отчёта
+function formatReportLit(val) {
+  const v = normLit(val);
+  return v === '-' ? '—' : v.toUpperCase();
+}
+
 function initDB() {
   return new Promise((resolve) => {
     const request = indexedDB.open(DB_NAME, 1);
@@ -870,6 +877,26 @@ async function loadDataFromDB() {
   reqLog.onsuccess = () => {
     verificationHistory = (reqLog.result || []).reverse();
     renderLogs();
+  };
+}
+
+function loadEmbeddedDemoData() {
+  const sample = [
+    { id: 1, sheet_name: 'Устройства', drawing_num: 'КСП01-362111.01-002', name: 'по с.3', lit_sb: 'дт', lit_sp: 'бт' },
+    { id: 2, sheet_name: 'Устройства', drawing_num: 'КСП01-362111.01-003', name: 'Вал привода', lit_sb: 'ат', lit_sp: 'бт' },
+    { id: 3, sheet_name: 'Электрика', drawing_num: 'КСП01-362662-001СБ', name: 'Установка антенн', lit_sb: 'ет', lit_sp: '-' },
+    { id: 4, sheet_name: 'Электрика', drawing_num: 'КСП01-362662-002', name: 'Установка антенн', lit_sb: 'ет', lit_sp: '-' },
+    { id: 5, sheet_name: 'Механика', drawing_num: '362154.112', name: 'Корпус редуктора', lit_sb: 'аг', lit_sp: 'вг' }
+  ];
+
+  const tx = dbInstance.transaction('drawings', 'readwrite');
+  const store = tx.objectStore('drawings');
+  store.clear();
+  sample.forEach(item => store.put(item));
+  tx.oncomplete = () => {
+    loadDataFromDB();
+    showToast('✅ Загружены демо-листы');
+    selectDrawing(sample[0]);
   };
 }
 
@@ -924,9 +951,11 @@ function handleLiveSearch(query) {
       document.getElementById('input-drawing-search').value = item.drawing_num;
     };
     
-    const litInfo = (item.lit_sp === '-' || !item.lit_sp) 
-      ? `ЛИТ:${item.lit_sb.toUpperCase()}` 
-      : `СБ:${item.lit_sb.toUpperCase()} / СП:${item.lit_sp.toUpperCase()}`;
+    const dbSbNorm = normLit(item.lit_sb);
+    const dbSpNorm = normLit(item.lit_sp);
+    const litInfo = (dbSpNorm === '-') 
+      ? `ЛИТ:${dbSbNorm.toUpperCase()}` 
+      : `СБ:${dbSbNorm.toUpperCase()} / СП:${dbSpNorm.toUpperCase()}`;
 
     div.innerHTML = `
       <div>
@@ -948,11 +977,12 @@ function selectDrawing(item) {
   document.getElementById('cur-drawing-num').innerText = item.drawing_num;
   document.getElementById('cur-drawing-name').innerText = 'Наименование: ' + item.name;
 
-  const hasSp = item.lit_sp && item.lit_sp !== '-';
+  const dbSpNorm = normLit(item.lit_sp);
+  const hasSp = (dbSpNorm !== '-');
 
-  document.getElementById('db-lit-sb').innerText = item.lit_sb || '-';
+  document.getElementById('db-lit-sb').innerText = normLit(item.lit_sb).toUpperCase();
   document.getElementById('lbl-db-sp').innerText = hasSp ? 'В БАЗЕ:' : 'НЕ ТРЕБ.:';
-  document.getElementById('db-lit-sp').innerText = hasSp ? item.lit_sp : '—';
+  document.getElementById('db-lit-sp').innerText = hasSp ? dbSpNorm.toUpperCase() : '—';
 
   document.getElementById('act-lit-sb').value = '';
   document.getElementById('act-lit-sp').value = hasSp ? '' : '—';
@@ -974,26 +1004,28 @@ function clearCurrentVerification() {
 
 function autoFillAndVerifyMatch() {
   if (!currentSelectedDrawing) return;
-  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
-  document.getElementById('act-lit-sb').value = currentSelectedDrawing.lit_sb || '';
-  document.getElementById('act-lit-sp').value = hasSp ? currentSelectedDrawing.lit_sp : '—';
+  const dbSbNorm = normLit(currentSelectedDrawing.lit_sb);
+  const dbSpNorm = normLit(currentSelectedDrawing.lit_sp);
+  const hasSp = (dbSpNorm !== '-');
+
+  document.getElementById('act-lit-sb').value = dbSbNorm !== '-' ? dbSbNorm : '';
+  document.getElementById('act-lit-sp').value = hasSp ? dbSpNorm : '—';
   runLiveComparison();
 }
 
 function runLiveComparison() {
   if (!currentSelectedDrawing) return;
-  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
+  const dbSb = normLit(currentSelectedDrawing.lit_sb);
+  const dbSp = normLit(currentSelectedDrawing.lit_sp);
+  const hasSp = (dbSp !== '-');
 
-  const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
-  const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
-
-  const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
-  const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
+  const actSb = normLit(document.getElementById('act-lit-sb').value);
+  const actSp = normLit(document.getElementById('act-lit-sp').value);
 
   const box = document.getElementById('verdict-display');
   const btn = document.getElementById('btn-save-verdict');
 
-  if (!actSb) {
+  if (actSb === '-' && (!hasSp || actSp === '-')) {
     box.className = 'verdict-box pending';
     box.innerHTML = '⏳ Введите литеру или подтвердите соответствие';
     btn.className = 'cartoon-btn btn-secondary';
@@ -1009,8 +1041,8 @@ function runLiveComparison() {
     btn.className = 'cartoon-btn btn-success';
   } else {
     let diff = [];
-    if (!isSbMatch) diff.push(`СБ: факт "${actSb}" ≠ база "${dbSb}"`);
-    if (hasSp && !isSpMatch) diff.push(`СП: факт "${actSp||'нет'}" ≠ база "${dbSp}"`);
+    if (!isSbMatch) diff.push(`СБ: факт "${formatReportLit(actSb)}" ≠ база "${formatReportLit(dbSb)}"`);
+    if (hasSp && !isSpMatch) diff.push(`СП: факт "${formatReportLit(actSp)}" ≠ база "${formatReportLit(dbSp)}"`);
 
     box.className = 'verdict-box mismatch';
     box.innerHTML = `⚠️ РАСХОЖДЕНИЕ: ${diff.join(' | ')}`;
@@ -1020,16 +1052,15 @@ function runLiveComparison() {
 
 function commitCurrentVerification() {
   if (!currentSelectedDrawing) return;
-  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
+  const dbSb = normLit(currentSelectedDrawing.lit_sb);
+  const dbSp = normLit(currentSelectedDrawing.lit_sp);
+  const hasSp = (dbSp !== '-');
 
-  const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
-  const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
+  const actSb = normLit(document.getElementById('act-lit-sb').value);
+  const actSp = normLit(document.getElementById('act-lit-sp').value);
   const comment = document.getElementById('act-comment').value.trim();
 
-  const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
-  const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
-
-  if (!actSb) return showToast('⚠️ Укажите литеру перед записью');
+  if (actSb === '-' && !hasSp) return showToast('⚠️ Укажите литеру перед записью');
 
   const isMatch = (actSb === dbSb) && (hasSp ? (actSp === dbSp) : true);
 
@@ -1039,9 +1070,9 @@ function commitCurrentVerification() {
     drawing_num: currentSelectedDrawing.drawing_num,
     name: currentSelectedDrawing.name,
     db_sb: dbSb,
-    db_sp: hasSp ? dbSp : '-',
-    act_sb: actSb || '-',
-    act_sp: hasSp ? (actSp || '-') : '-',
+    db_sp: dbSp,
+    act_sb: actSb,
+    act_sp: hasSp ? actSp : '-',
     comment: comment || '',
     status: isMatch ? 'MATCH' : 'MISMATCH',
     time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
@@ -1059,16 +1090,15 @@ function commitCurrentVerification() {
   };
 }
 
-/* ================= 6-ЗНАЧНАЯ СИНХРОНИЗАЦИЯ WEBRTC (БЕЗ CORS) ================= */
+/* ================= 6-ЗНАЧНАЯ ПРЯМАЯ СИНХРОНИЗАЦИЯ WEBRTC ================= */
 function generateDirectWebRTCPin() {
   if (verificationHistory.length === 0 && allDrawingsList.length === 0) {
     return alert('Нет данных для передачи. Проверьте хотя бы один чертёж или загрузите базу.');
   }
 
   const btn = document.getElementById('btn-generate-pin');
-  btn.innerText = '⏳ Создание PIN канала...';
+  btn.innerText = '⏳ Создание PIN...';
 
-  // Генерируем 6-значный код
   const pin = String(Math.floor(100000 + Math.random() * 900000));
   const peerId = 'archpin-' + pin;
 
@@ -1088,7 +1118,7 @@ function generateDirectWebRTCPin() {
 
     senderPeer.on('connection', (conn) => {
       conn.on('open', () => {
-        showToast('🔗 ПК подключился! Отправка смены...');
+        showToast('🔗 ПК подключился! Передача данных...');
         const payload = {
           drawings: allDrawingsList,
           logs: verificationHistory,
@@ -1101,17 +1131,16 @@ function generateDirectWebRTCPin() {
 
     senderPeer.on('error', (err) => {
       btn.innerText = '⚡ Создать 6-значный PIN смены';
-      // Если PIN случайно занят, пробуем заново
       if (err.type === 'unavailable-id') {
         generateDirectWebRTCPin();
       } else {
-        alert('Ошибка PeerJS: ' + err.type + '. Воспользуйтесь кнопкой «Копир. код» ниже.');
+        alert('Ошибка связи: ' + err.type + '. Воспользуйтесь кнопкой «Копир. код» ниже.');
       }
     });
 
   } catch(e) {
     btn.innerText = '⚡ Создать 6-значный PIN смены';
-    alert('Не удалось запустить WebRTC: ' + e.message);
+    alert('Не удалось запустить канал: ' + e.message);
   }
 }
 
@@ -1140,7 +1169,7 @@ function receiveDirectWebRTCPin() {
       const conn = receiverPeer.connect(targetPeerId, { reliable: true });
 
       conn.on('open', () => {
-        showToast('🔗 Соединено с телефоном! Скачивание...');
+        showToast('🔗 Соединено с телефоном! Загрузка...');
       });
 
       conn.on('data', (data) => {
@@ -1151,7 +1180,7 @@ function receiveDirectWebRTCPin() {
 
       conn.on('error', (e) => {
         btn.innerText = '📥 Загрузить';
-        alert('Ошибка связи с телефоном: ' + e);
+        alert('Ошибка приёма данных: ' + e);
       });
     });
 
@@ -1211,7 +1240,7 @@ function applySyncPacket(packet) {
   };
 }
 
-/* ================= ОФИЦИАЛЬНЫЙ МИНИМАЛИСТИЧНЫЙ WORD-ОТЧЁТ ================= */
+/* ================= ОФИЦИАЛЬНЫЙ WORD-ОТЧЁТ В РАЗМЕТКЕ СТРАНИЦЫ ================= */
 function generateMinimalistWordReport() {
   if (verificationHistory.length === 0) return alert('Журнал пуст.');
 
@@ -1221,66 +1250,142 @@ function generateMinimalistWordReport() {
   const reportTime = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 
   let docHTML = `
-  <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+  <html xmlns:o='urn:schemas-microsoft-com:office:office'
+        xmlns:w='urn:schemas-microsoft-com:office:word'
+        xmlns='http://www.w3.org/TR/REC-html40'>
   <head>
   <meta charset="utf-8">
   <title>Акт сверки архивной документации</title>
+  <!--[if gte mso 9]>
+  <xml>
+    <w:WordDocument>
+      <w:View>Print</w:View>
+      <w:Zoom>100</w:Zoom>
+      <w:DoNotOptimizeForBrowser/>
+    </w:WordDocument>
+  </xml>
+  <![endif]-->
   <style>
-    body { font-family: "Times New Roman", Times, serif; font-size: 12pt; line-height: 1.15; color: #000; margin: 20mm 15mm; }
-    .doc-header { text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 12pt; }
-    .doc-meta { width: 100%; margin-bottom: 14pt; border: none; }
-    .doc-meta td { border: none; padding: 2pt 0; font-size: 11pt; }
-    .section-title { font-size: 12pt; font-weight: bold; margin-top: 14pt; margin-bottom: 6pt; text-transform: uppercase; }
-    table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 14pt; }
-    table.data-table th { border: 1pt solid #000; padding: 4pt 5pt; font-size: 10pt; font-weight: bold; text-align: center; }
-    table.data-table td { border: 1pt solid #000; padding: 4pt 5pt; font-size: 10pt; vertical-align: middle; }
+    @page Section1 {
+      size: 297mm 210mm;
+      mso-page-orientation: landscape;
+      margin: 15mm 15mm 15mm 15mm;
+      mso-header-margin: 10mm;
+      mso-footer-margin: 10mm;
+    }
+    div.Section1 {
+      page: Section1;
+    }
+    body {
+      font-family: "Times New Roman", Times, serif;
+      font-size: 10pt;
+      line-height: 1.15;
+      color: #000000;
+    }
+    .doc-header {
+      text-align: center;
+      font-weight: bold;
+      font-size: 13pt;
+      text-transform: uppercase;
+      margin-bottom: 10pt;
+    }
+    .doc-meta {
+      width: 100%;
+      margin-bottom: 10pt;
+      border: none;
+    }
+    .doc-meta td {
+      border: none;
+      padding: 1.5pt 0;
+      font-size: 9.5pt;
+    }
+    .section-title {
+      font-size: 11pt;
+      font-weight: bold;
+      margin-top: 12pt;
+      margin-bottom: 5pt;
+      text-transform: uppercase;
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12pt;
+    }
+    table.data-table th {
+      border: 1pt solid #000000;
+      padding: 3.5pt 4pt;
+      font-size: 8.5pt;
+      font-weight: bold;
+      text-align: center;
+      background-color: #F2F2F2;
+    }
+    table.data-table td {
+      border: 1pt solid #000000;
+      padding: 3pt 4pt;
+      font-size: 8.5pt;
+      vertical-align: middle;
+    }
     .text-center { text-align: center; }
-    .sign-block { margin-top: 25pt; width: 100%; border: none; }
-    .sign-block td { border: none; padding: 10pt 0; font-size: 11pt; }
+    .sign-block {
+      margin-top: 20pt;
+      width: 100%;
+      border: none;
+    }
+    .sign-block td {
+      border: none;
+      padding: 6pt 0;
+      font-size: 9.5pt;
+    }
   </style>
   </head>
   <body>
+  <div class="Section1">
 
     <div class="doc-header">АКТ СВЕРКИ АРХИВНОЙ ДОКУМЕНТАЦИИ И ЛИТЕР</div>
 
     <table class="doc-meta">
       <tr>
-        <td style="width: 50%;"><b>Дата проверки:</b> ${reportDate} г.</td>
+        <td style="width: 50%;"><b>Дата проведения проверки:</b> ${reportDate} г.</td>
         <td style="width: 50%; text-align: right;"><b>Время формирования:</b> ${reportTime}</td>
       </tr>
       <tr><td colspan="2"><b>Общее количество проверенных позиций:</b> ${verificationHistory.length} шт.</td></tr>
       <tr><td colspan="2"><b>Соответствуют эталонным литерам:</b> ${matches.length} шт.</td></tr>
-      <tr><td colspan="2"><b>Требуют актуализации:</b> ${mismatches.length} шт.</td></tr>
+      <tr><td colspan="2"><b>Требуют актуализации / обновления литер:</b> ${mismatches.length} шт.</td></tr>
     </table>
 
+    <!-- РАЗДЕЛ 1: ПОЛНОЕ СООТВЕТСТВИЕ -->
     <div class="section-title">1. Документация с подтвержденным соответствием литер</div>
     <table class="data-table">
       <thead>
         <tr>
-          <th style="width: 4%;">№ п/п</th>
-          <th style="width: 14%;">Раздел (Лист)</th>
-          <th style="width: 22%;">Обозначение чертежа</th>
-          <th style="width: 24%;">Наименование</th>
-          <th style="width: 10%;">Литера СБ</th>
-          <th style="width: 10%;">Литера СП</th>
-          <th style="width: 16%;">Комментарий</th>
+          <th style="width: 3%;">№</th>
+          <th style="width: 12%;">Раздел (Лист)</th>
+          <th style="width: 20%;">Обозначение чертежа</th>
+          <th style="width: 25%;">Наименование</th>
+          <th style="width: 8%;">Литера СБ (Реестр)</th>
+          <th style="width: 8%;">Литера СБ (Факт)</th>
+          <th style="width: 8%;">Литера СП (Реестр)</th>
+          <th style="width: 8%;">Литера СП (Факт)</th>
+          <th style="width: 8%;">Комментарий</th>
         </tr>
       </thead>
       <tbody>
   `;
 
   if (matches.length === 0) {
-    docHTML += `<tr><td colspan="7" class="text-center">Позиции с подтвержденным соответствием отсутствуют</td></tr>`;
+    docHTML += `<tr><td colspan="9" class="text-center">Позиции с подтвержденным соответствием отсутствуют</td></tr>`;
   } else {
     matches.forEach((item, idx) => {
       docHTML += `
         <tr>
           <td class="text-center">${idx + 1}</td>
           <td class="text-center">${item.sheet_name}</td>
-          <td>${item.drawing_num}</td>
+          <td><b>${item.drawing_num}</b></td>
           <td>${item.name}</td>
-          <td class="text-center">${item.act_sb.toUpperCase()}</td>
-          <td class="text-center">${item.act_sp !== '-' ? item.act_sp.toUpperCase() : '—'}</td>
+          <td class="text-center">${formatReportLit(item.db_sb)}</td>
+          <td class="text-center">${formatReportLit(item.act_sb)}</td>
+          <td class="text-center">${formatReportLit(item.db_sp)}</td>
+          <td class="text-center">${formatReportLit(item.act_sp)}</td>
           <td>${item.comment || '—'}</td>
         </tr>
       `;
@@ -1291,36 +1396,40 @@ function generateMinimalistWordReport() {
       </tbody>
     </table>
 
+    <!-- РАЗДЕЛ 2: ВЕДОМОСТЬ РАСХОЖДЕНИЙ -->
     <div class="section-title">2. Ведомость документации, требующей актуализации литер</div>
     <table class="data-table">
       <thead>
         <tr>
-          <th style="width: 4%;">№ п/п</th>
-          <th style="width: 14%;">Раздел (Лист)</th>
-          <th style="width: 20%;">Обозначение чертежа</th>
-          <th style="width: 20%;">Наименование</th>
-          <th style="width: 11%;">Литера СБ (Факт/База)</th>
-          <th style="width: 11%;">Литера СП (Факт/База)</th>
-          <th style="width: 10%;">Действие</th>
-          <th style="width: 10%;">Комментарий</th>
+          <th style="width: 3%;">№</th>
+          <th style="width: 11%;">Раздел (Лист)</th>
+          <th style="width: 18%;">Обозначение чертежа</th>
+          <th style="width: 22%;">Наименование</th>
+          <th style="width: 8%;">Литера СБ (Реестр)</th>
+          <th style="width: 8%;">Литера СБ (Факт)</th>
+          <th style="width: 8%;">Литера СП (Реестр)</th>
+          <th style="width: 8%;">Литера СП (Факт)</th>
+          <th style="width: 6%;">Действие</th>
+          <th style="width: 8%;">Комментарий</th>
         </tr>
       </thead>
       <tbody>
   `;
 
   if (mismatches.length === 0) {
-    docHTML += `<tr><td colspan="8" class="text-center">Расхождений не выявлено.</td></tr>`;
+    docHTML += `<tr><td colspan="10" class="text-center">Расхождений не выявлено. Все проверенные литеры соответствуют реестру.</td></tr>`;
   } else {
     mismatches.forEach((item, idx) => {
-      const spFactBase = item.act_sp !== '-' ? `${item.act_sp.toUpperCase()} / ${item.db_sp.toUpperCase()}` : '—';
       docHTML += `
         <tr>
           <td class="text-center">${idx + 1}</td>
           <td class="text-center">${item.sheet_name}</td>
-          <td>${item.drawing_num}</td>
+          <td><b>${item.drawing_num}</b></td>
           <td>${item.name}</td>
-          <td class="text-center">${item.act_sb.toUpperCase()} / ${item.db_sb.toUpperCase()}</td>
-          <td class="text-center">${spFactBase}</td>
+          <td class="text-center">${formatReportLit(item.db_sb)}</td>
+          <td class="text-center" style="font-weight:bold;">${formatReportLit(item.act_sb)}</td>
+          <td class="text-center">${formatReportLit(item.db_sp)}</td>
+          <td class="text-center" style="font-weight:bold;">${formatReportLit(item.act_sp)}</td>
           <td class="text-center">Обновить</td>
           <td>${item.comment || '—'}</td>
         </tr>
@@ -1337,8 +1446,13 @@ function generateMinimalistWordReport() {
         <td style="width: 50%;">Ответственный оператор сверки:</td>
         <td style="width: 50%; text-align: right;">_________________ / _________________ /</td>
       </tr>
+      <tr>
+        <td style="width: 50%;">Представитель архива / ОТК:</td>
+        <td style="width: 50%; text-align: right;">_________________ / _________________ /</td>
+      </tr>
     </table>
 
+  </div>
   </body>
   </html>
   `;
@@ -1777,9 +1891,11 @@ function renderCatalog(filterText) {
       switchTab('check');
     };
     
-    const litInfo = (item.lit_sp === '-' || !item.lit_sp) 
-      ? `ЛИТ: ${item.lit_sb.toUpperCase()}` 
-      : `СБ: ${item.lit_sb.toUpperCase()} | СП: ${item.lit_sp.toUpperCase()}`;
+    const dbSb = normLit(item.lit_sb);
+    const dbSp = normLit(item.lit_sp);
+    const litInfo = (dbSp === '-') 
+      ? `ЛИТ: ${formatReportLit(dbSb)}` 
+      : `СБ: ${formatReportLit(dbSb)} | СП: ${formatReportLit(dbSp)}`;
 
     d.innerHTML = `
       <div>
@@ -1802,10 +1918,10 @@ function openDetailModal(id) {
   document.getElementById('modal-drawing-num').innerText = item.drawing_num;
   document.getElementById('modal-drawing-name').innerText = 'Наименование: ' + item.name;
 
-  document.getElementById('modal-db-sb').innerText = item.db_sb.toUpperCase();
-  document.getElementById('modal-act-sb').innerText = item.act_sb.toUpperCase();
-  document.getElementById('modal-db-sp').innerText = item.db_sp !== '-' ? item.db_sp.toUpperCase() : '—';
-  document.getElementById('modal-act-sp').innerText = item.act_sp !== '-' ? item.act_sp.toUpperCase() : '—';
+  document.getElementById('modal-db-sb').innerText = formatReportLit(item.db_sb);
+  document.getElementById('modal-act-sb').innerText = formatReportLit(item.act_sb);
+  document.getElementById('modal-db-sp').innerText = formatReportLit(item.db_sp);
+  document.getElementById('modal-act-sp').innerText = formatReportLit(item.act_sp);
 
   document.getElementById('modal-comment-text').innerText = item.comment || '—';
 
@@ -1867,8 +1983,13 @@ function renderLogs() {
     d.className = `log-item ${isM ? 'mismatch' : 'match'}`;
     d.onclick = () => openDetailModal(item.id);
 
-    const factLit = item.act_sp !== '-' ? `${item.act_sb.toUpperCase()}/${item.act_sp.toUpperCase()}` : item.act_sb.toUpperCase();
-    const baseLit = item.db_sp !== '-' ? `${item.db_sb.toUpperCase()}/${item.db_sp.toUpperCase()}` : item.db_sb.toUpperCase();
+    const actSb = formatReportLit(item.act_sb);
+    const dbSb = formatReportLit(item.db_sb);
+    const actSp = formatReportLit(item.act_sp);
+    const dbSp = formatReportLit(item.db_sp);
+
+    const factLit = (actSp !== '—') ? `${actSb}/${actSp}` : actSb;
+    const baseLit = (dbSp !== '—') ? `${dbSb}/${dbSp}` : dbSb;
     const commentBadge = item.comment ? `<div style="font-size:9.5px; color:#4A5568; margin-top:2px;">💬 ${item.comment}</div>` : '';
 
     d.innerHTML = `
