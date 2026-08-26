@@ -1,4 +1,4 @@
-const CACHE_NAME = 'archive-control-cache-v12';
+const CACHE_NAME = 'archive-control-cache-v14';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
