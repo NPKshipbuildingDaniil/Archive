@@ -196,10 +196,10 @@
 
   .cartoon-input {
     width: 100%;
-    padding: 7px 9px;
+    padding: 6px 8px;
     border: var(--border-main);
     border-radius: var(--radius-md);
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--secondary-dark);
     background: #FFFFFF;
@@ -256,9 +256,10 @@
   .btn-success { background: var(--accent-green); color: #FFFFFF; border-color: #065F46; box-shadow: 0 2px 0 #065F46; }
   .btn-danger { background: var(--accent-red); color: #FFFFFF; border-color: #991B1B; box-shadow: 0 2px 0 #991B1B; }
   .btn-word { background: #2B579A; color: #FFFFFF; border-color: #183B70; box-shadow: 0 2px 0 #183B70; }
+  .btn-sync { background: #6366F1; color: #FFFFFF; border-color: #4338CA; box-shadow: 0 2px 0 #4338CA; }
   .btn-sm { padding: 5px 8px; font-size: 10.5px; border-radius: var(--radius-sm); }
 
-  /* ЦИФРОВОЙ БЛОК (NUMPAD) */
+  /* ЦИФРОВОЙ БЛОК */
   .numpad-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -274,7 +275,7 @@
     font-size: 19px;
     font-weight: 900;
     color: var(--secondary-dark);
-    padding: 9px 0;
+    padding: 8px 0;
     box-shadow: 0 2px 0 var(--secondary-dark);
     cursor: pointer;
     display: flex;
@@ -282,7 +283,6 @@
     justify-content: center;
     user-select: none;
     -webkit-user-select: none;
-    transition: transform 0.05s ease;
   }
 
   .numpad-btn:active {
@@ -291,24 +291,8 @@
     background: #E2E8F0;
   }
 
-  .numpad-btn.action-btn {
-    background: var(--primary-bg);
-    font-size: 15px;
-    font-weight: 800;
-  }
-
-  .numpad-btn.del-btn {
-    background: #FEE2E2;
-    border-color: var(--accent-red);
-    color: var(--accent-red);
-    box-shadow: 0 2px 0 #991B1B;
-    font-size: 18px;
-  }
-
-  .numpad-btn.del-btn:active {
-    box-shadow: 0 0.5px 0 #991B1B;
-    background: #FCA5A5;
-  }
+  .numpad-btn.action-btn { background: var(--primary-bg); font-size: 15px; }
+  .numpad-btn.del-btn { background: #FEE2E2; border-color: var(--accent-red); color: var(--accent-red); box-shadow: 0 2px 0 #991B1B; }
 
   .drawing-code {
     font-family: monospace;
@@ -331,6 +315,19 @@
     text-transform: uppercase;
   }
 
+  /* БОЛЬШИЕ МЕТКИ СБ И СП */
+  .sb-sp-title-tag {
+    display: inline-block;
+    background: var(--secondary-dark);
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 2px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
   .compare-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -338,33 +335,27 @@
     background: #F8FAFC;
     border: 1.5px dashed var(--secondary-mid);
     border-radius: var(--radius-md);
-    padding: 6px;
-    margin-bottom: 6px;
+    padding: 5px;
+    margin-bottom: 4px;
   }
 
   .compare-col {
     display: flex;
     flex-direction: column;
     gap: 3px;
+    text-align: center;
   }
 
   .compare-cell-base {
     background: #F0F9FF;
     border: 1.5px solid var(--accent-sky);
     border-radius: var(--radius-sm);
-    padding: 4px;
+    padding: 3px;
     text-align: center;
   }
 
-  .compare-cell-base .title {
-    font-size: 8.5px;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: var(--secondary-mid);
-  }
-
   .compare-cell-base .val {
-    font-size: 18px;
+    font-size: 19px;
     font-weight: 900;
     color: var(--secondary-dark);
     text-transform: uppercase;
@@ -373,11 +364,11 @@
   .verdict-box {
     border: 1.5px solid;
     border-radius: var(--radius-md);
-    padding: 5px;
+    padding: 4px;
     text-align: center;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     font-weight: 800;
-    font-size: 11px;
+    font-size: 10.5px;
     line-height: 1.2;
   }
 
@@ -436,7 +427,6 @@
     box-shadow: 0 1px 0 var(--secondary-dark);
   }
 
-  .log-item:active { transform: scale(0.99); }
   .log-item.mismatch { border-left: 5px solid var(--accent-red); background: #FFF5F5; }
   .log-item.match { border-left: 5px solid var(--accent-green); background: #F0FDF4; }
 
@@ -510,7 +500,7 @@
       <div class="brand-logo">📐</div>
       <div class="brand-text">
         <h1>АРХИВ-КОНТРОЛЬ</h1>
-        <span>Сверка литер</span>
+        <span>Сверка & Синхронизация</span>
       </div>
     </div>
     <div class="header-badge" id="active-db-count">База: 0 шт</div>
@@ -526,10 +516,9 @@
 
   <main class="main-content">
 
-    <!-- 1. ВКЛАДКА СВЕРКИ (С ЦИФРОВЫМ БЛОКОМ) -->
+    <!-- 1. ВКЛАДКА СВЕРКИ -->
     <div id="view-check" class="view-panel active">
       
-      <!-- Поле поиска (с поддержкой прямого клика или экранного ввода) -->
       <div class="cartoon-card" style="margin-bottom: 5px; padding: 6px 8px; position: relative; flex-shrink: 0;">
         <div style="display: flex; gap: 4px; align-items: center;">
           <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Введите цифры чертежа..." autocomplete="off" oninput="handleLiveSearch(this.value)">
@@ -537,39 +526,46 @@
         </div>
       </div>
 
-      <!-- Всплывающий список подсказок -->
       <div id="search-dropdown-list" class="search-dropdown"></div>
 
-      <!-- Карточка выбранного чертежа (Появляется при выборе) -->
-      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1 1 auto; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 8px; min-height: 0;">
+      <!-- Карточка выбранного чертежа -->
+      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1 1 auto; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 6px 8px; min-height: 0;">
         <div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px;">
             <span class="sheet-badge" id="cur-sheet-name">Устройства</span>
             <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 2px 6px; font-size: 9.5px;" onclick="clearCurrentVerification()">Сброс</button>
           </div>
 
           <div class="drawing-code" id="cur-drawing-num" style="margin-bottom: 1px;">КСП01-362111.01-002</div>
 
-          <div style="font-size: 10.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="cur-drawing-name">
+          <div style="font-size: 10.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="cur-drawing-name">
             по с.3
           </div>
 
+          <!-- Сетка с БОЛЬШИМИ НАДПИСЯМИ СБ и СП -->
           <div class="compare-grid">
             <div class="compare-col">
+              <span class="sb-sp-title-tag">СБ (Чертёж)</span>
               <div class="compare-cell-base">
-                <div class="title" id="lbl-db-sb">СБ (в базе)</div>
+                <div style="font-size: 8px; font-weight:800; color:#7D8A9A;">В БАЗЕ:</div>
                 <div class="val" id="db-lit-sb">дт</div>
               </div>
-              <input type="text" id="act-lit-sb" class="cartoon-input" placeholder="Факт СБ" style="text-align: center; text-transform: lowercase; font-size: 16px; padding: 4px;" oninput="runLiveComparison()">
+              <input type="text" id="act-lit-sb" class="cartoon-input" placeholder="Факт СБ" style="text-align: center; text-transform: lowercase; font-size: 16px; padding: 3px;" oninput="runLiveComparison()">
             </div>
 
             <div class="compare-col">
+              <span class="sb-sp-title-tag">СП (Специф.)</span>
               <div class="compare-cell-base">
-                <div class="title" id="lbl-db-sp">СП (в базе)</div>
+                <div style="font-size: 8px; font-weight:800; color:#7D8A9A;" id="lbl-db-sp">В БАЗЕ:</div>
                 <div class="val" id="db-lit-sp">бт</div>
               </div>
-              <input type="text" id="act-lit-sp" class="cartoon-input" placeholder="Факт СП" style="text-align: center; text-transform: lowercase; font-size: 16px; padding: 4px;" oninput="runLiveComparison()">
+              <input type="text" id="act-lit-sp" class="cartoon-input" placeholder="Факт СП" style="text-align: center; text-transform: lowercase; font-size: 16px; padding: 3px;" oninput="runLiveComparison()">
             </div>
+          </div>
+
+          <!-- Поле КОММЕНТАРИЙ -->
+          <div style="margin-bottom: 4px;">
+            <input type="text" id="act-comment" class="cartoon-input" placeholder="💬 Комментарий (замято, размыто и т.д.)..." style="font-size: 11.5px; padding: 4px 7px;">
           </div>
 
           <div id="verdict-display" class="verdict-box pending">
@@ -577,24 +573,22 @@
           </div>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 5px; flex-shrink: 0;">
-          <button class="cartoon-btn btn-success" style="width: 100%; padding: 10px;" onclick="autoFillAndVerifyMatch()">
+        <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0;">
+          <button class="cartoon-btn btn-success" style="width: 100%; padding: 8px;" onclick="autoFillAndVerifyMatch()">
             ✅ Литеры совпадают (как в базе)
           </button>
-          <button id="btn-save-verdict" class="cartoon-btn btn-primary" style="width: 100%; padding: 10px;" onclick="commitCurrentVerification()">
+          <button id="btn-save-verdict" class="cartoon-btn btn-primary" style="width: 100%; padding: 8px;" onclick="commitCurrentVerification()">
             💾 Записать в журнал
           </button>
         </div>
       </div>
 
-      <!-- Зона поиска с ЦИФРОВЫМ БЛОКОМ (NUMPAD 3x3 + 0 + СТЕРЕТЬ) -->
+      <!-- Зона с цифровым блоком (NUMPAD) -->
       <div id="search-numpad-box" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; min-height: 0;">
-        
-        <div style="text-align: center; padding: 4px 0; color: var(--secondary-mid); font-size: 11px; font-weight: 700;">
-          Нажимайте цифры на экране для быстрого поиска:
+        <div style="text-align: center; padding: 2px 0; color: var(--secondary-mid); font-size: 10.5px; font-weight: 700;">
+          Экранный цифровой ввод (поиск по цифрам):
         </div>
 
-        <!-- КЛАВИАТУРА 3 НА 3 И ВНИЗУ 0 -->
         <div class="numpad-grid">
           <button class="numpad-btn" onclick="pressNumpad('1')">1</button>
           <button class="numpad-btn" onclick="pressNumpad('2')">2</button>
@@ -612,7 +606,6 @@
           <button class="numpad-btn" onclick="pressNumpad('0')">0</button>
           <button class="numpad-btn del-btn" onclick="pressBackspace()">⌫</button>
         </div>
-
       </div>
 
     </div>
@@ -688,20 +681,42 @@
       </div>
     </div>
 
-    <!-- 5. ФАЙЛЫ -->
+    <!-- 5. ФАЙЛЫ И СИНХРОНИЗАЦИЯ С ПК -->
     <div id="view-config" class="view-panel">
-      <div class="cartoon-card">
-        <div style="font-size: 11.5px; font-weight: 800; margin-bottom: 5px;">📊 Загрузка файла Excel</div>
+      
+      <!-- Загрузка Excel -->
+      <div class="cartoon-card" style="margin-bottom: 6px;">
+        <div style="font-size: 11.5px; font-weight: 800; margin-bottom: 4px;">📊 Загрузка файла Excel</div>
         <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv,.XLSX,.XLS,.CSV" style="display: none;" onchange="handleFileUpload(event)">
-        <div style="border: 2px dashed var(--secondary-mid); background: #F8FAFC; border-radius: var(--radius-md); padding: 16px 10px; text-align: center; cursor: pointer; margin-bottom: 6px;" onclick="document.getElementById('excel-file-input').click()">
-          <div style="font-size: 28px; margin-bottom: 2px;">📑</div>
-          <div style="font-size: 12px; font-weight: 800;">Выбрать файл Excel (.xlsx)</div>
-          <div style="font-size: 9.5px; color: var(--secondary-mid); margin-top: 2px;">Автоматически считывает все листы книги</div>
-        </div>
-        <button class="cartoon-btn btn-primary" style="width: 100%;" onclick="document.getElementById('excel-file-input').click()">
-          📂 Открыть файл на телефоне
+        <button class="cartoon-btn btn-primary" style="width: 100%; padding: 7px;" onclick="document.getElementById('excel-file-input').click()">
+          📂 Открыть файл Excel на устройстве
         </button>
       </div>
+
+      <!-- СИНХРОНИЗАЦИЯ ТЕЛЕФОН <-> ПК -->
+      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="font-size: 11.5px; font-weight: 800; margin-bottom: 4px;">🔄 Синхронизация Телефон ⟷ ПК</div>
+          <div style="font-size: 10px; color: var(--secondary-mid); margin-bottom: 8px; line-height: 1.3;">
+            Заполняйте данные на телефоне без интернета, а затем перенесите смену на компьютер в один клик:
+          </div>
+
+          <div class="btn-row" style="margin-bottom: 6px;">
+            <button class="cartoon-btn btn-sync" onclick="exportSyncDataText()">📤 Скопировать код смены</button>
+            <button class="cartoon-btn btn-sync" onclick="exportSyncDataFile()">💾 Скачать .sync</button>
+          </div>
+
+          <div style="margin-top: 6px;">
+            <input type="text" id="sync-import-input" class="cartoon-input" placeholder="Вставьте код смены сюда..." style="font-size: 11px; padding: 5px; margin-bottom: 4px;">
+            <button class="cartoon-btn btn-success" style="width: 100%; padding: 6px;" onclick="importSyncDataFromText()">📥 Применить данные смены на ПК</button>
+          </div>
+        </div>
+
+        <div style="font-size: 9.5px; color: var(--secondary-mid); text-align: center; margin-top: 6px;">
+          База данных сохраняется персистентно и защищена от сброса при обновлениях сайта.
+        </div>
+      </div>
+
     </div>
 
   </main>
@@ -741,6 +756,10 @@
         </div>
       </div>
 
+      <div id="modal-comment-box" style="font-size: 11px; background: #FFF; border: 1px solid var(--primary-alt); padding: 4px 6px; border-radius: 4px; margin-bottom: 6px; color: var(--secondary-dark);">
+        💬 <b>Комментарий:</b> <span id="modal-comment-text">—</span>
+      </div>
+
       <div id="modal-status-badge" class="verdict-box" style="margin-bottom: 5px;">-</div>
       <div style="font-size: 10px; color: var(--secondary-mid); margin-bottom: 8px; text-align: center;" id="modal-timestamp">-</div>
 
@@ -761,7 +780,13 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const DB_NAME = 'DrawingArchiveDB_v9';
+// Защита от сброса хранилища браузером
+if (navigator.storage && navigator.storage.persist) {
+  navigator.storage.persist();
+}
+
+// Постоянное единое имя базы
+const DB_NAME = 'DrawingArchiveDB_Permanent';
 let dbInstance = null;
 let allDrawingsList = [];
 let verificationHistory = [];
@@ -808,26 +833,7 @@ async function loadDataFromDB() {
   };
 }
 
-function loadEmbeddedDemoData() {
-  const sample = [
-    { id: 1, sheet_name: 'Устройства', drawing_num: 'КСП01-362111.01-002', name: 'по с.3', lit_sb: 'дт', lit_sp: 'бт' },
-    { id: 2, sheet_name: 'Устройства', drawing_num: 'КСП01-362111.01-003', name: 'Вал привода', lit_sb: 'ат', lit_sp: 'бт' },
-    { id: 3, sheet_name: 'Электрика', drawing_num: 'КСП01-362662-001СБ', name: 'Установка антенн', lit_sb: 'ет', lit_sp: '-' },
-    { id: 4, sheet_name: 'Электрика', drawing_num: 'КСП01-362662-002', name: 'Установка антенн', lit_sb: 'ет', lit_sp: '-' },
-    { id: 5, sheet_name: 'Механика', drawing_num: '362154.112', name: 'Корпус редуктора', lit_sb: 'аг', lit_sp: 'вг' }
-  ];
-
-  const tx = dbInstance.transaction('drawings', 'readwrite');
-  const store = tx.objectStore('drawings');
-  store.clear();
-  sample.forEach(item => store.put(item));
-  tx.oncomplete = () => {
-    loadDataFromDB();
-    showToast('✅ Загружены демо-листы');
-  };
-}
-
-/* ================= ЭКРАННЫЙ ЦИФРОВОЙ БЛОК (NUMPAD) ================= */
+/* ================= ЭКРАННЫЙ ЦИФРОВОЙ БЛОК ================= */
 function pressNumpad(digit) {
   const input = document.getElementById('input-drawing-search');
   input.value += digit;
@@ -904,15 +910,14 @@ function selectDrawing(item) {
 
   const hasSp = item.lit_sp && item.lit_sp !== '-';
 
-  document.getElementById('lbl-db-sb').innerText = hasSp ? 'СБ (в базе)' : 'Литера (база)';
   document.getElementById('db-lit-sb').innerText = item.lit_sb || '-';
-
-  document.getElementById('lbl-db-sp').innerText = hasSp ? 'СП (в базе)' : 'СП (не треб.)';
+  document.getElementById('lbl-db-sp').innerText = hasSp ? 'В БАЗЕ:' : 'НЕ ТРЕБ.:';
   document.getElementById('db-lit-sp').innerText = hasSp ? item.lit_sp : '—';
 
   document.getElementById('act-lit-sb').value = '';
   document.getElementById('act-lit-sp').value = hasSp ? '' : '—';
   document.getElementById('act-lit-sp').disabled = !hasSp;
+  document.getElementById('act-comment').value = '';
 
   document.getElementById('verify-box').style.display = 'flex';
   document.getElementById('search-numpad-box').style.display = 'none';
@@ -979,6 +984,7 @@ function commitCurrentVerification() {
 
   const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
   const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
+  const comment = document.getElementById('act-comment').value.trim();
 
   const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
   const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
@@ -996,6 +1002,7 @@ function commitCurrentVerification() {
     db_sp: hasSp ? dbSp : '-',
     act_sb: actSb || '-',
     act_sp: hasSp ? (actSp || '-') : '-',
+    comment: comment || '',
     status: isMatch ? 'MATCH' : 'MISMATCH',
     time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
     date: new Date().toLocaleDateString('ru-RU')
@@ -1010,6 +1017,217 @@ function commitCurrentVerification() {
     showToast(isMatch ? '✅ Записано (Норма)' : '⚠️ Записано в расхождения');
     clearCurrentVerification();
   };
+}
+
+/* ================= СИНХРОНИЗАЦИЯ ТЕЛЕФОН <-> ПК ================= */
+function exportSyncDataText() {
+  if (verificationHistory.length === 0 && allDrawingsList.length === 0) {
+    return alert('Нет данных для синхронизации');
+  }
+  const syncPacket = {
+    drawings: allDrawingsList,
+    logs: verificationHistory,
+    timestamp: Date.now()
+  };
+  const jsonStr = JSON.stringify(syncPacket);
+  const code = btoa(encodeURIComponent(jsonStr));
+  navigator.clipboard.writeText(code).then(() => {
+    showToast('📋 Код смены скопирован в буфер!');
+  }).catch(() => {
+    prompt('Скопируйте код синхронизации вручную:', code);
+  });
+}
+
+function exportSyncDataFile() {
+  const syncPacket = {
+    drawings: allDrawingsList,
+    logs: verificationHistory,
+    timestamp: Date.now()
+  };
+  const blob = new Blob([JSON.stringify(syncPacket)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Смена_Архив_${new Date().toISOString().slice(0,10)}.sync`;
+  a.click();
+  showToast('💾 Файл смены скачан');
+}
+
+function importSyncDataFromText() {
+  const code = document.getElementById('sync-import-input').value.trim();
+  if (!code) return showToast('⚠️ Вставьте код смены');
+
+  try {
+    const jsonStr = decodeURIComponent(atob(code));
+    const packet = JSON.parse(jsonStr);
+    applySyncPacket(packet);
+  } catch(e) {
+    alert('Неверный код синхронизации: ' + e.message);
+  }
+}
+
+function applySyncPacket(packet) {
+  if (!packet.drawings && !packet.logs) return alert('Файл не содержит данных смены');
+
+  const tx = dbInstance.transaction(['drawings', 'logs'], 'readwrite');
+  if (packet.drawings && packet.drawings.length > 0) {
+    const storeD = tx.objectStore('drawings');
+    storeD.clear();
+    packet.drawings.forEach(d => storeD.put(d));
+  }
+  if (packet.logs && packet.logs.length > 0) {
+    const storeL = tx.objectStore('logs');
+    storeL.clear();
+    packet.logs.forEach(l => storeL.put(l));
+  }
+  tx.oncomplete = () => {
+    loadDataFromDB();
+    showToast('✅ Данные успешно перенесены на ПК!');
+    document.getElementById('sync-import-input').value = '';
+    switchTab('log');
+  };
+}
+
+/* ================= ОФИЦИАЛЬНЫЙ МИНИМАЛИСТИЧНЫЙ WORD-ОТЧЁТ ================= */
+function generateMinimalistWordReport() {
+  if (verificationHistory.length === 0) return alert('Журнал пуст.');
+
+  const matches = verificationHistory.filter(i => i.status === 'MATCH');
+  const mismatches = verificationHistory.filter(i => i.status === 'MISMATCH');
+  const reportDate = new Date().toLocaleDateString('ru-RU');
+  const reportTime = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+  let docHTML = `
+  <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+  <head>
+  <meta charset="utf-8">
+  <title>Акт сверки архивной документации</title>
+  <style>
+    body { font-family: "Times New Roman", Times, serif; font-size: 12pt; line-height: 1.15; color: #000; margin: 20mm 15mm; }
+    .doc-header { text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 12pt; }
+    .doc-meta { width: 100%; margin-bottom: 14pt; border: none; }
+    .doc-meta td { border: none; padding: 2pt 0; font-size: 11pt; }
+    .section-title { font-size: 12pt; font-weight: bold; margin-top: 14pt; margin-bottom: 6pt; text-transform: uppercase; }
+    table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 14pt; }
+    table.data-table th { border: 1pt solid #000; padding: 4pt 5pt; font-size: 10pt; font-weight: bold; text-align: center; }
+    table.data-table td { border: 1pt solid #000; padding: 4pt 5pt; font-size: 10pt; vertical-align: middle; }
+    .text-center { text-align: center; }
+    .sign-block { margin-top: 25pt; width: 100%; border: none; }
+    .sign-block td { border: none; padding: 10pt 0; font-size: 11pt; }
+  </style>
+  </head>
+  <body>
+
+    <div class="doc-header">АКТ СВЕРКИ АРХИВНОЙ ДОКУМЕНТАЦИИ И ЛИТЕР</div>
+
+    <table class="doc-meta">
+      <tr>
+        <td style="width: 50%;"><b>Дата проверки:</b> ${reportDate} г.</td>
+        <td style="width: 50%; text-align: right;"><b>Время формирования:</b> ${reportTime}</td>
+      </tr>
+      <tr><td colspan="2"><b>Общее количество проверенных позиций:</b> ${verificationHistory.length} шт.</td></tr>
+      <tr><td colspan="2"><b>Соответствуют эталонным литерам:</b> ${matches.length} шт.</td></tr>
+      <tr><td colspan="2"><b>Требуют актуализации:</b> ${mismatches.length} шт.</td></tr>
+    </table>
+
+    <div class="section-title">1. Документация с подтвержденным соответствием литер</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 4%;">№ п/п</th>
+          <th style="width: 14%;">Раздел (Лист)</th>
+          <th style="width: 22%;">Обозначение чертежа</th>
+          <th style="width: 24%;">Наименование</th>
+          <th style="width: 10%;">Литера СБ</th>
+          <th style="width: 10%;">Литера СП</th>
+          <th style="width: 16%;">Комментарий</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (matches.length === 0) {
+    docHTML += `<tr><td colspan="7" class="text-center">Позиции с подтвержденным соответствием отсутствуют</td></tr>`;
+  } else {
+    matches.forEach((item, idx) => {
+      docHTML += `
+        <tr>
+          <td class="text-center">${idx + 1}</td>
+          <td class="text-center">${item.sheet_name}</td>
+          <td>${item.drawing_num}</td>
+          <td>${item.name}</td>
+          <td class="text-center">${item.act_sb.toUpperCase()}</td>
+          <td class="text-center">${item.act_sp !== '-' ? item.act_sp.toUpperCase() : '—'}</td>
+          <td>${item.comment || '—'}</td>
+        </tr>
+      `;
+    });
+  }
+
+  docHTML += `
+      </tbody>
+    </table>
+
+    <div class="section-title">2. Ведомость документации, требующей актуализации литер</div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th style="width: 4%;">№ п/п</th>
+          <th style="width: 14%;">Раздел (Лист)</th>
+          <th style="width: 20%;">Обозначение чертежа</th>
+          <th style="width: 20%;">Наименование</th>
+          <th style="width: 11%;">Литера СБ (Факт/База)</th>
+          <th style="width: 11%;">Литера СП (Факт/База)</th>
+          <th style="width: 10%;">Действие</th>
+          <th style="width: 10%;">Комментарий</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  if (mismatches.length === 0) {
+    docHTML += `<tr><td colspan="8" class="text-center">Расхождений не выявлено.</td></tr>`;
+  } else {
+    mismatches.forEach((item, idx) => {
+      const spFactBase = item.act_sp !== '-' ? `${item.act_sp.toUpperCase()} / ${item.db_sp.toUpperCase()}` : '—';
+      docHTML += `
+        <tr>
+          <td class="text-center">${idx + 1}</td>
+          <td class="text-center">${item.sheet_name}</td>
+          <td>${item.drawing_num}</td>
+          <td>${item.name}</td>
+          <td class="text-center">${item.act_sb.toUpperCase()} / ${item.db_sb.toUpperCase()}</td>
+          <td class="text-center">${spFactBase}</td>
+          <td class="text-center">Обновить</td>
+          <td>${item.comment || '—'}</td>
+        </tr>
+      `;
+    });
+  }
+
+  docHTML += `
+      </tbody>
+    </table>
+
+    <table class="sign-block">
+      <tr>
+        <td style="width: 50%;">Ответственный оператор сверки:</td>
+        <td style="width: 50%; text-align: right;">_________________ / _________________ /</td>
+      </tr>
+    </table>
+
+  </body>
+  </html>
+  `;
+
+  const blob = new Blob(['\ufeff' + docHTML], { type: 'application/msword;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Акт_сверки_литер_${reportDate.replace(/\./g, '_')}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast('📄 Официальный акт Word скачан');
 }
 
 /* ================= АВТОНОМНЫЙ ПАРСЕР XLSX / CSV ================= */
@@ -1225,7 +1443,7 @@ function saveParsedRowsToDB(sheetsData) {
   };
 }
 
-/* ================= ДВИЖОК OCR: КАДРИРОВАНИЕ ПО РАМКЕ ================= */
+/* ================= ДВИЖОК OCR ================= */
 async function toggleCamera() {
   const btn = document.getElementById('btn-toggle-cam');
   const v = document.getElementById('camera-video');
@@ -1405,7 +1623,7 @@ function findBestMatchingDrawingsFromOCR(ocrRawText) {
   showToast(`✅ Найдено совпадений: ${scoredList.length}`);
 }
 
-/* ================= КАТАЛОГ ВСЕХ ЧЕРТЕЖЕЙ (СКРОЛЛ) ================= */
+/* ================= КАТАЛОГ ВСЕХ ЧЕРТЕЖЕЙ ================= */
 function renderCatalog(filterText) {
   const container = document.getElementById('catalog-list-container');
   const cleanQ = filterText.trim().toLowerCase().replace(/[\s\-_.]/g, '');
@@ -1451,7 +1669,7 @@ function renderCatalog(filterText) {
   });
 }
 
-/* ================= ЖУРНАЛ И КАРТОЧКА (СКРОЛЛ) ================= */
+/* ================= ЖУРНАЛ ================= */
 function openDetailModal(id) {
   const item = verificationHistory.find(i => i.id === id);
   if (!item) return;
@@ -1464,6 +1682,8 @@ function openDetailModal(id) {
   document.getElementById('modal-act-sb').innerText = item.act_sb.toUpperCase();
   document.getElementById('modal-db-sp').innerText = item.db_sp !== '-' ? item.db_sp.toUpperCase() : '—';
   document.getElementById('modal-act-sp').innerText = item.act_sp !== '-' ? item.act_sp.toUpperCase() : '—';
+
+  document.getElementById('modal-comment-text').innerText = item.comment || '—';
 
   const badge = document.getElementById('modal-status-badge');
   if (item.status === 'MATCH') {
@@ -1525,6 +1745,7 @@ function renderLogs() {
 
     const factLit = item.act_sp !== '-' ? `${item.act_sb.toUpperCase()}/${item.act_sp.toUpperCase()}` : item.act_sb.toUpperCase();
     const baseLit = item.db_sp !== '-' ? `${item.db_sb.toUpperCase()}/${item.db_sp.toUpperCase()}` : item.db_sb.toUpperCase();
+    const commentBadge = item.comment ? `<div style="font-size:9.5px; color:#4A5568; margin-top:2px;">💬 ${item.comment}</div>` : '';
 
     d.innerHTML = `
       <div style="flex: 1 1 auto; overflow: hidden; padding-right: 4px;">
@@ -1534,6 +1755,7 @@ function renderLogs() {
         <div style="font-size:10px; font-weight:700; margin-top:1px;">
           ${isM ? `<span style="color:var(--accent-red)">Факт: ${factLit}</span> (База: ${baseLit})` : `<span style="color:var(--accent-green)">Литеры [${factLit}] — Норма</span>`}
         </div>
+        ${commentBadge}
       </div>
       <div>
         <button class="log-del-btn" onclick="deleteSingleLog(${item.id}, event)">🗑️</button>
@@ -1553,145 +1775,6 @@ function clearLogHistory() {
       showToast('Журнал полностью очищен');
     };
   }
-}
-
-/* ================= ОФИЦИАЛЬНЫЙ МИНИМАЛИСТИЧНЫЙ WORD-ОТЧЁТ ================= */
-function generateMinimalistWordReport() {
-  if (verificationHistory.length === 0) return alert('Журнал пуст.');
-
-  const matches = verificationHistory.filter(i => i.status === 'MATCH');
-  const mismatches = verificationHistory.filter(i => i.status === 'MISMATCH');
-  const reportDate = new Date().toLocaleDateString('ru-RU');
-  const reportTime = new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-
-  let docHTML = `
-  <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-  <head>
-  <meta charset="utf-8">
-  <title>Акт сверки архивной документации</title>
-  <style>
-    body { font-family: "Times New Roman", Times, serif; font-size: 12pt; line-height: 1.15; color: #000; margin: 20mm 15mm; }
-    .doc-header { text-align: center; font-weight: bold; font-size: 14pt; text-transform: uppercase; margin-bottom: 12pt; }
-    .doc-meta { width: 100%; margin-bottom: 14pt; border: none; }
-    .doc-meta td { border: none; padding: 2pt 0; font-size: 11pt; }
-    .section-title { font-size: 12pt; font-weight: bold; margin-top: 14pt; margin-bottom: 6pt; text-transform: uppercase; }
-    table.data-table { width: 100%; border-collapse: collapse; margin-bottom: 14pt; }
-    table.data-table th { border: 1pt solid #000; padding: 4pt 5pt; font-size: 10pt; font-weight: bold; text-align: center; }
-    table.data-table td { border: 1pt solid #000; padding: 4pt 5pt; font-size: 10pt; vertical-align: middle; }
-    .text-center { text-align: center; }
-    .sign-block { margin-top: 25pt; width: 100%; border: none; }
-    .sign-block td { border: none; padding: 10pt 0; font-size: 11pt; }
-  </style>
-  </head>
-  <body>
-
-    <div class="doc-header">АКТ СВЕРКИ АРХИВНОЙ ДОКУМЕНТАЦИИ И ЛИТЕР</div>
-
-    <table class="doc-meta">
-      <tr>
-        <td style="width: 50%;"><b>Дата проверки:</b> ${reportDate} г.</td>
-        <td style="width: 50%; text-align: right;"><b>Время формирования:</b> ${reportTime}</td>
-      </tr>
-      <tr><td colspan="2"><b>Общее количество проверенных позиций:</b> ${verificationHistory.length} шт.</td></tr>
-      <tr><td colspan="2"><b>Соответствуют эталонным литерам:</b> ${matches.length} шт.</td></tr>
-      <tr><td colspan="2"><b>Требуют актуализации:</b> ${mismatches.length} шт.</td></tr>
-    </table>
-
-    <div class="section-title">1. Документация с подтвержденным соответствием литер</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 5%;">№ п/п</th>
-          <th style="width: 18%;">Раздел (Лист)</th>
-          <th style="width: 25%;">Обозначение чертежа</th>
-          <th style="width: 28%;">Наименование</th>
-          <th style="width: 12%;">Литера СБ</th>
-          <th style="width: 12%;">Литера СП</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  if (matches.length === 0) {
-    docHTML += `<tr><td colspan="6" class="text-center">Позиции с подтвержденным соответствием отсутствуют</td></tr>`;
-  } else {
-    matches.forEach((item, idx) => {
-      docHTML += `
-        <tr>
-          <td class="text-center">${idx + 1}</td>
-          <td class="text-center">${item.sheet_name}</td>
-          <td>${item.drawing_num}</td>
-          <td>${item.name}</td>
-          <td class="text-center">${item.act_sb.toUpperCase()}</td>
-          <td class="text-center">${item.act_sp !== '-' ? item.act_sp.toUpperCase() : '—'}</td>
-        </tr>
-      `;
-    });
-  }
-
-  docHTML += `
-      </tbody>
-    </table>
-
-    <div class="section-title">2. Ведомость документации, требующей актуализации литер</div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th style="width: 4%;">№ п/п</th>
-          <th style="width: 16%;">Раздел (Лист)</th>
-          <th style="width: 23%;">Обозначение чертежа</th>
-          <th style="width: 23%;">Наименование</th>
-          <th style="width: 12%;">Литера СБ (Факт/База)</th>
-          <th style="width: 12%;">Литера СП (Факт/База)</th>
-          <th style="width: 10%;">Действие</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  if (mismatches.length === 0) {
-    docHTML += `<tr><td colspan="7" class="text-center">Расхождений не выявлено.</td></tr>`;
-  } else {
-    mismatches.forEach((item, idx) => {
-      const spFactBase = item.act_sp !== '-' ? `${item.act_sp.toUpperCase()} / ${item.db_sp.toUpperCase()}` : '—';
-      docHTML += `
-        <tr>
-          <td class="text-center">${idx + 1}</td>
-          <td class="text-center">${item.sheet_name}</td>
-          <td>${item.drawing_num}</td>
-          <td>${item.name}</td>
-          <td class="text-center">${item.act_sb.toUpperCase()} / ${item.db_sb.toUpperCase()}</td>
-          <td class="text-center">${spFactBase}</td>
-          <td class="text-center">Обновить</td>
-        </tr>
-      `;
-    });
-  }
-
-  docHTML += `
-      </tbody>
-    </table>
-
-    <table class="sign-block">
-      <tr>
-        <td style="width: 50%;">Ответственный оператор сверки:</td>
-        <td style="width: 50%; text-align: right;">_________________ / _________________ /</td>
-      </tr>
-    </table>
-
-  </body>
-  </html>
-  `;
-
-  const blob = new Blob(['\ufeff' + docHTML], { type: 'application/msword;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Акт_сверки_литер_${reportDate.replace(/\./g, '_')}.doc`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  showToast('📄 Официальный акт Word скачан');
 }
 
 function switchTab(tabId) {
