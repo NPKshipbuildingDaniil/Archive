@@ -12,6 +12,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icon.svg">
 
+<!-- Движок прямого WebRTC моста PeerJS (без CORS) -->
+<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <!-- OCR Движок -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
@@ -376,19 +378,19 @@
   .verdict-box.mismatch { background: #FEF2F2; border-color: var(--accent-red); color: #991B1B; }
   .verdict-box.pending { background: #FFFBEB; border-color: var(--accent-amber); color: #92400E; }
 
-  /* ПЛАШКА 6-ЗНАЧНОГО КОДА */
+  /* ПЛАШКА 6-ЗНАЧНОГО PIN КОДА */
   .pin-code-display {
     background: #1E1B4B;
     color: #A5B4FC;
     border: 2px solid var(--accent-purple);
     border-radius: var(--radius-md);
-    padding: 10px;
+    padding: 8px;
     text-align: center;
     font-family: monospace;
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 900;
-    letter-spacing: 6px;
-    margin: 6px 0;
+    letter-spacing: 5px;
+    margin: 4px 0;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
   }
 
@@ -697,7 +699,7 @@
       </div>
     </div>
 
-    <!-- 5. ФАЙЛЫ И ОБЛАЧНЫЙ 6-ЗНАЧНЫЙ PIN-КОД -->
+    <!-- 5. ФАЙЛЫ И 6-ЗНАЧНЫЙ PIN-МОСТ -->
     <div id="view-config" class="view-panel">
       
       <!-- Загрузка Excel -->
@@ -709,17 +711,17 @@
         </button>
       </div>
 
-      <!-- ОБЛАЧНЫЙ 6-ЗНАЧНЫЙ МОСТ (ТЕЛЕФОН <-> ПК) -->
+      <!-- 6-ЗНАЧНЫЙ PIN-МОСТ -->
       <div class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; margin-bottom: 0;">
         <div>
-          <div style="font-size: 12px; font-weight: 800; color: var(--accent-purple); margin-bottom: 2px;">☁️ Облачная передача смены (Телефон ➔ ПК)</div>
+          <div style="font-size: 12px; font-weight: 800; color: var(--accent-purple); margin-bottom: 2px;">⚡ Прямая передача смены по PIN (Телефон ➔ ПК)</div>
           <div style="font-size: 10px; color: var(--secondary-mid); margin-bottom: 6px; line-height: 1.3;">
             1. Нажмите <b>«Создать PIN»</b> на телефоне.<br>
-            2. Введите 6 цифр на компьютере и нажмите <b>«Загрузить»</b>.
+            2. Введите эти 6 цифр на компьютере и нажмите <b>«Загрузить»</b>.
           </div>
 
           <!-- Кнопка генерации PIN -->
-          <button class="cartoon-btn btn-sync" id="btn-generate-pin" style="width: 100%; padding: 9px;" onclick="generateCloud6DigitPIN()">
+          <button class="cartoon-btn btn-sync" id="btn-generate-pin" style="width: 100%; padding: 9px;" onclick="generateDirectWebRTCPin()">
             ⚡ Создать 6-значный PIN смены
           </button>
 
@@ -729,7 +731,9 @@
               КОД ДЛЯ ВВОДА НА КОМПЬЮТЕРЕ:
             </div>
             <div class="pin-code-display" id="pin-code-val">------</div>
-            <div style="font-size: 9px; color: var(--secondary-mid); text-align: center;">(Код активен для загрузки на ПК)</div>
+            <div style="font-size: 9px; color: var(--accent-green); text-align: center; font-weight: 800;">
+              🟢 Канал открыт. Введите код на ПК для мгновенной загрузки.
+            </div>
           </div>
 
           <!-- Прием на ПК по PIN -->
@@ -737,14 +741,14 @@
             <div style="font-size: 10.5px; font-weight: 800; margin-bottom: 4px;">ПРИЁМ СМЕНЫ НА ПК:</div>
             <div style="display: flex; gap: 4px;">
               <input type="text" id="input-receive-pin" class="cartoon-input" placeholder="6 цифр PIN..." maxlength="6" style="text-align: center; font-size: 17px; font-family: monospace; letter-spacing: 3px;">
-              <button class="cartoon-btn btn-success" style="width: auto; padding: 0 12px;" onclick="receiveCloud6DigitPIN()">📥 Загрузить</button>
+              <button class="cartoon-btn btn-success" id="btn-receive-pin" style="width: auto; padding: 0 12px;" onclick="receiveDirectWebRTCPin()">📥 Загрузить</button>
             </div>
           </div>
         </div>
 
-        <!-- Резервные офлайн методы -->
+        <!-- Резервный метод -->
         <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--primary-alt);">
-          <div style="font-size: 9.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 3px;">Резервные методы (без сети):</div>
+          <div style="font-size: 9.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 3px;">Резервные методы:</div>
           <div class="btn-row">
             <button class="cartoon-btn btn-secondary btn-sm" onclick="exportSyncDataText()">📋 Копир. код</button>
             <button class="cartoon-btn btn-secondary btn-sm" onclick="exportSyncDataFile()">💾 Файл .sync</button>
@@ -815,7 +819,6 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Защита от сброса кэша браузером
 if (navigator.storage && navigator.storage.persist) {
   navigator.storage.persist();
 }
@@ -827,6 +830,9 @@ let verificationHistory = [];
 let currentSelectedDrawing = null;
 let videoStream = null;
 let activeLogFilter = 'all';
+
+let senderPeer = null;
+let receiverPeer = null;
 
 function initDB() {
   return new Promise((resolve) => {
@@ -1053,69 +1059,63 @@ function commitCurrentVerification() {
   };
 }
 
-/* ================= ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ ПО 6-ЗНАЧНОМУ КОДУ ================= */
-// Используется открытый REST релей JsonBlob с CORS
-const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob';
-
-async function generateCloud6DigitPIN() {
+/* ================= 6-ЗНАЧНАЯ СИНХРОНИЗАЦИЯ WEBRTC (БЕЗ CORS) ================= */
+function generateDirectWebRTCPin() {
   if (verificationHistory.length === 0 && allDrawingsList.length === 0) {
-    return alert('Нет данных для отправки');
+    return alert('Нет данных для передачи. Проверьте хотя бы один чертёж или загрузите базу.');
   }
 
   const btn = document.getElementById('btn-generate-pin');
-  btn.innerText = '⏳ Отправка в облако...';
+  btn.innerText = '⏳ Создание PIN канала...';
 
   // Генерируем 6-значный код
-  const pinCode = String(Math.floor(100000 + Math.random() * 900000));
+  const pin = String(Math.floor(100000 + Math.random() * 900000));
+  const peerId = 'archpin-' + pin;
 
-  const syncPacket = {
-    pin: pinCode,
-    drawings: allDrawingsList,
-    logs: verificationHistory,
-    timestamp: Date.now()
-  };
+  if (senderPeer) {
+    try { senderPeer.destroy(); } catch(e){}
+  }
 
   try {
-    const response = await fetch(CLOUD_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Sync-PIN': pinCode
-      },
-      body: JSON.stringify(syncPacket)
+    senderPeer = new Peer(peerId);
+
+    senderPeer.on('open', () => {
+      document.getElementById('pin-code-val').innerText = pin.slice(0,3) + ' ' + pin.slice(3);
+      document.getElementById('pin-display-wrapper').style.display = 'block';
+      btn.innerText = '⚡ Обновить PIN код';
+      showToast(`✅ PIN: ${pin}. Введите его на ПК`);
     });
 
-    if (!response.ok) throw new Error('Ошибка сервера');
-    
-    // Получаем уникальный ID блоба из заголовка Location
-    const locationUrl = response.headers.get('Location') || '';
-    const blobId = locationUrl.split('/').pop();
+    senderPeer.on('connection', (conn) => {
+      conn.on('open', () => {
+        showToast('🔗 ПК подключился! Отправка смены...');
+        const payload = {
+          drawings: allDrawingsList,
+          logs: verificationHistory,
+          timestamp: Date.now()
+        };
+        conn.send(payload);
+        setTimeout(() => showToast('✅ Смена успешно передана на ПК!'), 600);
+      });
+    });
 
-    // Сохраняем связку PIN -> BlobId в реестр
-    await registerPinMapping(pinCode, blobId);
+    senderPeer.on('error', (err) => {
+      btn.innerText = '⚡ Создать 6-значный PIN смены';
+      // Если PIN случайно занят, пробуем заново
+      if (err.type === 'unavailable-id') {
+        generateDirectWebRTCPin();
+      } else {
+        alert('Ошибка PeerJS: ' + err.type + '. Воспользуйтесь кнопкой «Копир. код» ниже.');
+      }
+    });
 
-    document.getElementById('pin-code-val').innerText = pinCode.slice(0,3) + ' ' + pinCode.slice(3);
-    document.getElementById('pin-display-wrapper').style.display = 'block';
-    btn.innerText = '⚡ Обновить PIN код смены';
-    showToast(`✅ Смена отправлена! Код: ${pinCode}`);
   } catch(e) {
     btn.innerText = '⚡ Создать 6-значный PIN смены';
-    alert('Не удалось отправить в облако. Проверьте интернет или воспользуйтесь кнопкой «Копир. код» ниже: ' + e.message);
+    alert('Не удалось запустить WebRTC: ' + e.message);
   }
 }
 
-// Запись связки PIN -> BlobId в открытый релей KV
-async function registerPinMapping(pin, blobId) {
-  try {
-    await fetch(`https://kvdb.io/Ank85h93Kdj2098/pin_${pin}`, {
-      method: 'POST',
-      body: blobId
-    });
-  } catch(e) {}
-}
-
-async function receiveCloud6DigitPIN() {
+function receiveDirectWebRTCPin() {
   const pinInput = document.getElementById('input-receive-pin');
   const pin = pinInput.value.replace(/\D/g, '').trim();
 
@@ -1123,23 +1123,46 @@ async function receiveCloud6DigitPIN() {
     return showToast('⚠️ Введите 6 цифр PIN кода');
   }
 
-  showToast('⏳ Загрузка смены из облака...');
+  const btn = document.getElementById('btn-receive-pin');
+  btn.innerText = '⏳ Связь...';
+  showToast('🔍 Поиск телефона по PIN...');
+
+  const targetPeerId = 'archpin-' + pin;
+
+  if (receiverPeer) {
+    try { receiverPeer.destroy(); } catch(e){}
+  }
 
   try {
-    // 1. Получаем blobId по PIN
-    const resPin = await fetch(`https://kvdb.io/Ank85h93Kdj2098/pin_${pin}`);
-    if (!resPin.ok) throw new Error('PIN не найден или срок его действия истёк.');
-    const blobId = await resPin.text();
+    receiverPeer = new Peer();
 
-    // 2. Скачиваем данные смены
-    const resData = await fetch(`${CLOUD_API_URL}/${blobId.trim()}`);
-    if (!resData.ok) throw new Error('Ошибка загрузки данных смены.');
-    const packet = await resData.json();
+    receiverPeer.on('open', () => {
+      const conn = receiverPeer.connect(targetPeerId, { reliable: true });
 
-    applySyncPacket(packet);
-    pinInput.value = '';
+      conn.on('open', () => {
+        showToast('🔗 Соединено с телефоном! Скачивание...');
+      });
+
+      conn.on('data', (data) => {
+        applySyncPacket(data);
+        btn.innerText = '📥 Загрузить';
+        pinInput.value = '';
+      });
+
+      conn.on('error', (e) => {
+        btn.innerText = '📥 Загрузить';
+        alert('Ошибка связи с телефоном: ' + e);
+      });
+    });
+
+    receiverPeer.on('error', (err) => {
+      btn.innerText = '📥 Загрузить';
+      alert('Не найден телефон с PIN ' + pin + '. Убедитесь, что на телефоне открыто приложение и создан PIN.');
+    });
+
   } catch(e) {
-    alert('Ошибка синхронизации: ' + e.message);
+    btn.innerText = '📥 Загрузить';
+    alert('Ошибка соединения: ' + e.message);
   }
 }
 
