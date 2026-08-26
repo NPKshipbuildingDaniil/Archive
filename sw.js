@@ -1,9 +1,10 @@
-const CACHE_NAME = 'archive-control-cache-v11';
+const CACHE_NAME = 'archive-control-cache-v12';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
   './icon.svg',
+  'https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js',
   'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'
 ];
 
