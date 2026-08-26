@@ -271,14 +271,15 @@
     flex-shrink: 0;
   }
 
-  .numpad-btn {
+.numpad-btn {
     background: #FFFFFF;
     border: 2px solid var(--secondary-dark);
     border-radius: var(--radius-md);
     font-size: 19px;
     font-weight: 900;
     color: var(--secondary-dark);
-    padding: 8px 0;
+    aspect-ratio: 1 / 1;           /* 👈 Делает кнопку идеально квадратной */
+    padding: 0;                    /* 👈 Убирает растягивание */
     box-shadow: 0 2px 0 var(--secondary-dark);
     cursor: pointer;
     display: flex;
