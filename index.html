@@ -233,7 +233,6 @@
     box-shadow: 0 1px 0 #2D3748;
   }
 
-  /* РЯД КНОПОК БЕЗ БОКОВОГО СКРОЛЛА */
   .btn-row {
     display: flex;
     gap: 4px;
@@ -258,6 +257,58 @@
   .btn-danger { background: var(--accent-red); color: #FFFFFF; border-color: #991B1B; box-shadow: 0 2px 0 #991B1B; }
   .btn-word { background: #2B579A; color: #FFFFFF; border-color: #183B70; box-shadow: 0 2px 0 #183B70; }
   .btn-sm { padding: 5px 8px; font-size: 10.5px; border-radius: var(--radius-sm); }
+
+  /* ЦИФРОВОЙ БЛОК (NUMPAD) */
+  .numpad-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-top: auto;
+    flex-shrink: 0;
+  }
+
+  .numpad-btn {
+    background: #FFFFFF;
+    border: 2px solid var(--secondary-dark);
+    border-radius: var(--radius-md);
+    font-size: 19px;
+    font-weight: 900;
+    color: var(--secondary-dark);
+    padding: 9px 0;
+    box-shadow: 0 2px 0 var(--secondary-dark);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.05s ease;
+  }
+
+  .numpad-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 0.5px 0 var(--secondary-dark);
+    background: #E2E8F0;
+  }
+
+  .numpad-btn.action-btn {
+    background: var(--primary-bg);
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .numpad-btn.del-btn {
+    background: #FEE2E2;
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+    box-shadow: 0 2px 0 #991B1B;
+    font-size: 18px;
+  }
+
+  .numpad-btn.del-btn:active {
+    box-shadow: 0 0.5px 0 #991B1B;
+    background: #FCA5A5;
+  }
 
   .drawing-code {
     font-family: monospace;
@@ -342,10 +393,10 @@
     background: #FFFFFF;
     border: 2px solid var(--secondary-dark);
     border-radius: var(--radius-md);
-    max-height: 220px;
+    max-height: 200px;
     overflow-y: auto;
     z-index: 100;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
     display: none;
   }
 
@@ -361,7 +412,6 @@
   .search-item:active { background: #EEF2FF; }
   .search-item:last-child { border-bottom: none; }
 
-  /* СКРОЛЛ РЕЕСТРА И ЖУРНАЛА */
   .log-scroll-area {
     flex: 1 1 auto;
     min-height: 0;
@@ -476,18 +526,21 @@
 
   <main class="main-content">
 
-    <!-- 1. ВКЛАДКА СВЕРКИ -->
+    <!-- 1. ВКЛАДКА СВЕРКИ (С ЦИФРОВЫМ БЛОКОМ) -->
     <div id="view-check" class="view-panel active">
+      
+      <!-- Поле поиска (с поддержкой прямого клика или экранного ввода) -->
       <div class="cartoon-card" style="margin-bottom: 5px; padding: 6px 8px; position: relative; flex-shrink: 0;">
-        <div style="display: flex; gap: 4px;">
-          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Цифры (напр. 362662 или 362111)..." autocomplete="off" oninput="handleLiveSearch(this.value)">
-          <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 0 8px;" onclick="clearSearchInput()">✕</button>
+        <div style="display: flex; gap: 4px; align-items: center;">
+          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Введите цифры чертежа..." autocomplete="off" oninput="handleLiveSearch(this.value)">
+          <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 0 9px;" onclick="clearSearchInput()">✕</button>
         </div>
       </div>
 
+      <!-- Всплывающий список подсказок -->
       <div id="search-dropdown-list" class="search-dropdown"></div>
 
-      <!-- Карточка выбранного чертежа -->
+      <!-- Карточка выбранного чертежа (Появляется при выборе) -->
       <div id="verify-box" class="cartoon-card" style="display: none; flex: 1 1 auto; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 8px; min-height: 0;">
         <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
@@ -534,14 +587,34 @@
         </div>
       </div>
 
-      <div id="quick-guide-box" class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-bottom: 0;">
-        <div style="font-size: 28px; margin-bottom: 4px;">🔢</div>
-        <div style="font-size: 12.5px; font-weight: 800; margin-bottom: 3px;">Быстрый поиск чертежа</div>
-        <div style="font-size: 10.5px; color: var(--secondary-mid); margin-bottom: 8px;">Введите любые 3-6 цифр или откройте «Камеру»</div>
-        <button class="cartoon-btn btn-secondary btn-sm" style="width: auto;" onclick="loadEmbeddedDemoData()">
-          ✨ Загрузить тест (Устройства + Электрика)
-        </button>
+      <!-- Зона поиска с ЦИФРОВЫМ БЛОКОМ (NUMPAD 3x3 + 0 + СТЕРЕТЬ) -->
+      <div id="search-numpad-box" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; min-height: 0;">
+        
+        <div style="text-align: center; padding: 4px 0; color: var(--secondary-mid); font-size: 11px; font-weight: 700;">
+          Нажимайте цифры на экране для быстрого поиска:
+        </div>
+
+        <!-- КЛАВИАТУРА 3 НА 3 И ВНИЗУ 0 -->
+        <div class="numpad-grid">
+          <button class="numpad-btn" onclick="pressNumpad('1')">1</button>
+          <button class="numpad-btn" onclick="pressNumpad('2')">2</button>
+          <button class="numpad-btn" onclick="pressNumpad('3')">3</button>
+          
+          <button class="numpad-btn" onclick="pressNumpad('4')">4</button>
+          <button class="numpad-btn" onclick="pressNumpad('5')">5</button>
+          <button class="numpad-btn" onclick="pressNumpad('6')">6</button>
+          
+          <button class="numpad-btn" onclick="pressNumpad('7')">7</button>
+          <button class="numpad-btn" onclick="pressNumpad('8')">8</button>
+          <button class="numpad-btn" onclick="pressNumpad('9')">9</button>
+          
+          <button class="numpad-btn action-btn" onclick="clearSearchInput()">C</button>
+          <button class="numpad-btn" onclick="pressNumpad('0')">0</button>
+          <button class="numpad-btn del-btn" onclick="pressBackspace()">⌫</button>
+        </div>
+
       </div>
+
     </div>
 
     <!-- 2. ВКЛАДКА КАМЕРЫ -->
@@ -552,7 +625,6 @@
           <span id="ocr-status-badge" style="font-size: 9.5px; color: var(--secondary-mid); font-weight: bold;">Готов</span>
         </div>
 
-        <!-- Видеоискатель с рамкой кадрирования -->
         <div id="camera-box-wrap" style="position: relative; height: 135px; background: #1A202C; border-radius: var(--radius-md); border: var(--border-main); overflow: hidden; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
           <video id="camera-video" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover;"></video>
           <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
@@ -563,14 +635,13 @@
         <canvas id="ocr-canvas" style="display: none;"></canvas>
         <input type="file" id="native-camera-input" accept="image/*" capture="environment" style="display: none;" onchange="handleNativePhotoCapture(event)">
 
-        <!-- 3 КНОПКИ В ОДИН РЯД -->
         <div class="btn-row" style="margin-bottom: 6px;">
           <button class="cartoon-btn btn-primary" id="btn-toggle-cam" onclick="toggleCamera()">🔴 Видео</button>
           <button class="cartoon-btn btn-success" onclick="document.getElementById('native-camera-input').click()">📸 Фото</button>
           <button class="cartoon-btn btn-secondary" onclick="captureLiveVideoFrame()">⚡ Считать</button>
         </div>
 
-        <div style="font-size: 10px; font-weight: 800; color: var(--secondary-mid); margin-bottom: 3px; flex-shrink: 0;">СОВПАДЕНИЯ В БАЗЕ (ВНУТРИ РАМКИ):</div>
+        <div style="font-size: 10px; font-weight: 800; color: var(--secondary-mid); margin-bottom: 3px; flex-shrink: 0;">СОВПАДЕНИЯ В БАЗЕ:</div>
         <div id="ocr-results-container" class="log-scroll-area" style="background: #F8FAFC; border: 1.5px solid var(--primary-alt); border-radius: var(--radius-md); padding: 4px;">
           <div style="text-align: center; padding: 12px; font-size: 10.5px; color: #7D8A9A;">
             Наведите синюю рамку на шифр и нажмите «Считать» или сделайте «Фото»
@@ -579,7 +650,7 @@
       </div>
     </div>
 
-    <!-- 3. РЕЕСТР (ВЕРТИКАЛЬНЫЙ СКРОЛЛ) -->
+    <!-- 3. РЕЕСТР -->
     <div id="view-catalog" class="view-panel">
       <div class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; margin-bottom: 0; min-height: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-shrink: 0;">
@@ -591,7 +662,7 @@
       </div>
     </div>
 
-    <!-- 4. ЖУРНАЛ (ВЕРТИКАЛЬНЫЙ СКРОЛЛ И КНОПКИ В ОДИН РЯД) -->
+    <!-- 4. ЖУРНАЛ -->
     <div id="view-log" class="view-panel">
       <div class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; margin-bottom: 0; min-height: 0;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; flex-shrink: 0;">
@@ -599,7 +670,6 @@
           <span style="font-size: 10px; color: var(--secondary-mid);" id="log-stats-text">0 шт</span>
         </div>
 
-        <!-- 3 ФИЛЬТРА В ОДИН РЯД -->
         <div class="btn-row" style="margin-bottom: 5px;">
           <button class="cartoon-btn btn-secondary" onclick="filterLogs('all')">Все</button>
           <button class="cartoon-btn btn-danger" onclick="filterLogs('mismatch')">⚠️ Расхождения</button>
@@ -636,7 +706,7 @@
 
   </main>
 
-  <!-- КАРТОЧКА ДЕТАЛИЗАЦИИ -->
+  <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛИЗАЦИИ -->
   <div id="modal-detail" class="modal-overlay" onclick="closeDetailModal(event)">
     <div class="modal-container" onclick="event.stopPropagation()">
       <div class="modal-header">
@@ -691,7 +761,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-const DB_NAME = 'DrawingArchiveDB_v8';
+const DB_NAME = 'DrawingArchiveDB_v9';
 let dbInstance = null;
 let allDrawingsList = [];
 let verificationHistory = [];
@@ -754,7 +824,191 @@ function loadEmbeddedDemoData() {
   tx.oncomplete = () => {
     loadDataFromDB();
     showToast('✅ Загружены демо-листы');
-    selectDrawing(sample[0]);
+  };
+}
+
+/* ================= ЭКРАННЫЙ ЦИФРОВОЙ БЛОК (NUMPAD) ================= */
+function pressNumpad(digit) {
+  const input = document.getElementById('input-drawing-search');
+  input.value += digit;
+  handleLiveSearch(input.value);
+}
+
+function pressBackspace() {
+  const input = document.getElementById('input-drawing-search');
+  input.value = input.value.slice(0, -1);
+  handleLiveSearch(input.value);
+}
+
+function clearSearchInput() {
+  document.getElementById('input-drawing-search').value = '';
+  document.getElementById('search-dropdown-list').style.display = 'none';
+}
+
+/* ================= ЖИВОЙ ПОИСК И СВЕРКА ================= */
+function handleLiveSearch(query) {
+  const dropdown = document.getElementById('search-dropdown-list');
+  const cleanQ = query.trim().toLowerCase().replace(/[\s\-_.]/g, '');
+  const digitsQ = query.replace(/\D/g, '');
+
+  if (!cleanQ) {
+    dropdown.style.display = 'none';
+    return;
+  }
+
+  const matches = allDrawingsList.filter(item => {
+    if (digitsQ.length >= 3 && item._digits.includes(digitsQ)) return true;
+    if (cleanQ.length >= 2 && item._clean.includes(cleanQ)) return true;
+    return false;
+  }).slice(0, 15);
+
+  if (matches.length === 0) {
+    dropdown.innerHTML = '<div style="padding:8px; font-size:11px; color:#7D8A9A; text-align:center;">Ничего не найдено</div>';
+    dropdown.style.display = 'block';
+    return;
+  }
+
+  dropdown.innerHTML = '';
+  matches.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'search-item';
+    div.onclick = () => {
+      selectDrawing(item);
+      dropdown.style.display = 'none';
+      document.getElementById('input-drawing-search').value = item.drawing_num;
+    };
+    
+    const litInfo = (item.lit_sp === '-' || !item.lit_sp) 
+      ? `ЛИТ:${item.lit_sb.toUpperCase()}` 
+      : `СБ:${item.lit_sb.toUpperCase()} / СП:${item.lit_sp.toUpperCase()}`;
+
+    div.innerHTML = `
+      <div>
+        <span class="sheet-badge" style="font-size:8.5px; margin-bottom:1px;">${item.sheet_name}</span>
+        <div style="font-family:monospace; font-weight:800; font-size:13px; color:var(--accent-blue);">${item.drawing_num}</div>
+        <div style="font-size:10px; color:#7D8A9A;">${item.name}</div>
+      </div>
+      <div style="font-size:10.5px; font-weight:800; color:var(--secondary-dark); text-align:right;">${litInfo}</div>
+    `;
+    dropdown.appendChild(div);
+  });
+
+  dropdown.style.display = 'block';
+}
+
+function selectDrawing(item) {
+  currentSelectedDrawing = item;
+  document.getElementById('cur-sheet-name').innerText = item.sheet_name || 'Раздел';
+  document.getElementById('cur-drawing-num').innerText = item.drawing_num;
+  document.getElementById('cur-drawing-name').innerText = 'Наименование: ' + item.name;
+
+  const hasSp = item.lit_sp && item.lit_sp !== '-';
+
+  document.getElementById('lbl-db-sb').innerText = hasSp ? 'СБ (в базе)' : 'Литера (база)';
+  document.getElementById('db-lit-sb').innerText = item.lit_sb || '-';
+
+  document.getElementById('lbl-db-sp').innerText = hasSp ? 'СП (в базе)' : 'СП (не треб.)';
+  document.getElementById('db-lit-sp').innerText = hasSp ? item.lit_sp : '—';
+
+  document.getElementById('act-lit-sb').value = '';
+  document.getElementById('act-lit-sp').value = hasSp ? '' : '—';
+  document.getElementById('act-lit-sp').disabled = !hasSp;
+
+  document.getElementById('verify-box').style.display = 'flex';
+  document.getElementById('search-numpad-box').style.display = 'none';
+  document.getElementById('search-dropdown-list').style.display = 'none';
+  runLiveComparison();
+}
+
+function clearCurrentVerification() {
+  currentSelectedDrawing = null;
+  document.getElementById('verify-box').style.display = 'none';
+  document.getElementById('search-numpad-box').style.display = 'flex';
+  document.getElementById('input-drawing-search').value = '';
+}
+
+function autoFillAndVerifyMatch() {
+  if (!currentSelectedDrawing) return;
+  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
+  document.getElementById('act-lit-sb').value = currentSelectedDrawing.lit_sb || '';
+  document.getElementById('act-lit-sp').value = hasSp ? currentSelectedDrawing.lit_sp : '—';
+  runLiveComparison();
+}
+
+function runLiveComparison() {
+  if (!currentSelectedDrawing) return;
+  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
+
+  const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
+  const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
+
+  const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
+  const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
+
+  const box = document.getElementById('verdict-display');
+  const btn = document.getElementById('btn-save-verdict');
+
+  if (!actSb) {
+    box.className = 'verdict-box pending';
+    box.innerHTML = '⏳ Введите литеру или подтвердите соответствие';
+    btn.className = 'cartoon-btn btn-secondary';
+    return;
+  }
+
+  const isSbMatch = (actSb === dbSb);
+  const isSpMatch = hasSp ? (actSp === dbSp) : true;
+
+  if (isSbMatch && isSpMatch) {
+    box.className = 'verdict-box match';
+    box.innerHTML = '✅ ВСЁ ОТЛИЧНО (ЛИТЕРЫ СОВПАДАЮТ)';
+    btn.className = 'cartoon-btn btn-success';
+  } else {
+    let diff = [];
+    if (!isSbMatch) diff.push(`СБ: факт "${actSb}" ≠ база "${dbSb}"`);
+    if (hasSp && !isSpMatch) diff.push(`СП: факт "${actSp||'нет'}" ≠ база "${dbSp}"`);
+
+    box.className = 'verdict-box mismatch';
+    box.innerHTML = `⚠️ РАСХОЖДЕНИЕ: ${diff.join(' | ')}`;
+    btn.className = 'cartoon-btn btn-danger';
+  }
+}
+
+function commitCurrentVerification() {
+  if (!currentSelectedDrawing) return;
+  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
+
+  const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
+  const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
+
+  const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
+  const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
+
+  if (!actSb) return showToast('⚠️ Укажите литеру перед записью');
+
+  const isMatch = (actSb === dbSb) && (hasSp ? (actSp === dbSp) : true);
+
+  const entry = {
+    id: Date.now(),
+    sheet_name: currentSelectedDrawing.sheet_name || 'Основной',
+    drawing_num: currentSelectedDrawing.drawing_num,
+    name: currentSelectedDrawing.name,
+    db_sb: dbSb,
+    db_sp: hasSp ? dbSp : '-',
+    act_sb: actSb || '-',
+    act_sp: hasSp ? (actSp || '-') : '-',
+    status: isMatch ? 'MATCH' : 'MISMATCH',
+    time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    date: new Date().toLocaleDateString('ru-RU')
+  };
+
+  const tx = dbInstance.transaction('logs', 'readwrite');
+  tx.objectStore('logs').put(entry);
+
+  tx.oncomplete = () => {
+    verificationHistory.unshift(entry);
+    renderLogs();
+    showToast(isMatch ? '✅ Записано (Норма)' : '⚠️ Записано в расхождения');
+    clearCurrentVerification();
   };
 }
 
@@ -971,179 +1225,7 @@ function saveParsedRowsToDB(sheetsData) {
   };
 }
 
-/* ================= ЖИВОЙ ПОИСК И СВЕРКА ================= */
-function handleLiveSearch(query) {
-  const dropdown = document.getElementById('search-dropdown-list');
-  const cleanQ = query.trim().toLowerCase().replace(/[\s\-_.]/g, '');
-  const digitsQ = query.replace(/\D/g, '');
-
-  if (!cleanQ) {
-    dropdown.style.display = 'none';
-    return;
-  }
-
-  const matches = allDrawingsList.filter(item => {
-    if (digitsQ.length >= 3 && item._digits.includes(digitsQ)) return true;
-    if (cleanQ.length >= 2 && item._clean.includes(cleanQ)) return true;
-    return false;
-  }).slice(0, 15);
-
-  if (matches.length === 0) {
-    dropdown.innerHTML = '<div style="padding:8px; font-size:11px; color:#7D8A9A; text-align:center;">Ничего не найдено</div>';
-    dropdown.style.display = 'block';
-    return;
-  }
-
-  dropdown.innerHTML = '';
-  matches.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'search-item';
-    div.onclick = () => {
-      selectDrawing(item);
-      dropdown.style.display = 'none';
-      document.getElementById('input-drawing-search').value = item.drawing_num;
-    };
-    
-    const litInfo = (item.lit_sp === '-' || !item.lit_sp) 
-      ? `ЛИТ:${item.lit_sb.toUpperCase()}` 
-      : `СБ:${item.lit_sb.toUpperCase()} / СП:${item.lit_sp.toUpperCase()}`;
-
-    div.innerHTML = `
-      <div>
-        <span class="sheet-badge" style="font-size:8.5px; margin-bottom:1px;">${item.sheet_name}</span>
-        <div style="font-family:monospace; font-weight:800; font-size:13px; color:var(--accent-blue);">${item.drawing_num}</div>
-        <div style="font-size:10px; color:#7D8A9A;">${item.name}</div>
-      </div>
-      <div style="font-size:10.5px; font-weight:800; color:var(--secondary-dark); text-align:right;">${litInfo}</div>
-    `;
-    dropdown.appendChild(div);
-  });
-
-  dropdown.style.display = 'block';
-}
-
-function clearSearchInput() {
-  document.getElementById('input-drawing-search').value = '';
-  document.getElementById('search-dropdown-list').style.display = 'none';
-}
-
-function selectDrawing(item) {
-  currentSelectedDrawing = item;
-  document.getElementById('cur-sheet-name').innerText = item.sheet_name || 'Раздел';
-  document.getElementById('cur-drawing-num').innerText = item.drawing_num;
-  document.getElementById('cur-drawing-name').innerText = 'Наименование: ' + item.name;
-
-  const hasSp = item.lit_sp && item.lit_sp !== '-';
-
-  document.getElementById('lbl-db-sb').innerText = hasSp ? 'СБ (в базе)' : 'Литера (база)';
-  document.getElementById('db-lit-sb').innerText = item.lit_sb || '-';
-
-  document.getElementById('lbl-db-sp').innerText = hasSp ? 'СП (в базе)' : 'СП (не треб.)';
-  document.getElementById('db-lit-sp').innerText = hasSp ? item.lit_sp : '—';
-
-  document.getElementById('act-lit-sb').value = '';
-  document.getElementById('act-lit-sp').value = hasSp ? '' : '—';
-  document.getElementById('act-lit-sp').disabled = !hasSp;
-
-  document.getElementById('verify-box').style.display = 'flex';
-  document.getElementById('quick-guide-box').style.display = 'none';
-  document.getElementById('search-dropdown-list').style.display = 'none';
-  runLiveComparison();
-}
-
-function clearCurrentVerification() {
-  currentSelectedDrawing = null;
-  document.getElementById('verify-box').style.display = 'none';
-  document.getElementById('quick-guide-box').style.display = 'flex';
-  document.getElementById('input-drawing-search').value = '';
-}
-
-function autoFillAndVerifyMatch() {
-  if (!currentSelectedDrawing) return;
-  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
-  document.getElementById('act-lit-sb').value = currentSelectedDrawing.lit_sb || '';
-  document.getElementById('act-lit-sp').value = hasSp ? currentSelectedDrawing.lit_sp : '—';
-  runLiveComparison();
-}
-
-function runLiveComparison() {
-  if (!currentSelectedDrawing) return;
-  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
-
-  const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
-  const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
-
-  const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
-  const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
-
-  const box = document.getElementById('verdict-display');
-  const btn = document.getElementById('btn-save-verdict');
-
-  if (!actSb) {
-    box.className = 'verdict-box pending';
-    box.innerHTML = '⏳ Введите литеру или подтвердите соответствие';
-    btn.className = 'cartoon-btn btn-secondary';
-    return;
-  }
-
-  const isSbMatch = (actSb === dbSb);
-  const isSpMatch = hasSp ? (actSp === dbSp) : true;
-
-  if (isSbMatch && isSpMatch) {
-    box.className = 'verdict-box match';
-    box.innerHTML = '✅ ВСЁ ОТЛИЧНО (ЛИТЕРЫ СОВПАДАЮТ)';
-    btn.className = 'cartoon-btn btn-success';
-  } else {
-    let diff = [];
-    if (!isSbMatch) diff.push(`СБ: факт "${actSb}" ≠ база "${dbSb}"`);
-    if (hasSp && !isSpMatch) diff.push(`СП: факт "${actSp||'нет'}" ≠ база "${dbSp}"`);
-
-    box.className = 'verdict-box mismatch';
-    box.innerHTML = `⚠️ РАСХОЖДЕНИЕ: ${diff.join(' | ')}`;
-    btn.className = 'cartoon-btn btn-danger';
-  }
-}
-
-function commitCurrentVerification() {
-  if (!currentSelectedDrawing) return;
-  const hasSp = currentSelectedDrawing.lit_sp && currentSelectedDrawing.lit_sp !== '-';
-
-  const actSb = document.getElementById('act-lit-sb').value.trim().toLowerCase();
-  const actSp = document.getElementById('act-lit-sp').value.trim().toLowerCase();
-
-  const dbSb = (currentSelectedDrawing.lit_sb || '').trim().toLowerCase();
-  const dbSp = (currentSelectedDrawing.lit_sp || '').trim().toLowerCase();
-
-  if (!actSb) return showToast('⚠️ Укажите литеру перед записью');
-
-  const isMatch = (actSb === dbSb) && (hasSp ? (actSp === dbSp) : true);
-
-  const entry = {
-    id: Date.now(),
-    sheet_name: currentSelectedDrawing.sheet_name || 'Основной',
-    drawing_num: currentSelectedDrawing.drawing_num,
-    name: currentSelectedDrawing.name,
-    db_sb: dbSb,
-    db_sp: hasSp ? dbSp : '-',
-    act_sb: actSb || '-',
-    act_sp: hasSp ? (actSp || '-') : '-',
-    status: isMatch ? 'MATCH' : 'MISMATCH',
-    time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-    date: new Date().toLocaleDateString('ru-RU')
-  };
-
-  const tx = dbInstance.transaction('logs', 'readwrite');
-  tx.objectStore('logs').put(entry);
-
-  tx.oncomplete = () => {
-    verificationHistory.unshift(entry);
-    renderLogs();
-    showToast(isMatch ? '✅ Записано (Норма)' : '⚠️ Записано в расхождения');
-    clearCurrentVerification();
-  };
-}
-
-/* ================= ДВИЖОК OCR: КАДРИРОВАНИЕ ТОЧНО ПО СИНЕЙ РАМКЕ ================= */
+/* ================= ДВИЖОК OCR: КАДРИРОВАНИЕ ПО РАМКЕ ================= */
 async function toggleCamera() {
   const btn = document.getElementById('btn-toggle-cam');
   const v = document.getElementById('camera-video');
@@ -1171,27 +1253,24 @@ function stopCamera() {
   }
 }
 
-// Кадрирование строго по синей рамке видоискателя
 function cropImageToReticle(sourceElement, srcWidth, srcHeight) {
   const boxWrap = document.getElementById('camera-box-wrap');
   const reticle = document.getElementById('camera-reticle-box');
   const bRect = boxWrap.getBoundingClientRect();
   const rRect = reticle.getBoundingClientRect();
 
-  // Относительные координаты рамки
   const relX = (rRect.left - bRect.left) / bRect.width;
   const relY = (rRect.top - bRect.top) / bRect.height;
   const relW = rRect.width / bRect.width;
   const relH = rRect.height / bRect.height;
 
-  // Абсолютные координаты на исходном кадре
   const sx = Math.max(0, Math.floor(relX * srcWidth));
   const sy = Math.max(0, Math.floor(relY * srcHeight));
   const sw = Math.min(srcWidth - sx, Math.floor(relW * srcWidth));
   const sh = Math.min(srcHeight - sy, Math.floor(relH * srcHeight));
 
   const canvas = document.getElementById('ocr-canvas');
-  const scale = 2.5; // Увеличение для чёткого распознавания шрифтов
+  const scale = 2.5;
   canvas.width = Math.floor(sw * scale);
   canvas.height = Math.floor(sh * scale);
   const ctx = canvas.getContext('2d');
@@ -1200,7 +1279,6 @@ function cropImageToReticle(sourceElement, srcWidth, srcHeight) {
 
   ctx.drawImage(sourceElement, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
 
-  // Контрастирование и бинаризация для повышения точности цифр
   const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
   const d = imgData.data;
   let totalB = 0;
