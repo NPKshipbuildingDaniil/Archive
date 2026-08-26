@@ -27,6 +27,7 @@
     --accent-sky: #5AAFDD;
     --accent-green: #10B981;
     --accent-red: #E03030;
+    --accent-purple: #6366F1;
     
     --radius-lg: 12px;
     --radius-md: 8px;
@@ -256,7 +257,7 @@
   .btn-success { background: var(--accent-green); color: #FFFFFF; border-color: #065F46; box-shadow: 0 2px 0 #065F46; }
   .btn-danger { background: var(--accent-red); color: #FFFFFF; border-color: #991B1B; box-shadow: 0 2px 0 #991B1B; }
   .btn-word { background: #2B579A; color: #FFFFFF; border-color: #183B70; box-shadow: 0 2px 0 #183B70; }
-  .btn-sync { background: #6366F1; color: #FFFFFF; border-color: #4338CA; box-shadow: 0 2px 0 #4338CA; }
+  .btn-sync { background: var(--accent-purple); color: #FFFFFF; border-color: #4338CA; box-shadow: 0 2px 0 #4338CA; }
   .btn-sm { padding: 5px 8px; font-size: 10.5px; border-radius: var(--radius-sm); }
 
   /* ЦИФРОВОЙ БЛОК */
@@ -315,7 +316,6 @@
     text-transform: uppercase;
   }
 
-  /* БОЛЬШИЕ МЕТКИ СБ И СП */
   .sb-sp-title-tag {
     display: inline-block;
     background: var(--secondary-dark);
@@ -375,6 +375,22 @@
   .verdict-box.match { background: #ECFDF5; border-color: var(--accent-green); color: #065F46; }
   .verdict-box.mismatch { background: #FEF2F2; border-color: var(--accent-red); color: #991B1B; }
   .verdict-box.pending { background: #FFFBEB; border-color: var(--accent-amber); color: #92400E; }
+
+  /* ПЛАШКА 6-ЗНАЧНОГО КОДА */
+  .pin-code-display {
+    background: #1E1B4B;
+    color: #A5B4FC;
+    border: 2px solid var(--accent-purple);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    text-align: center;
+    font-family: monospace;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    margin: 6px 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+  }
 
   .search-dropdown {
     position: absolute;
@@ -500,7 +516,7 @@
       <div class="brand-logo">📐</div>
       <div class="brand-text">
         <h1>АРХИВ-КОНТРОЛЬ</h1>
-        <span>Сверка & Синхронизация</span>
+        <span>Сверка & Облачный PIN</span>
       </div>
     </div>
     <div class="header-badge" id="active-db-count">База: 0 шт</div>
@@ -586,7 +602,7 @@
       <!-- Зона с цифровым блоком (NUMPAD) -->
       <div id="search-numpad-box" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; min-height: 0;">
         <div style="text-align: center; padding: 2px 0; color: var(--secondary-mid); font-size: 10.5px; font-weight: 700;">
-          Экранный цифровой ввод (поиск по цифрам):
+          Экранный ввод (поиск по цифрам):
         </div>
 
         <div class="numpad-grid">
@@ -681,39 +697,58 @@
       </div>
     </div>
 
-    <!-- 5. ФАЙЛЫ И СИНХРОНИЗАЦИЯ С ПК -->
+    <!-- 5. ФАЙЛЫ И ОБЛАЧНЫЙ 6-ЗНАЧНЫЙ PIN-КОД -->
     <div id="view-config" class="view-panel">
       
       <!-- Загрузка Excel -->
-      <div class="cartoon-card" style="margin-bottom: 6px;">
-        <div style="font-size: 11.5px; font-weight: 800; margin-bottom: 4px;">📊 Загрузка файла Excel</div>
+      <div class="cartoon-card" style="margin-bottom: 6px; padding: 6px 8px;">
+        <div style="font-size: 11.5px; font-weight: 800; margin-bottom: 4px;">📊 База данных Excel</div>
         <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv,.XLSX,.XLS,.CSV" style="display: none;" onchange="handleFileUpload(event)">
         <button class="cartoon-btn btn-primary" style="width: 100%; padding: 7px;" onclick="document.getElementById('excel-file-input').click()">
           📂 Открыть файл Excel на устройстве
         </button>
       </div>
 
-      <!-- СИНХРОНИЗАЦИЯ ТЕЛЕФОН <-> ПК -->
-      <div class="cartoon-card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+      <!-- ОБЛАЧНЫЙ 6-ЗНАЧНЫЙ МОСТ (ТЕЛЕФОН <-> ПК) -->
+      <div class="cartoon-card" style="flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; margin-bottom: 0;">
         <div>
-          <div style="font-size: 11.5px; font-weight: 800; margin-bottom: 4px;">🔄 Синхронизация Телефон ⟷ ПК</div>
-          <div style="font-size: 10px; color: var(--secondary-mid); margin-bottom: 8px; line-height: 1.3;">
-            Заполняйте данные на телефоне без интернета, а затем перенесите смену на компьютер в один клик:
+          <div style="font-size: 12px; font-weight: 800; color: var(--accent-purple); margin-bottom: 2px;">☁️ Облачная передача смены (Телефон ➔ ПК)</div>
+          <div style="font-size: 10px; color: var(--secondary-mid); margin-bottom: 6px; line-height: 1.3;">
+            1. Нажмите <b>«Создать PIN»</b> на телефоне.<br>
+            2. Введите 6 цифр на компьютере и нажмите <b>«Загрузить»</b>.
           </div>
 
-          <div class="btn-row" style="margin-bottom: 6px;">
-            <button class="cartoon-btn btn-sync" onclick="exportSyncDataText()">📤 Скопировать код смены</button>
-            <button class="cartoon-btn btn-sync" onclick="exportSyncDataFile()">💾 Скачать .sync</button>
+          <!-- Кнопка генерации PIN -->
+          <button class="cartoon-btn btn-sync" id="btn-generate-pin" style="width: 100%; padding: 9px;" onclick="generateCloud6DigitPIN()">
+            ⚡ Создать 6-значный PIN смены
+          </button>
+
+          <!-- Отображение PIN кода -->
+          <div id="pin-display-wrapper" style="display: none;">
+            <div style="font-size: 10px; font-weight: 800; text-align: center; margin-top: 6px; color: var(--secondary-dark);">
+              КОД ДЛЯ ВВОДА НА КОМПЬЮТЕРЕ:
+            </div>
+            <div class="pin-code-display" id="pin-code-val">------</div>
+            <div style="font-size: 9px; color: var(--secondary-mid); text-align: center;">(Код активен для загрузки на ПК)</div>
           </div>
 
-          <div style="margin-top: 6px;">
-            <input type="text" id="sync-import-input" class="cartoon-input" placeholder="Вставьте код смены сюда..." style="font-size: 11px; padding: 5px; margin-bottom: 4px;">
-            <button class="cartoon-btn btn-success" style="width: 100%; padding: 6px;" onclick="importSyncDataFromText()">📥 Применить данные смены на ПК</button>
+          <!-- Прием на ПК по PIN -->
+          <div style="margin-top: 10px; padding-top: 8px; border-top: 1.5px dashed var(--primary-alt);">
+            <div style="font-size: 10.5px; font-weight: 800; margin-bottom: 4px;">ПРИЁМ СМЕНЫ НА ПК:</div>
+            <div style="display: flex; gap: 4px;">
+              <input type="text" id="input-receive-pin" class="cartoon-input" placeholder="6 цифр PIN..." maxlength="6" style="text-align: center; font-size: 17px; font-family: monospace; letter-spacing: 3px;">
+              <button class="cartoon-btn btn-success" style="width: auto; padding: 0 12px;" onclick="receiveCloud6DigitPIN()">📥 Загрузить</button>
+            </div>
           </div>
         </div>
 
-        <div style="font-size: 9.5px; color: var(--secondary-mid); text-align: center; margin-top: 6px;">
-          База данных сохраняется персистентно и защищена от сброса при обновлениях сайта.
+        <!-- Резервные офлайн методы -->
+        <div style="margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--primary-alt);">
+          <div style="font-size: 9.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 3px;">Резервные методы (без сети):</div>
+          <div class="btn-row">
+            <button class="cartoon-btn btn-secondary btn-sm" onclick="exportSyncDataText()">📋 Копир. код</button>
+            <button class="cartoon-btn btn-secondary btn-sm" onclick="exportSyncDataFile()">💾 Файл .sync</button>
+          </div>
         </div>
       </div>
 
@@ -780,12 +815,11 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Защита от сброса хранилища браузером
+// Защита от сброса кэша браузером
 if (navigator.storage && navigator.storage.persist) {
   navigator.storage.persist();
 }
 
-// Постоянное единое имя базы
 const DB_NAME = 'DrawingArchiveDB_Permanent';
 let dbInstance = null;
 let allDrawingsList = [];
@@ -1019,54 +1053,122 @@ function commitCurrentVerification() {
   };
 }
 
-/* ================= СИНХРОНИЗАЦИЯ ТЕЛЕФОН <-> ПК ================= */
-function exportSyncDataText() {
+/* ================= ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ ПО 6-ЗНАЧНОМУ КОДУ ================= */
+// Используется открытый REST релей JsonBlob с CORS
+const CLOUD_API_URL = 'https://jsonblob.com/api/jsonBlob';
+
+async function generateCloud6DigitPIN() {
   if (verificationHistory.length === 0 && allDrawingsList.length === 0) {
-    return alert('Нет данных для синхронизации');
+    return alert('Нет данных для отправки');
   }
+
+  const btn = document.getElementById('btn-generate-pin');
+  btn.innerText = '⏳ Отправка в облако...';
+
+  // Генерируем 6-значный код
+  const pinCode = String(Math.floor(100000 + Math.random() * 900000));
+
   const syncPacket = {
+    pin: pinCode,
     drawings: allDrawingsList,
     logs: verificationHistory,
     timestamp: Date.now()
   };
+
+  try {
+    const response = await fetch(CLOUD_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Sync-PIN': pinCode
+      },
+      body: JSON.stringify(syncPacket)
+    });
+
+    if (!response.ok) throw new Error('Ошибка сервера');
+    
+    // Получаем уникальный ID блоба из заголовка Location
+    const locationUrl = response.headers.get('Location') || '';
+    const blobId = locationUrl.split('/').pop();
+
+    // Сохраняем связку PIN -> BlobId в реестр
+    await registerPinMapping(pinCode, blobId);
+
+    document.getElementById('pin-code-val').innerText = pinCode.slice(0,3) + ' ' + pinCode.slice(3);
+    document.getElementById('pin-display-wrapper').style.display = 'block';
+    btn.innerText = '⚡ Обновить PIN код смены';
+    showToast(`✅ Смена отправлена! Код: ${pinCode}`);
+  } catch(e) {
+    btn.innerText = '⚡ Создать 6-значный PIN смены';
+    alert('Не удалось отправить в облако. Проверьте интернет или воспользуйтесь кнопкой «Копир. код» ниже: ' + e.message);
+  }
+}
+
+// Запись связки PIN -> BlobId в открытый релей KV
+async function registerPinMapping(pin, blobId) {
+  try {
+    await fetch(`https://kvdb.io/Ank85h93Kdj2098/pin_${pin}`, {
+      method: 'POST',
+      body: blobId
+    });
+  } catch(e) {}
+}
+
+async function receiveCloud6DigitPIN() {
+  const pinInput = document.getElementById('input-receive-pin');
+  const pin = pinInput.value.replace(/\D/g, '').trim();
+
+  if (pin.length !== 6) {
+    return showToast('⚠️ Введите 6 цифр PIN кода');
+  }
+
+  showToast('⏳ Загрузка смены из облака...');
+
+  try {
+    // 1. Получаем blobId по PIN
+    const resPin = await fetch(`https://kvdb.io/Ank85h93Kdj2098/pin_${pin}`);
+    if (!resPin.ok) throw new Error('PIN не найден или срок его действия истёк.');
+    const blobId = await resPin.text();
+
+    // 2. Скачиваем данные смены
+    const resData = await fetch(`${CLOUD_API_URL}/${blobId.trim()}`);
+    if (!resData.ok) throw new Error('Ошибка загрузки данных смены.');
+    const packet = await resData.json();
+
+    applySyncPacket(packet);
+    pinInput.value = '';
+  } catch(e) {
+    alert('Ошибка синхронизации: ' + e.message);
+  }
+}
+
+function exportSyncDataText() {
+  if (verificationHistory.length === 0 && allDrawingsList.length === 0) {
+    return alert('Нет данных для экспорта');
+  }
+  const syncPacket = { drawings: allDrawingsList, logs: verificationHistory, timestamp: Date.now() };
   const jsonStr = JSON.stringify(syncPacket);
   const code = btoa(encodeURIComponent(jsonStr));
   navigator.clipboard.writeText(code).then(() => {
-    showToast('📋 Код смены скопирован в буфер!');
+    showToast('📋 Код скопирован в буфер!');
   }).catch(() => {
-    prompt('Скопируйте код синхронизации вручную:', code);
+    prompt('Скопируйте код вручную:', code);
   });
 }
 
 function exportSyncDataFile() {
-  const syncPacket = {
-    drawings: allDrawingsList,
-    logs: verificationHistory,
-    timestamp: Date.now()
-  };
+  const syncPacket = { drawings: allDrawingsList, logs: verificationHistory, timestamp: Date.now() };
   const blob = new Blob([JSON.stringify(syncPacket)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = `Смена_Архив_${new Date().toISOString().slice(0,10)}.sync`;
   a.click();
-  showToast('💾 Файл смены скачан');
-}
-
-function importSyncDataFromText() {
-  const code = document.getElementById('sync-import-input').value.trim();
-  if (!code) return showToast('⚠️ Вставьте код смены');
-
-  try {
-    const jsonStr = decodeURIComponent(atob(code));
-    const packet = JSON.parse(jsonStr);
-    applySyncPacket(packet);
-  } catch(e) {
-    alert('Неверный код синхронизации: ' + e.message);
-  }
+  showToast('💾 Файл смены сохранён');
 }
 
 function applySyncPacket(packet) {
-  if (!packet.drawings && !packet.logs) return alert('Файл не содержит данных смены');
+  if (!packet.drawings && !packet.logs) return alert('Данные повреждены');
 
   const tx = dbInstance.transaction(['drawings', 'logs'], 'readwrite');
   if (packet.drawings && packet.drawings.length > 0) {
@@ -1081,8 +1183,7 @@ function applySyncPacket(packet) {
   }
   tx.oncomplete = () => {
     loadDataFromDB();
-    showToast('✅ Данные успешно перенесены на ПК!');
-    document.getElementById('sync-import-input').value = '';
+    showToast('✅ Смена успешно загружена на ПК!');
     switchTab('log');
   };
 }
@@ -1230,7 +1331,7 @@ function generateMinimalistWordReport() {
   showToast('📄 Официальный акт Word скачан');
 }
 
-/* ================= АВТОНОМНЫЙ ПАРСЕР XLSX / CSV ================= */
+/* ================= АВТОНОМНЫЙ ПАРСЕР XLSX ================= */
 async function handleFileUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -1571,7 +1672,7 @@ function findBestMatchingDrawingsFromOCR(ocrRawText) {
   const ocrDigits = ocrRawText.replace(/\D/g, '');
 
   if (!ocrDigits && !ocrClean) {
-    resultsBox.innerHTML = '<div style="padding:8px; font-size:11px; color:#7D8A9A; text-align:center;">В рамке символы не обнаружены. Наведите точнее.</div>';
+    resultsBox.innerHTML = '<div style="padding:8px; font-size:11px; color:#7D8A9A; text-align:center;">В рамке символы не обнаружены.</div>';
     return;
   }
 
@@ -1588,7 +1689,7 @@ function findBestMatchingDrawingsFromOCR(ocrRawText) {
   if (scoredList.length === 0) {
     resultsBox.innerHTML = `
       <div style="padding:8px; font-size:10.5px; color:#7D8A9A; text-align:center;">
-        Распознано в рамке: "<b>${ocrRawText.trim().slice(0, 25)}</b>"<br>В реестре совпадений не найдено.
+        Распознано: "<b>${ocrRawText.trim().slice(0, 25)}</b>"<br>В реестре совпадений не найдено.
       </div>
     `;
     return;
