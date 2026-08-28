@@ -12,7 +12,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="icon.svg">
 
-<!-- Движок прямого WebRTC моста PeerJS -->
+<!-- WebRTC мост PeerJS -->
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <!-- OCR Движок -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
@@ -199,17 +199,17 @@
     background: var(--panel-bg);
     border: var(--border-main);
     border-radius: var(--radius-lg);
-    padding: 6px 8px;
+    padding: 8px 10px;
     margin-bottom: 4px;
     box-shadow: var(--shadow-cartoon);
   }
 
   .cartoon-input {
     width: 100%;
-    padding: 5px 7px;
+    padding: 8px 10px;
     border: var(--border-main);
     border-radius: var(--radius-md);
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 800;
     color: var(--secondary-dark);
     background: #FFFFFF;
@@ -221,11 +221,30 @@
     box-shadow: 0 0 0 2px rgba(51, 85, 204, 0.2);
   }
 
+  /* ВДВОЕ УВЕЛИЧЕННЫЕ ПОЛЯ РУЧНОГО ВВОДА ЛИТЕРОВ */
+  .input-liter-tall {
+    min-height: 48px;
+    font-size: 18px !important;
+    font-weight: 900 !important;
+    text-align: center;
+    padding: 8px 4px !important;
+    text-transform: lowercase;
+    border-width: 2.5px !important;
+  }
+
+  /* ВДВОЕ УВЕЛИЧЕННЫЕ ПОЛЯ КОММЕНТАРИЕВ */
+  .input-comment-tall {
+    min-height: 38px;
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    padding: 8px 8px !important;
+  }
+
   .cartoon-btn {
-    padding: 6px 5px;
+    padding: 8px 6px;
     border: var(--border-main);
     border-radius: var(--radius-md);
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 800;
     cursor: pointer;
     text-align: center;
@@ -243,11 +262,10 @@
     box-shadow: 0 1px 0 #2D3748;
   }
 
-  /* Вдвое увеличенные нижние кнопки сверки */
   .btn-tall-primary {
     min-height: 52px;
     padding: 10px 8px;
-    font-size: 13.5px;
+    font-size: 14px;
     font-weight: 900;
     letter-spacing: 0.4px;
   }
@@ -255,23 +273,22 @@
   .btn-tall-action {
     min-height: 46px;
     padding: 8px 6px;
-    font-size: 11.5px;
+    font-size: 12px;
     font-weight: 900;
   }
 
-  /* Локальные компактные кнопки под полями литеров */
   .btn-sub-action {
-    padding: 3px 4px;
-    font-size: 9px;
+    padding: 6px 4px;
+    font-size: 10px;
     font-weight: 800;
-    min-height: 24px;
+    min-height: 30px;
     border-radius: var(--radius-sm);
-    box-shadow: 0 1px 0 #2D3748;
+    box-shadow: 0 1.5px 0 #2D3748;
   }
 
   .btn-row {
     display: flex;
-    gap: 4px;
+    gap: 5px;
     width: 100%;
     flex-shrink: 0;
   }
@@ -321,7 +338,7 @@
     font-size: 21px;
     font-weight: 900;
     color: var(--secondary-dark);
-    height: clamp(44px, 6.2vh, 56px);
+    height: clamp(42px, 5.8vh, 52px);
     box-shadow: 0 2px 0 var(--secondary-dark);
     cursor: pointer;
     display: flex;
@@ -342,19 +359,19 @@
 
   .drawing-code {
     font-family: monospace;
-    font-size: 14.5px;
+    font-size: 16px;
     font-weight: 900;
     color: var(--accent-blue);
     word-break: break-all;
-    line-height: 1.15;
+    line-height: 1.2;
   }
 
   .sheet-badge {
     background: #E2E8F0;
     color: #2D3748;
-    font-size: 8.5px;
+    font-size: 9px;
     font-weight: 800;
-    padding: 2px 5px;
+    padding: 2px 6px;
     border-radius: 4px;
     border: 1px solid var(--secondary-mid);
     display: inline-block;
@@ -365,56 +382,56 @@
     display: inline-block;
     background: var(--secondary-dark);
     color: #FFFFFF;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 900;
-    padding: 2px 5px;
-    border-radius: 4px;
-    letter-spacing: 0.2px;
+    padding: 3px 6px;
+    border-radius: 5px;
+    letter-spacing: 0.3px;
     margin-bottom: 2px;
   }
 
   .compare-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 4px;
+    gap: 6px;
     background: #F8FAFC;
-    border: 1.5px dashed var(--secondary-mid);
+    border: 2px dashed var(--secondary-mid);
     border-radius: var(--radius-md);
-    padding: 4px;
-    margin-bottom: 3px;
+    padding: 6px;
+    margin-bottom: 6px;
   }
 
   .compare-col {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 4px;
     text-align: center;
   }
 
   .compare-cell-base {
     background: #F0F9FF;
-    border: 1.5px solid var(--accent-sky);
+    border: 2px solid var(--accent-sky);
     border-radius: var(--radius-sm);
-    padding: 2px;
+    padding: 4px 2px;
     text-align: center;
   }
 
   .compare-cell-base .val {
-    font-size: 14.5px;
+    font-size: 16px;
     font-weight: 900;
     color: var(--secondary-dark);
     text-transform: uppercase;
   }
 
   .verdict-box {
-    border: 1.5px solid;
+    border: 2px solid;
     border-radius: var(--radius-md);
-    padding: 4px;
+    padding: 6px;
     text-align: center;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     font-weight: 800;
-    font-size: 10px;
-    line-height: 1.15;
+    font-size: 11px;
+    line-height: 1.2;
   }
 
   .verdict-box.match { background: #ECFDF5; border-color: var(--accent-green); color: #065F46; }
@@ -435,25 +452,28 @@
     margin: 3px 0;
   }
 
-  /* Список очереди / результатов поиска */
+  /* ПОЛНОРАЗМЕРНЫЙ ВЕРХНИЙ СПИСОК СВЕРКИ */
   .queue-list-box {
     background: #FFFFFF;
-    border: 1.5px solid var(--secondary-dark);
+    border: 2px solid var(--secondary-dark);
     border-radius: var(--radius-md);
-    padding: 2px;
+    padding: 3px;
     overflow-y: auto;
-    max-height: clamp(85px, 17vh, 130px);
-    margin-bottom: 3px;
+    flex: 1 1 0px;
+    min-height: 0;
+    margin-bottom: 4px;
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
+    -webkit-overflow-scrolling: touch;
   }
 
   .search-item {
-    padding: 4px 6px;
+    padding: 8px 8px;
     border-bottom: 1px solid var(--primary-alt);
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #FFFFFF;
   }
 
   .search-item:active { background: #EEF2FF; }
@@ -472,30 +492,30 @@
 
   .log-item {
     background: #FFFFFF;
-    border: 1.5px solid var(--secondary-dark);
+    border: 2px solid var(--secondary-dark);
     border-radius: var(--radius-md);
-    padding: 5px 7px;
-    margin-bottom: 4px;
+    padding: 8px 9px;
+    margin-bottom: 5px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0 1px 0 var(--secondary-dark);
+    box-shadow: 0 1.5px 0 var(--secondary-dark);
   }
 
-  .log-item.mismatch { border-left: 4px solid var(--accent-red); background: #FFF5F5; }
-  .log-item.match { border-left: 4px solid var(--accent-green); background: #F0FDF4; }
+  .log-item.mismatch { border-left: 5px solid var(--accent-red); background: #FFF5F5; }
+  .log-item.match { border-left: 5px solid var(--accent-green); background: #F0FDF4; }
 
   .log-del-btn {
     background: #FFFFFF;
     border: 1.5px solid var(--accent-red);
     color: var(--accent-red);
     border-radius: var(--radius-sm);
-    padding: 3px 6px;
-    font-size: 10.5px;
+    padding: 4px 7px;
+    font-size: 11px;
     font-weight: bold;
     cursor: pointer;
-    margin-left: 4px;
+    margin-left: 5px;
     flex-shrink: 0;
   }
 
@@ -571,77 +591,78 @@
     <!-- 1. ВКЛАДКА СВЕРКИ -->
     <div id="view-check" class="view-panel active">
       
-      <!-- Верхний блок поиска и памяти последнего чертежа -->
-      <div class="cartoon-card" style="margin-bottom: 3px; padding: 4px 6px; position: relative; flex-shrink: 0;">
+      <!-- Поле ввода поиска и плашка последнего чертежа -->
+      <div class="cartoon-card" style="margin-bottom: 4px; padding: 5px 8px; position: relative; flex-shrink: 0;">
         <div style="display: flex; gap: 4px; align-items: center;">
           <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Введите шифр чертежа..." autocomplete="off" oninput="handleLiveSearch(this.value)">
-          <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 0 8px;" onclick="clearSearchInput()">✕</button>
+          <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 0 9px;" onclick="clearSearchInput()">✕</button>
         </div>
         
-        <!-- Плашка последнего проверенного чертежа -->
-        <div id="last-interacted-box" style="display: none; margin-top: 3px; background: #F0F9FF; border: 1px dashed var(--accent-sky); border-radius: var(--radius-sm); padding: 2px 6px; font-size: 9px; color: var(--secondary-dark); justify-content: space-between; align-items: center;">
+        <div id="last-interacted-box" style="display: none; margin-top: 4px; background: #F0F9FF; border: 1.5px dashed var(--accent-sky); border-radius: var(--radius-sm); padding: 3px 6px; font-size: 10px; color: var(--secondary-dark); justify-content: space-between; align-items: center;">
           <div>📌 <b>Последний:</b> <span id="last-drawing-code" style="font-family: monospace; font-weight: 800; color: var(--accent-blue);">-</span> <span id="last-drawing-lits" style="color: var(--secondary-mid);"></span></div>
         </div>
       </div>
 
-      <!-- Карточка выбранного чертежа -->
-      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1 1 0px; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 5px 7px; min-height: 0; overflow-y: auto;">
+      <!-- Рабочая карточка выбранного чертежа -->
+      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1 1 0px; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 6px 8px; min-height: 0; overflow-y: auto;">
         <div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
             <span class="sheet-badge" id="cur-sheet-name">Устройства</span>
-            <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 2px 6px; font-size: 9px;" onclick="clearCurrentVerification()">Сброс</button>
+            <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 2px 7px; font-size: 9.5px;" onclick="clearCurrentVerification()">Сброс</button>
           </div>
 
-          <div class="drawing-code" id="cur-drawing-num" style="margin-bottom: 1px;">КСП01-362111.01-002</div>
+          <div class="drawing-code" id="cur-drawing-num" style="margin-bottom: 2px;">КСП01-362111.01-002</div>
 
-          <div style="font-size: 9.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="cur-drawing-name">
+          <div style="font-size: 10.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="cur-drawing-name">
             по с.3
           </div>
 
-          <!-- Сетка СБ и СП с локальными кнопками и комментариями -->
+          <!-- Сетка СБ и СП с увеличенными полями и комментариями -->
           <div class="compare-grid">
             <!-- КОЛОНКА СБ -->
             <div class="compare-col">
               <span class="sb-sp-title-tag">Литер СБ (Чертёж)</span>
               <div class="compare-cell-base">
-                <div style="font-size: 7px; font-weight:800; color:#7D8A9A;">В БАЗЕ:</div>
+                <div style="font-size: 8px; font-weight:800; color:#7D8A9A;">В БАЗЕ:</div>
                 <div class="val" id="db-lit-sb">дт</div>
               </div>
-              <input type="text" id="act-lit-sb" class="cartoon-input" placeholder="Факт СБ" style="text-align: center; text-transform: lowercase; font-size: 13.5px; padding: 3px;" oninput="runLiveComparison()">
               
-              <!-- Собственные кнопки для СБ -->
-              <div class="btn-row" style="gap: 2px;">
+              <!-- Поле ввода факта СБ (вдвое выше) -->
+              <input type="text" id="act-lit-sb" class="cartoon-input input-liter-tall" placeholder="Факт СБ" oninput="runLiveComparison()">
+              
+              <div class="btn-row" style="gap: 3px;">
                 <button class="cartoon-btn btn-success btn-sub-action" onclick="setLitSbMatch()">Литер верен</button>
                 <button class="cartoon-btn btn-warning btn-sub-action" onclick="setLitSbNone()">Литер нет</button>
               </div>
 
-              <!-- Комментарий для СБ -->
-              <input type="text" id="act-comment-sb" class="cartoon-input" placeholder="💬 Коммент СБ..." style="font-size: 9px; padding: 2px 4px;">
+              <!-- Комментарий СБ (вдвое выше) -->
+              <input type="text" id="act-comment-sb" class="cartoon-input input-comment-tall" placeholder="💬 Коммент СБ...">
             </div>
 
             <!-- КОЛОНКА СП -->
             <div class="compare-col">
               <span class="sb-sp-title-tag">Литер СП (Специф.)</span>
               <div class="compare-cell-base">
-                <div style="font-size: 7px; font-weight:800; color:#7D8A9A;" id="lbl-db-sp">В БАЗЕ:</div>
+                <div style="font-size: 8px; font-weight:800; color:#7D8A9A;" id="lbl-db-sp">В БАЗЕ:</div>
                 <div class="val" id="db-lit-sp">нет</div>
               </div>
-              <input type="text" id="act-lit-sp" class="cartoon-input" placeholder="Факт СП" style="text-align: center; text-transform: lowercase; font-size: 13.5px; padding: 3px;" oninput="runLiveComparison()">
               
-              <!-- Собственные кнопки для СП -->
-              <div class="btn-row" style="gap: 2px;">
+              <!-- Поле ввода факта СП (вдвое выше) -->
+              <input type="text" id="act-lit-sp" class="cartoon-input input-liter-tall" placeholder="Факт СП" oninput="runLiveComparison()">
+              
+              <div class="btn-row" style="gap: 3px;">
                 <button class="cartoon-btn btn-success btn-sub-action" onclick="setLitSpMatch()">Литер верен</button>
                 <button class="cartoon-btn btn-warning btn-sub-action" onclick="setLitSpNone()">Литер нет</button>
               </div>
 
-              <!-- Комментарий для СП -->
-              <input type="text" id="act-comment-sp" class="cartoon-input" placeholder="💬 Коммент СП..." style="font-size: 9px; padding: 2px 4px;">
+              <!-- Комментарий СП (вдвое выше) -->
+              <input type="text" id="act-comment-sp" class="cartoon-input input-comment-tall" placeholder="💬 Коммент СП...">
             </div>
           </div>
 
-          <!-- Поле ОБЩЕГО КОММЕНТАРИЯ -->
-          <div style="margin-bottom: 3px;">
-            <input type="text" id="act-comment-gen" class="cartoon-input" placeholder="💬 Общий комментарий (замято, размыто и т.д.)..." style="font-size: 9.5px; padding: 3px 6px;">
+          <!-- ОБЩИЙ КОММЕНТАРИЙ (вдвое выше) -->
+          <div style="margin-bottom: 4px;">
+            <input type="text" id="act-comment-gen" class="cartoon-input input-comment-tall" placeholder="💬 Общий комментарий (замято, размыто и т.д.)...">
           </div>
 
           <div id="verdict-display" class="verdict-box pending">
@@ -649,7 +670,7 @@
           </div>
         </div>
 
-        <!-- Увеличенные вдвое функциональные кнопки панели сверки -->
+        <!-- Нижние кнопки увеличенной высоты -->
         <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; margin-top: 2px;">
           <div class="btn-row">
             <button class="cartoon-btn btn-success btn-tall-action" style="flex: 1.2;" onclick="autoFillAndVerifyMatch()">
@@ -665,16 +686,15 @@
         </div>
       </div>
 
-      <!-- Зона с постоянным списком очереди/поиска и цифровым блоком -->
+      <!-- ЗОНА ПОЛНОРАЗМЕРНОГО СПИСКА И ЦИФЕРБЛАТА -->
       <div id="search-numpad-box" class="numpad-container">
         
-        <!-- Заголовок списка следующих / найденных -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 2px 2px 2px; color: var(--secondary-mid); font-size: 9px; font-weight: 800;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 3px 3px 3px; color: var(--secondary-mid); font-size: 10px; font-weight: 800;">
           <span id="queue-list-title">⚡ Следующие по реестру:</span>
-          <span id="queue-count-badge" style="font-size: 8.5px;"></span>
+          <span id="queue-count-badge" style="font-size: 9.5px; font-weight: 800;"></span>
         </div>
 
-        <!-- Постоянный выпадающий список следующих/найденных чертежей -->
+        <!-- Полноразмерный список очереди / результатов поиска -->
         <div id="search-dropdown-list" class="queue-list-box"></div>
 
         <!-- NUMPAD -->
@@ -702,9 +722,9 @@
     <!-- 2. ВКЛАДКА КАМЕРЫ -->
     <div id="view-camera" class="view-panel">
       <div class="cartoon-card" style="flex: 1 1 0px; display: flex; flex-direction: column; margin-bottom: 0; min-height: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; flex-shrink: 0;">
-          <span style="font-size: 10.5px; font-weight: 800;">📷 Оптическое считывание (OCR)</span>
-          <span id="ocr-status-badge" style="font-size: 8.5px; color: var(--secondary-mid); font-weight: bold;">Готов</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-shrink: 0;">
+          <span style="font-size: 11px; font-weight: 800;">📷 Оптическое считывание (OCR)</span>
+          <span id="ocr-status-badge" style="font-size: 9px; color: var(--secondary-mid); font-weight: bold;">Готов</span>
         </div>
 
         <div id="camera-box-wrap" style="position: relative; height: clamp(110px, 18vh, 140px); background: #1A202C; border-radius: var(--radius-md); border: var(--border-main); overflow: hidden; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
@@ -723,10 +743,10 @@
           <button class="cartoon-btn btn-secondary" onclick="captureLiveVideoFrame()">⚡ Считать</button>
         </div>
 
-        <div style="font-size: 9px; font-weight: 800; color: var(--secondary-mid); margin-bottom: 2px; flex-shrink: 0;">СОВПАДЕНИЯ В БАЗЕ:</div>
+        <div style="font-size: 9.5px; font-weight: 800; color: var(--secondary-mid); margin-bottom: 2px; flex-shrink: 0;">СОВПАДЕНИЯ В БАЗЕ:</div>
         <div id="ocr-results-container" class="log-scroll-area" style="background: #F8FAFC; border: 1.5px solid var(--primary-alt); border-radius: var(--radius-md); padding: 4px;">
-          <div style="text-align: center; padding: 8px; font-size: 9.5px; color: #7D8A9A;">
-            Наведите синюю рамку на шифр и нажмите «Считать» или сделайте «Фото»
+          <div style="text-align: center; padding: 8px; font-size: 10px; color: #7D8A9A;">
+            Наведите рамку на шифр и нажмите «Считать» или сделайте «Фото»
           </div>
         </div>
       </div>
@@ -735,11 +755,11 @@
     <!-- 3. РЕЕСТР -->
     <div id="view-catalog" class="view-panel">
       <div class="cartoon-card" style="flex: 1 1 0px; display: flex; flex-direction: column; margin-bottom: 0; min-height: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; flex-shrink: 0;">
-          <span style="font-size: 10.5px; font-weight: 800;">📚 База по всем листам</span>
-          <span style="font-size: 9px; color: var(--secondary-mid);" id="catalog-count-text">0 шт</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-shrink: 0;">
+          <span style="font-size: 11px; font-weight: 800;">📚 База по всем листам</span>
+          <span style="font-size: 9.5px; color: var(--secondary-mid);" id="catalog-count-text">0 шт</span>
         </div>
-        <input type="text" id="catalog-filter-input" class="cartoon-input" placeholder="Поиск по цифрам или разделу..." style="font-size: 12px; margin-bottom: 4px; padding: 4px 6px; flex-shrink: 0;" oninput="renderCatalog(this.value)">
+        <input type="text" id="catalog-filter-input" class="cartoon-input" placeholder="Поиск по цифрам или разделу..." style="font-size: 13px; margin-bottom: 4px; padding: 6px 8px; flex-shrink: 0;" oninput="renderCatalog(this.value)">
         <div id="catalog-list-container" class="log-scroll-area"></div>
       </div>
     </div>
@@ -747,9 +767,9 @@
     <!-- 4. ЖУРНАЛ -->
     <div id="view-log" class="view-panel">
       <div class="cartoon-card" style="flex: 1 1 0px; display: flex; flex-direction: column; margin-bottom: 0; min-height: 0;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px; flex-shrink: 0;">
-          <span style="font-size: 10.5px; font-weight: 800;">📋 Проверенные чертежи</span>
-          <span style="font-size: 9px; color: var(--secondary-mid);" id="log-stats-text">0 шт</span>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-shrink: 0;">
+          <span style="font-size: 11px; font-weight: 800;">📋 Проверенные чертежи</span>
+          <span style="font-size: 9.5px; color: var(--secondary-mid);" id="log-stats-text">0 шт</span>
         </div>
 
         <div class="btn-row" style="margin-bottom: 4px;">
@@ -760,11 +780,11 @@
 
         <div id="log-list-container" class="log-scroll-area"></div>
 
-        <button class="cartoon-btn btn-word" onclick="generateMinimalistWordReport()" style="width: 100%; margin-bottom: 3px; padding: 7px;">
+        <button class="cartoon-btn btn-word" onclick="generateMinimalistWordReport()" style="width: 100%; margin-bottom: 4px; padding: 8px;">
           📄 Скачать официальный акт (.doc)
         </button>
 
-        <button class="cartoon-btn btn-secondary" style="width: 100%; padding: 4px; font-size: 10px;" onclick="clearLogHistory()">
+        <button class="cartoon-btn btn-secondary" style="width: 100%; padding: 5px; font-size: 10.5px;" onclick="clearLogHistory()">
           🗑️ Очистить весь журнал
         </button>
       </div>
@@ -773,47 +793,47 @@
     <!-- 5. ФАЙЛЫ И PIN-МОСТ -->
     <div id="view-config" class="view-panel">
       
-      <div class="cartoon-card" style="margin-bottom: 4px; padding: 5px 7px; flex-shrink: 0;">
-        <div style="font-size: 10.5px; font-weight: 800; margin-bottom: 2px;">📊 База данных Excel</div>
+      <div class="cartoon-card" style="margin-bottom: 4px; padding: 6px 8px; flex-shrink: 0;">
+        <div style="font-size: 11px; font-weight: 800; margin-bottom: 3px;">📊 База данных Excel</div>
         <input type="file" id="excel-file-input" accept=".xlsx,.xls,.csv,.XLSX,.XLS,.CSV" style="display: none;" onchange="handleFileUpload(event)">
-        <button class="cartoon-btn btn-primary" style="width: 100%; padding: 6px;" onclick="document.getElementById('excel-file-input').click()">
+        <button class="cartoon-btn btn-primary" style="width: 100%; padding: 7px;" onclick="document.getElementById('excel-file-input').click()">
           📂 Открыть файл Excel на устройстве
         </button>
       </div>
 
       <div class="cartoon-card" style="flex: 1 1 0px; display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; margin-bottom: 0; min-height: 0;">
         <div>
-          <div style="font-size: 11px; font-weight: 800; color: var(--accent-purple); margin-bottom: 2px;">⚡ Прямая передача смены по PIN (Телефон ➔ ПК)</div>
-          <div style="font-size: 9px; color: var(--secondary-mid); margin-bottom: 4px; line-height: 1.2;">
+          <div style="font-size: 11.5px; font-weight: 800; color: var(--accent-purple); margin-bottom: 2px;">⚡ Прямая передача смены по PIN (Телефон ➔ ПК)</div>
+          <div style="font-size: 9.5px; color: var(--secondary-mid); margin-bottom: 5px; line-height: 1.25;">
             1. Нажмите <b>«Создать PIN»</b> на телефоне.<br>
             2. Введите эти 6 цифр на компьютере и нажмите <b>«Загрузить»</b>.
           </div>
 
-          <button class="cartoon-btn btn-sync" id="btn-generate-pin" style="width: 100%; padding: 7px;" onclick="generateDirectWebRTCPin()">
+          <button class="cartoon-btn btn-sync" id="btn-generate-pin" style="width: 100%; padding: 8px;" onclick="generateDirectWebRTCPin()">
             ⚡ Создать 6-значный PIN смены
           </button>
 
           <div id="pin-display-wrapper" style="display: none;">
-            <div style="font-size: 9px; font-weight: 800; text-align: center; margin-top: 4px; color: var(--secondary-dark);">
+            <div style="font-size: 9.5px; font-weight: 800; text-align: center; margin-top: 5px; color: var(--secondary-dark);">
               КОД ДЛЯ ВВОДА НА КОМПЬЮТЕРЕ:
             </div>
             <div class="pin-code-display" id="pin-code-val">------</div>
-            <div style="font-size: 8px; color: var(--accent-green); text-align: center; font-weight: 800;">
+            <div style="font-size: 8.5px; color: var(--accent-green); text-align: center; font-weight: 800;">
               🟢 Канал открыт. Введите код на ПК для мгновенной загрузки.
             </div>
           </div>
 
-          <div style="margin-top: 6px; padding-top: 4px; border-top: 1.5px dashed var(--primary-alt);">
-            <div style="font-size: 9.5px; font-weight: 800; margin-bottom: 2px;">ПРИЁМ СМЕНЫ НА ПК:</div>
+          <div style="margin-top: 6px; padding-top: 5px; border-top: 1.5px dashed var(--primary-alt);">
+            <div style="font-size: 10px; font-weight: 800; margin-bottom: 3px;">ПРИЁМ СМЕНЫ НА ПК:</div>
             <div style="display: flex; gap: 4px;">
-              <input type="text" id="input-receive-pin" class="cartoon-input" placeholder="6 цифр PIN..." maxlength="6" style="text-align: center; font-size: 15px; font-family: monospace; letter-spacing: 2px; padding: 4px;">
-              <button class="cartoon-btn btn-success" id="btn-receive-pin" style="width: auto; padding: 0 8px;" onclick="receiveDirectWebRTCPin()">📥 Загрузить</button>
+              <input type="text" id="input-receive-pin" class="cartoon-input" placeholder="6 цифр PIN..." maxlength="6" style="text-align: center; font-size: 16px; font-family: monospace; letter-spacing: 2px; padding: 5px;">
+              <button class="cartoon-btn btn-success" id="btn-receive-pin" style="width: auto; padding: 0 10px;" onclick="receiveDirectWebRTCPin()">📥 Загрузить</button>
             </div>
           </div>
         </div>
 
         <div style="margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--primary-alt);">
-          <div style="font-size: 8.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 2px;">Резервные методы:</div>
+          <div style="font-size: 9px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 2px;">Резервные методы:</div>
           <div class="btn-row">
             <button class="cartoon-btn btn-secondary btn-sm" onclick="exportSyncDataText()">📋 Копир. код</button>
             <button class="cartoon-btn btn-secondary btn-sm" onclick="exportSyncDataFile()">💾 Файл .sync</button>
@@ -831,41 +851,41 @@
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
         <div>
           <span class="sheet-badge" id="modal-sheet-name">Устройства</span>
-          <div style="font-size: 10.5px; font-weight: 800; margin-top: 1px;">Карточка чертежа</div>
+          <div style="font-size: 11px; font-weight: 800; margin-top: 1px;">Карточка чертежа</div>
         </div>
-        <button style="background: var(--primary-bg); border: 1.5px solid var(--secondary-dark); border-radius: 50%; width: 22px; height: 22px; font-weight: 900; cursor: pointer;" onclick="closeDetailModal()">✕</button>
+        <button style="background: var(--primary-bg); border: 1.5px solid var(--secondary-dark); border-radius: 50%; width: 24px; height: 24px; font-weight: 900; cursor: pointer;" onclick="closeDetailModal()">✕</button>
       </div>
 
-      <div class="drawing-code" id="modal-drawing-num" style="font-size: 15px; margin-bottom: 2px;">-</div>
-      <div style="font-size: 10px; font-weight: 700; color: var(--secondary-dark); margin-bottom: 4px;" id="modal-drawing-name">-</div>
+      <div class="drawing-code" id="modal-drawing-num" style="font-size: 16px; margin-bottom: 2px;">-</div>
+      <div style="font-size: 10.5px; font-weight: 700; color: var(--secondary-dark); margin-bottom: 4px;" id="modal-drawing-name">-</div>
 
-      <div style="background: #F8FAFC; border: 1.5px solid var(--primary-alt); border-radius: var(--radius-md); padding: 4px; margin-bottom: 4px;">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3px; text-align: center;">
-          <div style="background: #FFF; padding: 3px; border-radius: 4px; border: 1px solid var(--primary-alt);">
-            <div style="font-size: 7.5px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СБ (РЕЕСТР)</div>
-            <div style="font-size: 14px; font-weight: 900;" id="modal-db-sb">нет</div>
+      <div style="background: #F8FAFC; border: 1.5px solid var(--primary-alt); border-radius: var(--radius-md); padding: 5px; margin-bottom: 5px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; text-align: center;">
+          <div style="background: #FFF; padding: 4px; border-radius: 4px; border: 1px solid var(--primary-alt);">
+            <div style="font-size: 8px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СБ (РЕЕСТР)</div>
+            <div style="font-size: 15px; font-weight: 900;" id="modal-db-sb">нет</div>
           </div>
-          <div style="background: #FFF; padding: 3px; border-radius: 4px; border: 1px solid var(--primary-alt);">
-            <div style="font-size: 7.5px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СБ (ФАКТ)</div>
-            <div style="font-size: 14px; font-weight: 900;" id="modal-act-sb">нет</div>
+          <div style="background: #FFF; padding: 4px; border-radius: 4px; border: 1px solid var(--primary-alt);">
+            <div style="font-size: 8px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СБ (ФАКТ)</div>
+            <div style="font-size: 15px; font-weight: 900;" id="modal-act-sb">нет</div>
           </div>
-          <div style="background: #FFF; padding: 3px; border-radius: 4px; border: 1px solid var(--primary-alt);">
-            <div style="font-size: 7.5px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СП (РЕЕСТР)</div>
-            <div style="font-size: 14px; font-weight: 900;" id="modal-db-sp">нет</div>
+          <div style="background: #FFF; padding: 4px; border-radius: 4px; border: 1px solid var(--primary-alt);">
+            <div style="font-size: 8px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СП (РЕЕСТР)</div>
+            <div style="font-size: 15px; font-weight: 900;" id="modal-db-sp">нет</div>
           </div>
-          <div style="background: #FFF; padding: 3px; border-radius: 4px; border: 1px solid var(--primary-alt);">
-            <div style="font-size: 7.5px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СП (ФАКТ)</div>
-            <div style="font-size: 14px; font-weight: 900;" id="modal-act-sp">нет</div>
+          <div style="background: #FFF; padding: 4px; border-radius: 4px; border: 1px solid var(--primary-alt);">
+            <div style="font-size: 8px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СП (ФАКТ)</div>
+            <div style="font-size: 15px; font-weight: 900;" id="modal-act-sp">нет</div>
           </div>
         </div>
       </div>
 
-      <div id="modal-comment-box" style="font-size: 10px; background: #FFF; border: 1px solid var(--primary-alt); padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; color: var(--secondary-dark); line-height: 1.3;">
+      <div id="modal-comment-box" style="font-size: 10.5px; background: #FFF; border: 1px solid var(--primary-alt); padding: 5px 6px; border-radius: 4px; margin-bottom: 5px; color: var(--secondary-dark); line-height: 1.35;">
         💬 <b>Комментарии:</b> <span id="modal-comment-text">—</span>
       </div>
 
-      <div id="modal-status-badge" class="verdict-box" style="margin-bottom: 4px;">-</div>
-      <div style="font-size: 9px; color: var(--secondary-mid); margin-bottom: 5px; text-align: center;" id="modal-timestamp">-</div>
+      <div id="modal-status-badge" class="verdict-box" style="margin-bottom: 5px;">-</div>
+      <div style="font-size: 9.5px; color: var(--secondary-mid); margin-bottom: 6px; text-align: center;" id="modal-timestamp">-</div>
 
       <div class="btn-row">
         <button class="cartoon-btn btn-danger" id="modal-btn-delete">🗑️ Удалить</button>
@@ -945,7 +965,6 @@ async function loadDataFromDB() {
     document.getElementById('active-db-count').innerText = `База: ${allDrawingsList.length} шт`;
     document.getElementById('catalog-count-text').innerText = `${allDrawingsList.length} шт`;
     
-    // Восстановление памяти о последнем чертеже из localStorage
     const savedLastId = localStorage.getItem('arch_last_drawing_id');
     if (savedLastId) {
       lastInteractedDrawing = allDrawingsList.find(d => String(d.id) === String(savedLastId)) || null;
@@ -1007,7 +1026,7 @@ function renderQueueList(cleanFilter) {
   if (allDrawingsList.length === 0) {
     title.innerText = '⚡ Очередь чертежей:';
     countBadge.innerText = '';
-    container.innerHTML = '<div style="padding:6px; font-size:9.5px; color:#7D8A9A; text-align:center;">База пуста. Загрузите файл Excel.</div>';
+    container.innerHTML = '<div style="padding:10px; font-size:11px; color:#7D8A9A; text-align:center;">База пуста. Загрузите файл Excel.</div>';
     return;
   }
 
@@ -1021,7 +1040,7 @@ function renderQueueList(cleanFilter) {
       if (digitsQ.length >= 2 && item._digits.includes(digitsQ)) return true;
       if (item._clean.includes(cleanFilter)) return true;
       return false;
-    }).slice(0, 20);
+    }).slice(0, 30);
 
     countBadge.innerText = `${listToDisplay.length} шт`;
   } else {
@@ -1035,18 +1054,18 @@ function renderQueueList(cleanFilter) {
     }
 
     if (startIndex >= allDrawingsList.length) {
-      startIndex = 0; // Зацикливание к началу
+      startIndex = 0;
     }
 
-    listToDisplay = allDrawingsList.slice(startIndex, startIndex + 15);
+    listToDisplay = allDrawingsList.slice(startIndex, startIndex + 25);
     if (listToDisplay.length === 0 && allDrawingsList.length > 0) {
-      listToDisplay = allDrawingsList.slice(0, 15);
+      listToDisplay = allDrawingsList.slice(0, 25);
     }
     countBadge.innerText = `${listToDisplay.length} шт`;
   }
 
   if (listToDisplay.length === 0) {
-    container.innerHTML = '<div style="padding:6px; font-size:9.5px; color:#7D8A9A; text-align:center;">Ничего не найдено</div>';
+    container.innerHTML = '<div style="padding:10px; font-size:11px; color:#7D8A9A; text-align:center;">Ничего не найдено</div>';
     return;
   }
 
@@ -1060,15 +1079,15 @@ function renderQueueList(cleanFilter) {
     
     const dbSbNorm = formatReportLit(item.lit_sb);
     const dbSpNorm = formatReportLit(item.lit_sp);
-    const litInfo = `СБ:${dbSbNorm} СП:${dbSpNorm}`;
+    const litInfo = `СБ: ${dbSbNorm} | СП: ${dbSpNorm}`;
 
     div.innerHTML = `
-      <div style="flex: 1 1 auto; overflow: hidden; padding-right: 4px;">
-        <span class="sheet-badge" style="font-size:7.5px; margin-bottom:1px;">${item.sheet_name}</span>
-        <div style="font-family:monospace; font-weight:800; font-size:12px; color:var(--accent-blue);">${item.drawing_num}</div>
-        <div style="font-size:8.5px; color:#7D8A9A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+      <div style="flex: 1 1 auto; overflow: hidden; padding-right: 6px;">
+        <span class="sheet-badge" style="font-size:8.5px; margin-bottom:2px;">${item.sheet_name}</span>
+        <div style="font-family:monospace; font-weight:900; font-size:14.5px; color:var(--accent-blue); line-height:1.2;">${item.drawing_num}</div>
+        <div style="font-size:10px; font-weight:700; color:#7D8A9A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
       </div>
-      <div style="font-size:9.5px; font-weight:800; color:var(--secondary-dark); text-align:right; flex-shrink:0;">${litInfo}</div>
+      <div style="font-size:11.5px; font-weight:900; color:var(--secondary-dark); text-align:right; flex-shrink:0;">${litInfo}</div>
     `;
     container.appendChild(div);
   });
@@ -1091,7 +1110,6 @@ function selectDrawing(item) {
   document.getElementById('act-lit-sb').disabled = false;
   document.getElementById('act-lit-sp').disabled = false;
   
-  // Сброс всех полей комментариев
   document.getElementById('act-comment-sb').value = '';
   document.getElementById('act-comment-sp').value = '';
   document.getElementById('act-comment-gen').value = '';
@@ -1197,7 +1215,6 @@ function commitCurrentVerification() {
   const commSb = document.getElementById('act-comment-sb').value.trim();
   const commSp = document.getElementById('act-comment-sp').value.trim();
 
-  // Формирование структурированного комментария ОБЩ:... СБ:... СП:...
   const commentParts = [];
   if (commGen) commentParts.push(`ОБЩ:${commGen}`);
   if (commSb) commentParts.push(`СБ:${commSb}`);
@@ -1228,7 +1245,6 @@ function commitCurrentVerification() {
     verificationHistory.unshift(entry);
     renderLogs();
     
-    // Запоминание последнего проверенного чертежа
     lastInteractedDrawing = currentSelectedDrawing;
     localStorage.setItem('arch_last_drawing_id', lastInteractedDrawing.id);
     updateLastDrawingUI();
@@ -1996,10 +2012,10 @@ function findBestMatchingDrawingsFromOCR(ocrRawText) {
     div.innerHTML = `
       <div>
         <span class="sheet-badge" style="font-size:8px;">${item.sheet_name}</span>
-        <div style="font-family:monospace; font-weight:900; font-size:12px; color:var(--accent-blue);">${item.drawing_num}</div>
-        <div style="font-size:9.5px; color:#7D8A9A;">${item.name}</div>
+        <div style="font-family:monospace; font-weight:900; font-size:13.5px; color:var(--accent-blue);">${item.drawing_num}</div>
+        <div style="font-size:10px; color:#7D8A9A;">${item.name}</div>
       </div>
-      <button class="cartoon-btn btn-primary btn-sm" style="width:auto; padding:3px 7px; flex-shrink:0;">Выбрать ➡️</button>
+      <button class="cartoon-btn btn-primary btn-sm" style="width:auto; padding:4px 8px; flex-shrink:0;">Выбрать ➡️</button>
     `;
     resultsBox.appendChild(div);
   });
@@ -2043,11 +2059,11 @@ function renderCatalog(filterText) {
 
     d.innerHTML = `
       <div>
-        <span class="sheet-badge" style="font-size:8px; margin-bottom:1px;">${item.sheet_name}</span>
-        <div style="font-family:monospace; font-weight:900; font-size:12px; color:var(--accent-blue);">${item.drawing_num}</div>
-        <div style="font-size:9.5px; color:#7D8A9A;">${item.name}</div>
+        <span class="sheet-badge" style="font-size:8.5px; margin-bottom:1px;">${item.sheet_name}</span>
+        <div style="font-family:monospace; font-weight:900; font-size:13px; color:var(--accent-blue);">${item.drawing_num}</div>
+        <div style="font-size:10px; color:#7D8A9A;">${item.name}</div>
       </div>
-      <div style="font-size:9.5px; font-weight:800; color:var(--secondary-dark);">${litInfo}</div>
+      <div style="font-size:10.5px; font-weight:800; color:var(--secondary-dark);">${litInfo}</div>
     `;
     container.appendChild(d);
   });
@@ -2134,14 +2150,14 @@ function renderLogs() {
 
     const factLit = `СБ:${actSb} / СП:${actSp}`;
     const baseLit = `СБ:${dbSb} / СП:${dbSp}`;
-    const commentBadge = item.comment ? `<div style="font-size:8.5px; color:#4A5568; margin-top:2px;">💬 <b>${item.comment}</b></div>` : '';
+    const commentBadge = item.comment ? `<div style="font-size:9px; color:#4A5568; margin-top:2px;">💬 <b>${item.comment}</b></div>` : '';
 
     d.innerHTML = `
       <div style="flex: 1 1 auto; overflow: hidden; padding-right: 4px;">
-        <span class="sheet-badge" style="font-size:7.5px; margin-bottom:1px;">${item.sheet_name}</span>
-        <div style="font-family:monospace; font-weight:900; font-size:11.5px; color:var(--secondary-dark);">${item.drawing_num}</div>
-        <div style="font-size:9px; color:#7D8A9A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
-        <div style="font-size:9px; font-weight:700; margin-top:1px;">
+        <span class="sheet-badge" style="font-size:8px; margin-bottom:1px;">${item.sheet_name}</span>
+        <div style="font-family:monospace; font-weight:900; font-size:12.5px; color:var(--secondary-dark);">${item.drawing_num}</div>
+        <div style="font-size:9.5px; color:#7D8A9A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
+        <div style="font-size:9.5px; font-weight:700; margin-top:1px;">
           ${isM ? `<span style="color:var(--accent-red)">Факт [${factLit}]</span> (Реестр [${baseLit}])` : `<span style="color:var(--accent-green)">Литеры [${factLit}] — Норма</span>`}
         </div>
         ${commentBadge}
