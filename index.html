@@ -206,10 +206,10 @@
 
   .cartoon-input {
     width: 100%;
-    padding: 6px 8px;
+    padding: 5px 7px;
     border: var(--border-main);
     border-radius: var(--radius-md);
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 800;
     color: var(--secondary-dark);
     background: #FFFFFF;
@@ -222,7 +222,7 @@
   }
 
   .cartoon-btn {
-    padding: 7px 6px;
+    padding: 6px 5px;
     border: var(--border-main);
     border-radius: var(--radius-md);
     font-size: 11px;
@@ -243,10 +243,30 @@
     box-shadow: 0 1px 0 #2D3748;
   }
 
-  .btn-tall {
-    min-height: 38px;
+  /* Вдвое увеличенные нижние кнопки сверки */
+  .btn-tall-primary {
+    min-height: 52px;
+    padding: 10px 8px;
+    font-size: 13.5px;
+    font-weight: 900;
+    letter-spacing: 0.4px;
+  }
+
+  .btn-tall-action {
+    min-height: 46px;
     padding: 8px 6px;
     font-size: 11.5px;
+    font-weight: 900;
+  }
+
+  /* Локальные компактные кнопки под полями литеров */
+  .btn-sub-action {
+    padding: 3px 4px;
+    font-size: 9px;
+    font-weight: 800;
+    min-height: 24px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 1px 0 #2D3748;
   }
 
   .btn-row {
@@ -276,7 +296,7 @@
   .btn-sync { background: var(--accent-purple); color: #FFFFFF; border-color: #4338CA; box-shadow: 0 2px 0 #4338CA; }
   .btn-sm { padding: 4px 6px; font-size: 9.5px; border-radius: var(--radius-sm); }
 
-  /* АДАПТИВНЫЙ И КРУПНЫЙ ЦИФРОВОЙ БЛОК */
+  /* ЦИФРОВОЙ БЛОК */
   .numpad-container {
     flex: 1 1 auto;
     display: flex;
@@ -289,18 +309,19 @@
   .numpad-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 5px;
+    gap: 4px;
     width: 100%;
+    flex-shrink: 0;
   }
 
   .numpad-btn {
     background: #FFFFFF;
     border: 2px solid var(--secondary-dark);
     border-radius: var(--radius-md);
-    font-size: 22px;
+    font-size: 21px;
     font-weight: 900;
     color: var(--secondary-dark);
-    height: clamp(48px, 6.8vh, 62px);
+    height: clamp(44px, 6.2vh, 56px);
     box-shadow: 0 2px 0 var(--secondary-dark);
     cursor: pointer;
     display: flex;
@@ -316,8 +337,8 @@
     background: #E2E8F0;
   }
 
-  .numpad-btn.action-btn { background: var(--primary-bg); font-size: 16px; }
-  .numpad-btn.del-btn { background: #FEE2E2; border-color: var(--accent-red); color: var(--accent-red); box-shadow: 0 2px 0 #991B1B; font-size: 19px; }
+  .numpad-btn.action-btn { background: var(--primary-bg); font-size: 15px; }
+  .numpad-btn.del-btn { background: #FEE2E2; border-color: var(--accent-red); color: var(--accent-red); box-shadow: 0 2px 0 #991B1B; font-size: 18px; }
 
   .drawing-code {
     font-family: monospace;
@@ -344,9 +365,9 @@
     display: inline-block;
     background: var(--secondary-dark);
     color: #FFFFFF;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 900;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: 4px;
     letter-spacing: 0.2px;
     margin-bottom: 2px;
@@ -360,13 +381,13 @@
     border: 1.5px dashed var(--secondary-mid);
     border-radius: var(--radius-md);
     padding: 4px;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
 
   .compare-col {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
     text-align: center;
   }
 
@@ -379,7 +400,7 @@
   }
 
   .compare-cell-base .val {
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 900;
     color: var(--secondary-dark);
     text-transform: uppercase;
@@ -392,7 +413,7 @@
     text-align: center;
     margin-bottom: 4px;
     font-weight: 800;
-    font-size: 10.5px;
+    font-size: 10px;
     line-height: 1.15;
   }
 
@@ -414,23 +435,20 @@
     margin: 3px 0;
   }
 
-  .search-dropdown {
-    position: absolute;
-    top: 42px;
-    left: 8px;
-    right: 8px;
+  /* Список очереди / результатов поиска */
+  .queue-list-box {
     background: #FFFFFF;
-    border: 2px solid var(--secondary-dark);
+    border: 1.5px solid var(--secondary-dark);
     border-radius: var(--radius-md);
-    max-height: 120px;
+    padding: 2px;
     overflow-y: auto;
-    z-index: 100;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
-    display: none;
+    max-height: clamp(85px, 17vh, 130px);
+    margin-bottom: 3px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.06);
   }
 
   .search-item {
-    padding: 5px 8px;
+    padding: 4px 6px;
     border-bottom: 1px solid var(--primary-alt);
     cursor: pointer;
     display: flex;
@@ -553,18 +571,21 @@
     <!-- 1. ВКЛАДКА СВЕРКИ -->
     <div id="view-check" class="view-panel active">
       
-      <div class="cartoon-card" style="margin-bottom: 4px; padding: 4px 6px; position: relative; flex-shrink: 0;">
+      <!-- Верхний блок поиска и памяти последнего чертежа -->
+      <div class="cartoon-card" style="margin-bottom: 3px; padding: 4px 6px; position: relative; flex-shrink: 0;">
         <div style="display: flex; gap: 4px; align-items: center;">
-          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Введите цифры чертежа..." autocomplete="off" oninput="handleLiveSearch(this.value)">
+          <input type="text" id="input-drawing-search" class="cartoon-input" placeholder="Введите шифр чертежа..." autocomplete="off" oninput="handleLiveSearch(this.value)">
           <button class="cartoon-btn btn-secondary btn-sm" style="width: auto; padding: 0 8px;" onclick="clearSearchInput()">✕</button>
+        </div>
+        
+        <!-- Плашка последнего проверенного чертежа -->
+        <div id="last-interacted-box" style="display: none; margin-top: 3px; background: #F0F9FF; border: 1px dashed var(--accent-sky); border-radius: var(--radius-sm); padding: 2px 6px; font-size: 9px; color: var(--secondary-dark); justify-content: space-between; align-items: center;">
+          <div>📌 <b>Последний:</b> <span id="last-drawing-code" style="font-family: monospace; font-weight: 800; color: var(--accent-blue);">-</span> <span id="last-drawing-lits" style="color: var(--secondary-mid);"></span></div>
         </div>
       </div>
 
-      <!-- Всплывающий список поиска -->
-      <div id="search-dropdown-list" class="search-dropdown"></div>
-
       <!-- Карточка выбранного чертежа -->
-      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1 1 0px; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 6px 8px; min-height: 0; overflow-y: auto;">
+      <div id="verify-box" class="cartoon-card" style="display: none; flex: 1 1 0px; margin-bottom: 0; flex-direction: column; justify-content: space-between; padding: 5px 7px; min-height: 0; overflow-y: auto;">
         <div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px;">
             <span class="sheet-badge" id="cur-sheet-name">Устройства</span>
@@ -573,34 +594,54 @@
 
           <div class="drawing-code" id="cur-drawing-num" style="margin-bottom: 1px;">КСП01-362111.01-002</div>
 
-          <div style="font-size: 9.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="cur-drawing-name">
+          <div style="font-size: 9.5px; font-weight: 700; color: var(--secondary-mid); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="cur-drawing-name">
             по с.3
           </div>
 
-          <!-- Сетка СБ и СП -->
+          <!-- Сетка СБ и СП с локальными кнопками и комментариями -->
           <div class="compare-grid">
+            <!-- КОЛОНКА СБ -->
             <div class="compare-col">
               <span class="sb-sp-title-tag">Литер СБ (Чертёж)</span>
               <div class="compare-cell-base">
                 <div style="font-size: 7px; font-weight:800; color:#7D8A9A;">В БАЗЕ:</div>
                 <div class="val" id="db-lit-sb">дт</div>
               </div>
-              <input type="text" id="act-lit-sb" class="cartoon-input" placeholder="Факт СБ" style="text-align: center; text-transform: lowercase; font-size: 14px; padding: 4px;" oninput="runLiveComparison()">
+              <input type="text" id="act-lit-sb" class="cartoon-input" placeholder="Факт СБ" style="text-align: center; text-transform: lowercase; font-size: 13.5px; padding: 3px;" oninput="runLiveComparison()">
+              
+              <!-- Собственные кнопки для СБ -->
+              <div class="btn-row" style="gap: 2px;">
+                <button class="cartoon-btn btn-success btn-sub-action" onclick="setLitSbMatch()">Литер верен</button>
+                <button class="cartoon-btn btn-warning btn-sub-action" onclick="setLitSbNone()">Литер нет</button>
+              </div>
+
+              <!-- Комментарий для СБ -->
+              <input type="text" id="act-comment-sb" class="cartoon-input" placeholder="💬 Коммент СБ..." style="font-size: 9px; padding: 2px 4px;">
             </div>
 
+            <!-- КОЛОНКА СП -->
             <div class="compare-col">
               <span class="sb-sp-title-tag">Литер СП (Специф.)</span>
               <div class="compare-cell-base">
                 <div style="font-size: 7px; font-weight:800; color:#7D8A9A;" id="lbl-db-sp">В БАЗЕ:</div>
                 <div class="val" id="db-lit-sp">нет</div>
               </div>
-              <input type="text" id="act-lit-sp" class="cartoon-input" placeholder="Факт СП" style="text-align: center; text-transform: lowercase; font-size: 14px; padding: 4px;" oninput="runLiveComparison()">
+              <input type="text" id="act-lit-sp" class="cartoon-input" placeholder="Факт СП" style="text-align: center; text-transform: lowercase; font-size: 13.5px; padding: 3px;" oninput="runLiveComparison()">
+              
+              <!-- Собственные кнопки для СП -->
+              <div class="btn-row" style="gap: 2px;">
+                <button class="cartoon-btn btn-success btn-sub-action" onclick="setLitSpMatch()">Литер верен</button>
+                <button class="cartoon-btn btn-warning btn-sub-action" onclick="setLitSpNone()">Литер нет</button>
+              </div>
+
+              <!-- Комментарий для СП -->
+              <input type="text" id="act-comment-sp" class="cartoon-input" placeholder="💬 Коммент СП..." style="font-size: 9px; padding: 2px 4px;">
             </div>
           </div>
 
-          <!-- Поле КОММЕНТАРИЙ -->
-          <div style="margin-bottom: 4px;">
-            <input type="text" id="act-comment" class="cartoon-input" placeholder="💬 Комментарий (замято, размыто и т.д.)..." style="font-size: 10.5px; padding: 4px 6px;">
+          <!-- Поле ОБЩЕГО КОММЕНТАРИЯ -->
+          <div style="margin-bottom: 3px;">
+            <input type="text" id="act-comment-gen" class="cartoon-input" placeholder="💬 Общий комментарий (замято, размыто и т.д.)..." style="font-size: 9.5px; padding: 3px 6px;">
           </div>
 
           <div id="verdict-display" class="verdict-box pending">
@@ -608,28 +649,35 @@
           </div>
         </div>
 
-        <!-- Кнопки панели сверки -->
-        <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; margin-top: 4px;">
+        <!-- Увеличенные вдвое функциональные кнопки панели сверки -->
+        <div style="display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; margin-top: 2px;">
           <div class="btn-row">
-            <button class="cartoon-btn btn-success btn-tall" style="flex: 1.2;" onclick="autoFillAndVerifyMatch()">
-              ✅ Литеры совпадают
+            <button class="cartoon-btn btn-success btn-tall-action" style="flex: 1.2;" onclick="autoFillAndVerifyMatch()">
+              ✅ Литеры совпадают (СБ и СП)
             </button>
-            <button class="cartoon-btn btn-warning btn-tall" style="flex: 0.8;" onclick="setNoLitBoth()">
-              🚫 Литер нет
+            <button class="cartoon-btn btn-warning btn-tall-action" style="flex: 0.8;" onclick="setNoLitBoth()">
+              🚫 Литер нет (СБ и СП)
             </button>
           </div>
-          <button id="btn-save-verdict" class="cartoon-btn btn-primary btn-tall" style="width: 100%;" onclick="commitCurrentVerification()">
+          <button id="btn-save-verdict" class="cartoon-btn btn-primary btn-tall-primary" style="width: 100%;" onclick="commitCurrentVerification()">
             💾 Записать в журнал
           </button>
         </div>
       </div>
 
-      <!-- Зона с крупным цифровым блоком (NUMPAD) -->
+      <!-- Зона с постоянным списком очереди/поиска и цифровым блоком -->
       <div id="search-numpad-box" class="numpad-container">
-        <div style="text-align: center; padding: 2px 0 4px 0; color: var(--secondary-mid); font-size: 9.5px; font-weight: 700;">
-          Экранный ввод (поиск по цифрам):
+        
+        <!-- Заголовок списка следующих / найденных -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 2px 2px 2px; color: var(--secondary-mid); font-size: 9px; font-weight: 800;">
+          <span id="queue-list-title">⚡ Следующие по реестру:</span>
+          <span id="queue-count-badge" style="font-size: 8.5px;"></span>
         </div>
 
+        <!-- Постоянный выпадающий список следующих/найденных чертежей -->
+        <div id="search-dropdown-list" class="queue-list-box"></div>
+
+        <!-- NUMPAD -->
         <div class="numpad-grid">
           <button class="numpad-btn" onclick="pressNumpad('1')">1</button>
           <button class="numpad-btn" onclick="pressNumpad('2')">2</button>
@@ -805,15 +853,15 @@
             <div style="font-size: 7.5px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СП (РЕЕСТР)</div>
             <div style="font-size: 14px; font-weight: 900;" id="modal-db-sp">нет</div>
           </div>
-          <div style="background: #FFF; padding: 4px; border-radius: 4px; border: 1px solid var(--primary-alt);">
+          <div style="background: #FFF; padding: 3px; border-radius: 4px; border: 1px solid var(--primary-alt);">
             <div style="font-size: 7.5px; font-weight: 800; color: var(--secondary-mid);">ЛИТЕР СП (ФАКТ)</div>
             <div style="font-size: 14px; font-weight: 900;" id="modal-act-sp">нет</div>
           </div>
         </div>
       </div>
 
-      <div id="modal-comment-box" style="font-size: 10px; background: #FFF; border: 1px solid var(--primary-alt); padding: 3px 5px; border-radius: 4px; margin-bottom: 4px; color: var(--secondary-dark);">
-        💬 <b>Комментарий:</b> <span id="modal-comment-text">—</span>
+      <div id="modal-comment-box" style="font-size: 10px; background: #FFF; border: 1px solid var(--primary-alt); padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; color: var(--secondary-dark); line-height: 1.3;">
+        💬 <b>Комментарии:</b> <span id="modal-comment-text">—</span>
       </div>
 
       <div id="modal-status-badge" class="verdict-box" style="margin-bottom: 4px;">-</div>
@@ -845,6 +893,7 @@ let dbInstance = null;
 let allDrawingsList = [];
 let verificationHistory = [];
 let currentSelectedDrawing = null;
+let lastInteractedDrawing = null;
 let videoStream = null;
 let activeLogFilter = 'all';
 
@@ -895,6 +944,15 @@ async function loadDataFromDB() {
     }));
     document.getElementById('active-db-count').innerText = `База: ${allDrawingsList.length} шт`;
     document.getElementById('catalog-count-text').innerText = `${allDrawingsList.length} шт`;
+    
+    // Восстановление памяти о последнем чертеже из localStorage
+    const savedLastId = localStorage.getItem('arch_last_drawing_id');
+    if (savedLastId) {
+      lastInteractedDrawing = allDrawingsList.find(d => String(d.id) === String(savedLastId)) || null;
+    }
+    
+    updateLastDrawingUI();
+    renderQueueList('');
     renderCatalog('');
   };
 
@@ -921,58 +979,99 @@ function pressBackspace() {
 
 function clearSearchInput() {
   document.getElementById('input-drawing-search').value = '';
-  document.getElementById('search-dropdown-list').style.display = 'none';
+  handleLiveSearch('');
 }
 
-/* ================= ЖИВОЙ ПОИСК И СВЕРКА ================= */
+/* ================= ОЧЕРЕДЬ СЛЕДУЮЩИХ И ПОИСК ================= */
+function updateLastDrawingUI() {
+  const box = document.getElementById('last-interacted-box');
+  if (lastInteractedDrawing) {
+    box.style.display = 'flex';
+    document.getElementById('last-drawing-code').innerText = lastInteractedDrawing.drawing_num;
+    document.getElementById('last-drawing-lits').innerText = `(СБ:${formatReportLit(lastInteractedDrawing.lit_sb)} СП:${formatReportLit(lastInteractedDrawing.lit_sp)})`;
+  } else {
+    box.style.display = 'none';
+  }
+}
+
 function handleLiveSearch(query) {
-  const dropdown = document.getElementById('search-dropdown-list');
   const cleanQ = query.trim().toLowerCase().replace(/[\s\-_.]/g, '');
-  const digitsQ = query.replace(/\D/g, '');
+  renderQueueList(cleanQ);
+}
 
-  if (!cleanQ) {
-    dropdown.style.display = 'none';
+function renderQueueList(cleanFilter) {
+  const container = document.getElementById('search-dropdown-list');
+  const title = document.getElementById('queue-list-title');
+  const countBadge = document.getElementById('queue-count-badge');
+
+  if (allDrawingsList.length === 0) {
+    title.innerText = '⚡ Очередь чертежей:';
+    countBadge.innerText = '';
+    container.innerHTML = '<div style="padding:6px; font-size:9.5px; color:#7D8A9A; text-align:center;">База пуста. Загрузите файл Excel.</div>';
     return;
   }
 
-  const matches = allDrawingsList.filter(item => {
-    if (digitsQ.length >= 3 && item._digits.includes(digitsQ)) return true;
-    if (cleanQ.length >= 2 && item._clean.includes(cleanQ)) return true;
-    return false;
-  }).slice(0, 15);
+  let listToDisplay = [];
 
-  if (matches.length === 0) {
-    dropdown.innerHTML = '<div style="padding:6px; font-size:10px; color:#7D8A9A; text-align:center;">Ничего не найдено</div>';
-    dropdown.style.display = 'block';
+  if (cleanFilter) {
+    title.innerText = '🔍 Результаты поиска:';
+    const digitsQ = cleanFilter.replace(/\D/g, '');
+
+    listToDisplay = allDrawingsList.filter(item => {
+      if (digitsQ.length >= 2 && item._digits.includes(digitsQ)) return true;
+      if (item._clean.includes(cleanFilter)) return true;
+      return false;
+    }).slice(0, 20);
+
+    countBadge.innerText = `${listToDisplay.length} шт`;
+  } else {
+    title.innerText = '⚡ Следующие по реестру:';
+    let startIndex = 0;
+    if (lastInteractedDrawing) {
+      const idx = allDrawingsList.findIndex(d => d.id === lastInteractedDrawing.id);
+      if (idx !== -1) {
+        startIndex = idx + 1;
+      }
+    }
+
+    if (startIndex >= allDrawingsList.length) {
+      startIndex = 0; // Зацикливание к началу
+    }
+
+    listToDisplay = allDrawingsList.slice(startIndex, startIndex + 15);
+    if (listToDisplay.length === 0 && allDrawingsList.length > 0) {
+      listToDisplay = allDrawingsList.slice(0, 15);
+    }
+    countBadge.innerText = `${listToDisplay.length} шт`;
+  }
+
+  if (listToDisplay.length === 0) {
+    container.innerHTML = '<div style="padding:6px; font-size:9.5px; color:#7D8A9A; text-align:center;">Ничего не найдено</div>';
     return;
   }
 
-  dropdown.innerHTML = '';
-  matches.forEach(item => {
+  container.innerHTML = '';
+  listToDisplay.forEach(item => {
     const div = document.createElement('div');
     div.className = 'search-item';
     div.onclick = () => {
       selectDrawing(item);
-      dropdown.style.display = 'none';
-      document.getElementById('input-drawing-search').value = item.drawing_num;
     };
     
     const dbSbNorm = formatReportLit(item.lit_sb);
     const dbSpNorm = formatReportLit(item.lit_sp);
-    const litInfo = `СБ: ${dbSbNorm} | СП: ${dbSpNorm}`;
+    const litInfo = `СБ:${dbSbNorm} СП:${dbSpNorm}`;
 
     div.innerHTML = `
-      <div>
+      <div style="flex: 1 1 auto; overflow: hidden; padding-right: 4px;">
         <span class="sheet-badge" style="font-size:7.5px; margin-bottom:1px;">${item.sheet_name}</span>
         <div style="font-family:monospace; font-weight:800; font-size:12px; color:var(--accent-blue);">${item.drawing_num}</div>
-        <div style="font-size:9px; color:#7D8A9A;">${item.name}</div>
+        <div style="font-size:8.5px; color:#7D8A9A; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.name}</div>
       </div>
-      <div style="font-size:9.5px; font-weight:800; color:var(--secondary-dark); text-align:right;">${litInfo}</div>
+      <div style="font-size:9.5px; font-weight:800; color:var(--secondary-dark); text-align:right; flex-shrink:0;">${litInfo}</div>
     `;
-    dropdown.appendChild(div);
+    container.appendChild(div);
   });
-
-  dropdown.style.display = 'block';
 }
 
 function selectDrawing(item) {
@@ -991,11 +1090,14 @@ function selectDrawing(item) {
   document.getElementById('act-lit-sp').value = '';
   document.getElementById('act-lit-sb').disabled = false;
   document.getElementById('act-lit-sp').disabled = false;
-  document.getElementById('act-comment').value = '';
+  
+  // Сброс всех полей комментариев
+  document.getElementById('act-comment-sb').value = '';
+  document.getElementById('act-comment-sp').value = '';
+  document.getElementById('act-comment-gen').value = '';
 
   document.getElementById('verify-box').style.display = 'flex';
   document.getElementById('search-numpad-box').style.display = 'none';
-  document.getElementById('search-dropdown-list').style.display = 'none';
   runLiveComparison();
 }
 
@@ -1004,19 +1106,41 @@ function clearCurrentVerification() {
   document.getElementById('verify-box').style.display = 'none';
   document.getElementById('search-numpad-box').style.display = 'flex';
   document.getElementById('input-drawing-search').value = '';
+  renderQueueList('');
 }
 
-function autoFillAndVerifyMatch() {
+/* ================= ЛОКАЛЬНЫЕ КНОПКИ ДЛЯ СБ И СП ================= */
+function setLitSbMatch() {
   if (!currentSelectedDrawing) return;
   document.getElementById('act-lit-sb').value = formatReportLit(currentSelectedDrawing.lit_sb);
+  runLiveComparison();
+}
+
+function setLitSbNone() {
+  document.getElementById('act-lit-sb').value = 'нет';
+  runLiveComparison();
+}
+
+function setLitSpMatch() {
+  if (!currentSelectedDrawing) return;
   document.getElementById('act-lit-sp').value = formatReportLit(currentSelectedDrawing.lit_sp);
   runLiveComparison();
 }
 
-function setNoLitBoth() {
-  document.getElementById('act-lit-sb').value = 'нет';
+function setLitSpNone() {
   document.getElementById('act-lit-sp').value = 'нет';
   runLiveComparison();
+}
+
+/* ================= ОБЩИЕ КНОПКИ (СБ И СП ВМЕСТЕ) ================= */
+function autoFillAndVerifyMatch() {
+  setLitSbMatch();
+  setLitSpMatch();
+}
+
+function setNoLitBoth() {
+  setLitSbNone();
+  setLitSpNone();
 }
 
 function runLiveComparison() {
@@ -1030,7 +1154,7 @@ function runLiveComparison() {
   if (rawActSb === '' && rawActSp === '') {
     box.className = 'verdict-box pending';
     box.innerHTML = '⏳ Укажите литеры со штампа или подтвердите совпадение';
-    btn.className = 'cartoon-btn btn-secondary btn-tall';
+    btn.className = 'cartoon-btn btn-secondary btn-tall-primary';
     return;
   }
 
@@ -1046,7 +1170,7 @@ function runLiveComparison() {
   if (isSbMatch && isSpMatch) {
     box.className = 'verdict-box match';
     box.innerHTML = '✅ ВСЁ ОТЛИЧНО (ЛИТЕРЫ СОВПАДАЮТ)';
-    btn.className = 'cartoon-btn btn-success btn-tall';
+    btn.className = 'cartoon-btn btn-success btn-tall-primary';
   } else {
     let diff = [];
     if (!isSbMatch) diff.push(`СБ: факт "${formatReportLit(actSb)}" ≠ реестр "${formatReportLit(dbSb)}"`);
@@ -1054,7 +1178,7 @@ function runLiveComparison() {
 
     box.className = 'verdict-box mismatch';
     box.innerHTML = `⚠️ РАСХОЖДЕНИЕ: ${diff.join(' | ')}`;
-    btn.className = 'cartoon-btn btn-danger btn-tall';
+    btn.className = 'cartoon-btn btn-danger btn-tall-primary';
   }
 }
 
@@ -1068,7 +1192,17 @@ function commitCurrentVerification() {
 
   const actSb = normLit(rawActSb || 'нет');
   const actSp = normLit(rawActSp || 'нет');
-  const comment = document.getElementById('act-comment').value.trim();
+
+  const commGen = document.getElementById('act-comment-gen').value.trim();
+  const commSb = document.getElementById('act-comment-sb').value.trim();
+  const commSp = document.getElementById('act-comment-sp').value.trim();
+
+  // Формирование структурированного комментария ОБЩ:... СБ:... СП:...
+  const commentParts = [];
+  if (commGen) commentParts.push(`ОБЩ:${commGen}`);
+  if (commSb) commentParts.push(`СБ:${commSb}`);
+  if (commSp) commentParts.push(`СП:${commSp}`);
+  const finalComment = commentParts.join(' ');
 
   const isMatch = (actSb === dbSb) && (actSp === dbSp);
 
@@ -1081,7 +1215,7 @@ function commitCurrentVerification() {
     db_sp: dbSp,
     act_sb: actSb,
     act_sp: actSp,
-    comment: comment || '',
+    comment: finalComment,
     status: isMatch ? 'MATCH' : 'MISMATCH',
     time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
     date: new Date().toLocaleDateString('ru-RU')
@@ -1093,6 +1227,12 @@ function commitCurrentVerification() {
   tx.oncomplete = () => {
     verificationHistory.unshift(entry);
     renderLogs();
+    
+    // Запоминание последнего проверенного чертежа
+    lastInteractedDrawing = currentSelectedDrawing;
+    localStorage.setItem('arch_last_drawing_id', lastInteractedDrawing.id);
+    updateLastDrawingUI();
+
     showToast(isMatch ? '✅ Записано (Норма)' : '⚠️ Записано в расхождения');
     clearCurrentVerification();
   };
@@ -1368,12 +1508,12 @@ function generateMinimalistWordReport() {
           <th style="width: 3%;">№</th>
           <th style="width: 12%;">Раздел (Лист)</th>
           <th style="width: 20%;">Обозначение чертежа</th>
-          <th style="width: 25%;">Наименование</th>
-          <th style="width: 8%;">Литер СБ (Реестр)</th>
-          <th style="width: 8%;">Литер СБ (Факт)</th>
-          <th style="width: 8%;">Литер СП (Реестр)</th>
-          <th style="width: 8%;">Литер СП (Факт)</th>
-          <th style="width: 8%;">Комментарий</th>
+          <th style="width: 23%;">Наименование</th>
+          <th style="width: 7%;">Литер СБ (Реестр)</th>
+          <th style="width: 7%;">Литер СБ (Факт)</th>
+          <th style="width: 7%;">Литер СП (Реестр)</th>
+          <th style="width: 7%;">Литер СП (Факт)</th>
+          <th style="width: 14%;">Комментарии</th>
         </tr>
       </thead>
       <tbody>
@@ -1410,13 +1550,13 @@ function generateMinimalistWordReport() {
           <th style="width: 3%;">№</th>
           <th style="width: 11%;">Раздел (Лист)</th>
           <th style="width: 18%;">Обозначение чертежа</th>
-          <th style="width: 22%;">Наименование</th>
-          <th style="width: 8%;">Литер СБ (Реестр)</th>
-          <th style="width: 8%;">Литер СБ (Факт)</th>
-          <th style="width: 8%;">Литер СП (Реестр)</th>
-          <th style="width: 8%;">Литер СП (Факт)</th>
+          <th style="width: 21%;">Наименование</th>
+          <th style="width: 7%;">Литер СБ (Реестр)</th>
+          <th style="width: 7%;">Литер СБ (Факт)</th>
+          <th style="width: 7%;">Литер СП (Реестр)</th>
+          <th style="width: 7%;">Литер СП (Факт)</th>
           <th style="width: 6%;">Действие</th>
-          <th style="width: 8%;">Комментарий</th>
+          <th style="width: 13%;">Комментарии</th>
         </tr>
       </thead>
       <tbody>
@@ -1994,7 +2134,7 @@ function renderLogs() {
 
     const factLit = `СБ:${actSb} / СП:${actSp}`;
     const baseLit = `СБ:${dbSb} / СП:${dbSp}`;
-    const commentBadge = item.comment ? `<div style="font-size:8.5px; color:#4A5568; margin-top:1px;">💬 ${item.comment}</div>` : '';
+    const commentBadge = item.comment ? `<div style="font-size:8.5px; color:#4A5568; margin-top:2px;">💬 <b>${item.comment}</b></div>` : '';
 
     d.innerHTML = `
       <div style="flex: 1 1 auto; overflow: hidden; padding-right: 4px;">
